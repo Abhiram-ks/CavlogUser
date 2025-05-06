@@ -56,6 +56,14 @@ class SettingsScreen extends StatelessWidget {
                   Navigator.pushNamed(context, AppRoutes.resetPassword,
                       arguments: false);
                 }),
+          settingsWidget(
+           context: context,
+           screenHeight: screenHeight,
+           icon: Icons.book_online,
+           title: 'My Booking',
+           onTap: () {
+           Navigator.pushNamed(context, AppRoutes.myBooking);
+                }),
             Divider(
               color: AppPalette.hintClr,
             ),

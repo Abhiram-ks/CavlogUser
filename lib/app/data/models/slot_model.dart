@@ -10,7 +10,7 @@ class SlotModel {
   final bool booked;
   final bool available;
   final Duration duration;
-  
+
 
 
   SlotModel({
@@ -50,7 +50,7 @@ class SlotModel {
       date: map['date'] ?? '',
       booked: map['booked'] ?? false,
       available: map['available'] ?? true,
-      duration: Duration(minutes: map['duration'] ?? 0)
+      duration: Duration(minutes: map['duration'] ?? 0),
   );
   }
 }

@@ -20,10 +20,9 @@ class WalletOverviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final selectedIndex = context.watch<WalletTabCubit>().state;
 
-    return Container(
+    return SizedBox(
       height: screenWidth * 0.45,
       width: double.infinity,
-      color: AppPalette.scafoldClr,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
         child: Column(

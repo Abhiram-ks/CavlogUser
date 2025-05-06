@@ -69,7 +69,7 @@ class HomeScreen extends StatelessWidget {
                                     style: IconButton.styleFrom(
                                       backgroundColor: AppPalette.whiteClr,
                                     ),
-                                    icon: Icon(Icons.wallet,
+                                    icon: Icon(Icons.account_balance_wallet_outlined ,
                                         color: AppPalette.blackClr,),
                                     onPressed: () {
                                       Navigator.pushNamed(context, AppRoutes.wallet);

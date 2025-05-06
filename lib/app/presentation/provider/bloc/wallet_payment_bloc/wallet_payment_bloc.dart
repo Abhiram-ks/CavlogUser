@@ -9,6 +9,7 @@ import 'package:user_panel/app/domain/usecases/generate_booking_otp.dart';
 import '../../../../../auth/data/datasources/auth_local_datasource.dart';
 import '../../../../data/models/slot_model.dart';
 import '../../../../data/repositories/wallet_payment_repo.dart';
+import '../../../../domain/usecases/data_listing_usecase.dart';
 
 part 'wallet_payment_event.dart';
 part 'wallet_payment_state.dart';
@@ -18,7 +19,7 @@ class WalletPaymentBloc extends Bloc<WalletPaymentEvent, WalletPaymentState> {
   final WalletPaymentRepository repository;
   final BookingRemoteDatasources bookingRemoteDatasources;
   final WalletTransactionRemoteDataSource walletTransactionRemoteDataSource;
-  final SlotCheckingRepository slotCheckingRepository;
+  final SlotChekingRepository slotCheckingRepository;
 
   WalletPaymentBloc({
    required this.repository,
@@ -27,6 +28,25 @@ class WalletPaymentBloc extends Bloc<WalletPaymentEvent, WalletPaymentState> {
    required this.walletTransactionRemoteDataSource,
   }) : super(WalletPaymentInitial()) {
     on<WalletPaymentRequest>(_handleWalletPaymentRequest);
+    on<WalletPaymentCheckSlots>(_handleSlotChekings);
+  }
+
+    Future<void> _handleSlotChekings(WalletPaymentCheckSlots event, Emitter<WalletPaymentState> emit) async {
+     try {
+      final available = await slotCheckingRepository.slotCheking(
+        barberId: event.barberId,
+        selectedSlots: event.selectedSlots,
+      );
+      if (!available) {
+        emit(WalletPaymentSlotNotAvalbale());
+        return;
+      }
+
+      emit(WalletPaymntSlotAvalable());
+     } catch (e) {
+       emit(WalletPaymentFailure("Slot booking must be atomic to prevent double booking."));
+     }
+  
   }
 
   Future<void> _handleWalletPaymentRequest(
@@ -45,7 +65,7 @@ class WalletPaymentBloc extends Bloc<WalletPaymentEvent, WalletPaymentState> {
       }
 
       // 1. Slot Availability Check
-      final available = await slotCheckingRepository.slotChecking(
+      final available = await slotCheckingRepository.slotCheking( 
         barberId: event.barberId,
         selectedSlots: event.selectedSlots,
       );
@@ -54,7 +74,7 @@ class WalletPaymentBloc extends Bloc<WalletPaymentEvent, WalletPaymentState> {
         return;
       }
       
-      final booking = await _prepareBookingModel(userId: userId, event: event);
+      final booking = await prepareBookingModel(userId: userId, event: event);
       // 3. Wallet Deduction
       final walletSuccess = await repository.walletPayment(
         userId: userId,
@@ -78,9 +98,9 @@ class WalletPaymentBloc extends Bloc<WalletPaymentEvent, WalletPaymentState> {
         barberId: event.barberId,
         selectedSlots: event.selectedSlots,
       );
+    
       if (!slotBooked) {
-        emit(WalletPaymentFailure(
-            'Slot booking failed. Amount will be refunded in 1–3 business days.'));
+        emit(WalletPaymentFailure('Slot booking failed. Amount will be refunded in 1–3 business days.'));
         return;
       }
 
@@ -90,8 +110,7 @@ class WalletPaymentBloc extends Bloc<WalletPaymentEvent, WalletPaymentState> {
       if (bookingCreated) {
         emit(WalletPaymentSuccess());
       } else {
-        emit(WalletPaymentFailure(
-            'Booking creation failed. Contact support if amount was deducted.'));
+        emit(WalletPaymentFailure('Booking creation failed. Contact support if amount was deducted.'));
       }
     } catch (e) {
       emit(WalletPaymentFailure('Unexpected error: ${e.toString()}'));
@@ -101,7 +120,7 @@ class WalletPaymentBloc extends Bloc<WalletPaymentEvent, WalletPaymentState> {
 
 
 
-Future<BookingModel> _prepareBookingModel({
+Future<BookingModel> prepareBookingModel({
   required String userId,
   required WalletPaymentRequest event,
 }) async {
@@ -114,8 +133,7 @@ Future<BookingModel> _prepareBookingModel({
 
   final List<DateTime> slotTimes = event.selectedSlots.map((slot) => slot.startTime).toList();
 
-  final int totalDuration = event.selectedSlots
-      .fold(0, (sum, slot) => sum + slot.duration.inMinutes);
+  final int totalDuration = event.selectedSlots.fold(0, (sum, slot) => sum + slot.duration.inMinutes);
 
   return BookingModel(
     userId: userId,
@@ -126,7 +144,9 @@ Future<BookingModel> _prepareBookingModel({
     serviceType: serviceTypeMap,
     slotTime: slotTimes,
     amountPaid: event.bookingAmount,
-    status: "pending",
+    status: "Completed",
     otp: bookingOTP,
+    transaction: 'debited',
+    serviceStatus: 'Pending',
   );
 }

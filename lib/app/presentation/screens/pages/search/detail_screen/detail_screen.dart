@@ -75,8 +75,7 @@ class _DetailBarberScreenState extends State<DetailBarberScreen> {
                               BlocBuilder<TabCubit, int>(
                                 builder: (context, selectedIndex) {
                                   return Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
+                                    mainAxisAlignment:MainAxisAlignment.spaceEvenly,
                                     children: List.generate(3, (index) {
                                       final tabs = [ 'Post', 'Services', 'review'];
                                       return GestureDetector(

@@ -35,8 +35,7 @@ class ProfileScreen extends StatelessWidget {
                         return profilepageloading(screenHeight, screenWidth);
                       }
                       else if (state is FetchUserLoaded){
-                         return ProfileScrollviewWidget(
-                          screenHeight: screenHeight, screenWidth: screenWidth, user: state.user);
+                        return ProfileScrollviewWidget(screenHeight: screenHeight, screenWidth: screenWidth, user: state.user);
                       }
                       return  profilepageloading(screenHeight, screenWidth);
                     },

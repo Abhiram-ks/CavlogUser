@@ -1,21 +1,23 @@
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:user_panel/app/presentation/screens/pages/search/payment_screen/payment_success_screen.dart';
+import 'package:user_panel/app/data/datasources/barber_wallet_remote_datasources.dart';
+import 'package:user_panel/app/data/datasources/booking_remote_datasources.dart';
+import 'package:user_panel/app/data/repositories/slot_cheking_repo.dart';
+import 'package:user_panel/app/presentation/provider/bloc/online_payment_bloc/online_payment_bloc.dart';
 import 'package:user_panel/app/presentation/widget/search_widget/booking_screen_widget/booking_chips_maker.dart';
-import 'package:user_panel/core/common/custom_snackbar_widget.dart';
+import 'package:user_panel/app/presentation/widget/search_widget/payment_screen_widgets/handle_online_payment_state.dart';
 import '../../../../../../core/common/custom_actionbutton_widget.dart';
-import '../../../../../../core/stripe/stripe_payment_sheet.dart';
 import '../../../../../../core/themes/colors.dart';
 import '../../../../../../core/utils/constant/constant.dart';
 import '../../../../../data/models/slot_model.dart' show SlotModel;
 import '../../../../../domain/usecases/data_listing_usecase.dart';
 import '../../../../provider/cubit/booking_cubits/corrency_convertion_cubit/corrency_conversion_cubit.dart';
 import '../../../../provider/cubit/booking_cubits/date_selection_cubit/date_selection_cubit.dart';
-import '../../../../widget/search_widget/payment_screen_widgets/payment_payment_option_widget.dart';
 import '../../../../widget/search_widget/payment_screen_widgets/payment_top_portion_widget.dart';
-import '../wallet_payment_screen/wallet_paymet_screen.dart';
 
 class PaymentScreen extends StatelessWidget {
   final String barberUid;
@@ -40,6 +42,7 @@ class PaymentScreen extends StatelessWidget {
       providers: [
         BlocProvider.value(value: slotSelectionCubit),
         BlocProvider(create: (_) => CurrencyConversionCubit()..convertINRtoUSD(totalInINR)),
+        BlocProvider(create: (_) =>OnlinePaymentBloc(bookingRemoteDatasources: BookingRemoteDatasourcesImpl(), slotCheckingRepository: SlotCheckingRepositoryImpl(), walletTransactionRemoteDataSource: WalletTransactionRemoteDataSourceImpl()) )
       ],
       child: LayoutBuilder(builder: (context, constraints) {
         double screenHeight = constraints.maxHeight;
@@ -71,8 +74,7 @@ class PaymentScreen extends StatelessWidget {
             ),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-          floatingActionButton:
-          BlocBuilder<CurrencyConversionCubit, CurrencyConversionState>(
+          floatingActionButton: BlocBuilder<CurrencyConversionCubit, CurrencyConversionState>(
             builder: (context, convertionState) {
               String labelText = 'Loading...';
               if (convertionState is CurrencyConversionSuccess) {
@@ -80,65 +82,24 @@ class PaymentScreen extends StatelessWidget {
               } else if (convertionState is CurrencyConversionFailure) {
                 labelText = '₹${totalInINR.toStringAsFixed(2)}';
               }
-              return SizedBox(
-                  width: screenWidth * 0.9,
-                  child: ButtonComponents.actionButton(
+              return BlocListener<OnlinePaymentBloc, OnlinePaymentState>(
+                listener: (context, state) {
+                  log('now working state for online payment is : $state');
+                  handleOnlinePaymentStates(context: context, state: state, totalAmount: totalInINR.toStringAsFixed(2), barberUid: barberUid, selectedServices: selectedServices,convertionState: convertionState,labelText: labelText,platformFee: platformFee,screenHeight: screenHeight,screenWidth: screenWidth,selectedSlots: selectedSlots, slotSelectionCubit:slotSelectionCubit, totalInINR: totalInINR);
+                },
+                child: SizedBox(
+                    width: screenWidth * 0.9,
+                    child: ButtonComponents.actionButton(
                       screenHeight: screenHeight,
                       screenWidth: screenWidth,
                       buttonColor: AppPalette.greenClr,
                       label: labelText,
-                      onTap: () async {
-                        BottomSheetPaymentOption().showBottomSheet(
-                            context: context,
-                            screenHeight: screenHeight,
-                            screenWidth: screenWidth,
-                            walletPaymentAction: () {
-                              Navigator.pop(context);
-                              Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                      WalletPaymetScreen(
-                                        selectedSlots: selectedSlots,
-                                        barberUid: barberUid,
-                                        platformFee: platformFee,
-                                        totalAmount: totalInINR,
-                                        selectedServices: selectedServices,
-                                        slotSelectionCubit: slotSelectionCubit,
-                                      ),
-                                    ),
-                                  );
-                            },
-                            stripePaymentAction: () async {
-                              Navigator.pop(context);
-                              double usdAmount; 
-                              if (convertionState  is CurrencyConversionSuccess) {
-                                usdAmount = convertionState.convertedAmount;
-                              } else {
-                                CustomeSnackBar.show(context: context, title: "Payment processing failed.", description: "Oops! There was an issue with your slot booking or payment method. Please try again.", titleClr: AppPalette.redClr);
-                                return;
-                              }
+                      onTap: () {
+                      context.read<OnlinePaymentBloc>().add(OnlinePaymentCheckSlots(barberId: barberUid, selectedSlots: selectedSlots));
 
-                              final bool success =  await StripePaymentSheetHandler.instance .presentPaymentSheet(context: context,amount: usdAmount, currency: 'usd',label: 'Pay $labelText');
-  
-                               if (!context.mounted) return;
-                                if (success) {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                      PaymentSuccessScreen(
-                                        totalAmount: labelText,
-                                        barberUid: barberUid,
-                                        selectedServices: selectedServices,
-                                        isWallet: false,
-                                      ),
-                                    ),
-                                  );
-                                }
-                               else {
-                                return;
-                              }
-                            });
-                      }));
+                     
+                        })),
+              );
             },
           ),
         );
@@ -304,7 +265,7 @@ class _PaymentBottomSectionWidgetState
                 context: context,
                 prefixText: 'Total price',
                 prefixTextStyle: GoogleFonts.plusJakartaSans(
-                 fontWeight: FontWeight.bold, color: AppPalette.greenClr),
+                    fontWeight: FontWeight.bold, color: AppPalette.greenClr),
                 suffixText: '₹ ${totalAmount + platformFee}',
                 suffixTextStyle: GoogleFonts.plusJakartaSans(
                     fontWeight: FontWeight.bold, color: AppPalette.blackClr),

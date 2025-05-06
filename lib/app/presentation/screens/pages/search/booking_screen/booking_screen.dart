@@ -227,10 +227,21 @@ class _BookinScreenWidgetsState extends State<BookinScreenWidgets> {
                 },
               ),
               ConstantWidgets.hight10(context),
-              Text('Available time',
-                  style: TextStyle(fontWeight: FontWeight.w900)),
-              BlocBuilder<FetchSlotsSpecificdateBloc,
-                  FetchSlotsSpecificDateState>(builder: (context, state) {
+               Text('Status Indicators', style: TextStyle(fontWeight: FontWeight.w900)),
+                 SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      colorMarker(context: context,hintText: 'Reserve Time',markColor: AppPalette.buttonClr),
+                      colorMarker(context: context,hintText: 'Active Slots',markColor: AppPalette.whiteClr),
+                      colorMarker(context: context,hintText: 'Disabled Slots',markColor:const Color.fromARGB(255, 237, 237, 238)),
+                      colorMarker(context: context,hintText: 'Booked Slots',markColor: AppPalette.hintClr),
+                    ],
+                  ),
+                ),
+             ConstantWidgets.hight10(context),
+              Text('Available time', style: TextStyle(fontWeight: FontWeight.w900)),
+              BlocBuilder<FetchSlotsSpecificdateBloc,FetchSlotsSpecificDateState>(builder: (context, state) {
                 if (state is FetchSlotsSpecificDateEmpty) {
                   Center(
                     child: Column(
@@ -279,10 +290,8 @@ class _BookinScreenWidgetsState extends State<BookinScreenWidgets> {
                 }
                 if (state is FetchSlotsSpecificDateLoaded) {
                   final slots = state.slots;
-                  final slotSelectionCubit =
-                      context.watch<SlotSelectionCubit>();
-                  final serviceSelectionState =
-                      context.watch<ServiceSelectionCubit>().state;
+                  final slotSelectionCubit =  context.watch<SlotSelectionCubit>();
+                  final serviceSelectionState =  context.watch<ServiceSelectionCubit>().state;
                   final maxSelectableSlots = context
                       .watch<ServiceSelectionCubit>()
                       .state
@@ -341,9 +350,7 @@ class _BookinScreenWidgetsState extends State<BookinScreenWidgets> {
                               (isSelected ||
                                   selectedSlotCount < maxSelectableSlots);
                           if (canSelectSlot) {
-                            context
-                                .read<SlotSelectionCubit>()
-                                .toggleSlot(slot, maxSelectableSlots);
+                            context .read<SlotSelectionCubit>()  .toggleSlot(slot, maxSelectableSlots);
                           }
                         },
                       );
@@ -494,4 +501,23 @@ class BookingCalenderBlocBuilder extends StatelessWidget {
       },
     );
   }
+}
+
+
+Row colorMarker(
+    {required BuildContext context,
+    required Color markColor,
+    required String hintText}) {
+  return Row(children: [
+    Container(
+        width: 15,
+        height: 15,
+        decoration: BoxDecoration(
+          color: markColor,
+          shape: BoxShape.rectangle,
+        )),
+    ConstantWidgets.width20(context),
+    Text(hintText),
+    ConstantWidgets.width40(context)
+  ]);
 }

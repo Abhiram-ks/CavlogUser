@@ -87,3 +87,5 @@ String formatCurrency(double amount) {
       RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (match) => '${match[1]},');
   return '₹$intPart.${parts[1]}';
 }
+
+

@@ -5,13 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:user_panel/app/data/datasources/barber_wallet_remote_datasources.dart';
 import 'package:user_panel/app/data/datasources/booking_remote_datasources.dart';
 import 'package:user_panel/app/data/repositories/slot_cheking_repo.dart';
-import 'package:user_panel/app/presentation/screens/pages/search/payment_screen/payment_success_screen.dart';
 import 'package:user_panel/app/presentation/widget/search_widget/wallet_payment_widget/handle_wallet_paymentstate.dart';
 import 'package:user_panel/core/common/custom_appbar_widget.dart';
-import 'package:user_panel/core/common/custom_snackbar_widget.dart';
 import 'package:user_panel/core/themes/colors.dart';
 import '../../../../../../core/common/custom_actionbutton_widget.dart';
-import '../../../../../../core/stripe/stripe_payment_sheet.dart';
 import '../../../../../../core/utils/constant/constant.dart';
 import '../../../../../data/models/slot_model.dart';
 import '../../../../../data/repositories/fetch_wallets_repo.dart';
@@ -46,8 +43,7 @@ class WalletPaymetScreen extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider( create: (_) => FetchWalletBloc(FetchWalletsRepositoryImpl())),
-        BlocProvider( create: (_) => WalletPaymentBloc(
-          repository:  WalletPaymentRepositoryImpl(),bookingRemoteDatasources: BookingRemoteDatasourcesImpl(),slotCheckingRepository:SlotCheckingRepositoryImpl(),walletTransactionRemoteDataSource:WalletTransactionRemoteDataSourceImpl()),
+        BlocProvider( create: (_) => WalletPaymentBloc(repository:  WalletPaymentRepositoryImpl(),bookingRemoteDatasources: BookingRemoteDatasourcesImpl(),slotCheckingRepository:SlotCheckingRepositoryImpl(),walletTransactionRemoteDataSource:WalletTransactionRemoteDataSourceImpl()),
         )
       ],
       child: Builder(builder: (context) {
@@ -71,17 +67,12 @@ class WalletPaymetScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: screenWidth * 0.08),
+                            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.08),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  'Digital Money Pay',
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 28,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                Text('Digital Money Pay',
+                                  style: GoogleFonts.plusJakartaSans(fontSize: 28,fontWeight: FontWeight.bold),
                                 ),
                                 ConstantWidgets.hight10(context),
                                 Text(
@@ -90,9 +81,7 @@ class WalletPaymetScreen extends StatelessWidget {
                                   'If not, you can top up or split the payment between wallet and online options.',
                                 ),
                                 ConstantWidgets.hight10(context),
-                                WalletPaymentBalanceCard(
-                                  screenWidth: screenWidth,
-                                  screenHeight: screenHeight,
+                                WalletPaymentBalanceCard( screenWidth: screenWidth, screenHeight: screenHeight,
                                 ),
                               ],
                             ),
@@ -102,25 +91,16 @@ class WalletPaymetScreen extends StatelessWidget {
                             child: SingleChildScrollView(
                               physics: const BouncingScrollPhysics(),
                               child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: screenWidth * 0.05),
-                                child: BlocBuilder<FetchWalletBloc,
-                                    FetchWalletState>(
+                                padding: EdgeInsets.symmetric( horizontal: screenWidth * 0.05),
+                                child: BlocBuilder<FetchWalletBloc,FetchWalletState>(
                                   builder: (context, walletBalanceState) {
-                                    if (walletBalanceState
-                                        is FetchWalletLoaded) {
-                                      balance =
-                                          walletBalanceState.wallet.totalAmount;
-                                      if (balance <= 0 ||
-                                          bookingAmount > balance) {
+                                    if (walletBalanceState is FetchWalletLoaded) {
+                                      balance = walletBalanceState.wallet.totalAmount;
+                                      if (balance <= 0 || bookingAmount > balance) {
                                         balanceColor = AppPalette.redClr;
                                       }
-                                    } else if (walletBalanceState
-                                            is FetchWalletEmpty ||
-                                        walletBalanceState
-                                            is FetchWalletFailure) {
-                                      balance = 0.0;
-                                      balanceColor = AppPalette.redClr;
+                                    } else if (walletBalanceState is FetchWalletEmpty || walletBalanceState is FetchWalletFailure) {
+                                      balance = 0.0; balanceColor = AppPalette.redClr;
                                     }
 
                                     final bool isShortfall =
@@ -150,7 +130,7 @@ class WalletPaymetScreen extends StatelessWidget {
                       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
                       floatingActionButton: BlocListener<WalletPaymentBloc, WalletPaymentState>(
                         listener: (context, state) {
-                         handleWalletPaymentStates(context: context, barberUid: barberUid, totalAmount:totalAmount.toStringAsFixed(2) , selectedServices: selectedServices, state: state);
+                         handleWalletPaymentStates(context: context, barberUid: barberUid, totalAmount:totalAmount.toStringAsFixed(2) , selectedServices: selectedServices, state: state,balance: balance,bookingAmount: bookingAmount,isShortfallAmount: isShortfallAmount,platformFee: platformFee,selectedSlots: selectedSlots);
                         },
                         child: SizedBox(
                           width: screenWidth * 0.9,
@@ -160,55 +140,8 @@ class WalletPaymetScreen extends StatelessWidget {
                               buttonColor: AppPalette.greenClr,
                               label: '₹ ${bookingAmount.toStringAsFixed(2)}',
                               onTap: () async {
-                                if (balance >= 100) {
-                                  if (isShortfallAmount == 0.0) {
-                                    context.read<WalletPaymentBloc>().add(WalletPaymentRequest(
-                                      bookingAmount:bookingAmount,
-                                      barberId: barberUid,
-                                      selectedServices: selectedServices,
-                                      selectedSlots:selectedSlots,
-                                      platformFee: platformFee
-                                      ));
-                                  } else {
-                                    final bool success =
-                                        await StripePaymentSheetHandler.instance
-                                            .presentPaymentSheet(
-                                                context: context,
-                                                amount: isShortfallAmount,
-                                                currency: 'usd',
-                                                label:
-                                                    'Pay $isShortfallAmount');
-                                    if (!context.mounted) return;
-                                    if (success) {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              PaymentSuccessScreen(
-                                            totalAmount: totalAmount.toStringAsFixed(2),
-                                            barberUid: barberUid,
-                                            selectedServices: selectedServices,
-                                            isWallet: false,
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      CustomeSnackBar.show(
-                                          context: context,
-                                          title: "Payment processing failed.",
-                                          description:
-                                              "Oops! There was an issue with your slot booking or payment method. Please try again.",
-                                          titleClr: AppPalette.redClr);
-                                      return;
-                                    }
-                                  }
-                                } else {
-                                  CustomeSnackBar.show(
-                                      context: context,
-                                      title: "Insufficient Balance",
-                                      description:
-                                          'To use Digital Money Pay, your wallet balance must be at least ₹100. Please top up your wallet to proceed.',
-                                      titleClr: AppPalette.blackClr);
-                                }
+                                context.read<WalletPaymentBloc>().add(WalletPaymentCheckSlots(barberId: barberUid, selectedSlots: selectedSlots));
+                             
                               }),
                         ),
                       ))));
@@ -216,6 +149,9 @@ class WalletPaymetScreen extends StatelessWidget {
       }),
     );
   }
+
+
+}
 
   Column digitalPaymentSummaryWidget(
       BuildContext context,
@@ -242,7 +178,7 @@ class WalletPaymetScreen extends StatelessWidget {
           prefixText: 'Wallet Balance',
           prefixTextStyle: GoogleFonts.plusJakartaSans(
               fontWeight: FontWeight.w500, color: balanceColor),
-          suffixText: '₹ $balance',
+          suffixText: '₹ ${balance.toStringAsFixed(2)}',
           suffixTextStyle: GoogleFonts.plusJakartaSans(
               fontWeight: FontWeight.w500, color: AppPalette.blackClr),
         ),
@@ -287,7 +223,8 @@ class WalletPaymetScreen extends StatelessWidget {
       ],
     );
   }
-}
+
+  
 
 class WalletPaymentBalanceCard extends StatelessWidget {
   final double screenWidth;
