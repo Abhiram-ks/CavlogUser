@@ -9,8 +9,6 @@ import 'package:user_panel/app/domain/usecases/generate_booking_otp.dart';
 import '../../../../../auth/data/datasources/auth_local_datasource.dart';
 import '../../../../data/models/slot_model.dart';
 import '../../../../data/repositories/wallet_payment_repo.dart';
-import '../../../../domain/usecases/data_listing_usecase.dart';
-
 part 'wallet_payment_event.dart';
 part 'wallet_payment_state.dart';
 

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:user_panel/app/presentation/screens/navigation/bottom_navigation_controllers.dart';
 import 'package:user_panel/app/presentation/screens/pages/home/wallet_screen/wallet_sreen.dart';
+import 'package:user_panel/app/presentation/screens/pages/home/wishlist_screen/wishlist_screen.dart';
 import 'package:user_panel/app/presentation/screens/pages/search/booking_screen/booking_screen.dart';
 import 'package:user_panel/app/presentation/screens/settings/settings_subscreens/my_booking_screen.dart';
 import 'package:user_panel/app/presentation/screens/settings/settings_subscreens/profile_and_edit_screen.dart';
@@ -28,6 +29,7 @@ class AppRoutes {
   static const String booking = '/booking_screen';
   static const String wallet = '/wallet_sreen';
   static const String myBooking = '/my_booking_screen';
+  static const String wishList = '/wishlist_screen';
 
   static Route<dynamic> generateRoute(RouteSettings settings){
     switch (settings.name) {
@@ -59,6 +61,8 @@ class AppRoutes {
            return MaterialPageRoute(builder:(_) => WalletSreen());
       case myBooking:
           return CupertinoPageRoute(builder:(_) => MyBookingScreen());
+      case wishList:
+          return MaterialPageRoute(builder: (_) => WishlistScreen());
       default: 
         return MaterialPageRoute(
           builder: (_) => Scaffold(

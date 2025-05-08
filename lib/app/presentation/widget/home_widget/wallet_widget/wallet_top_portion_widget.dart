@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:user_panel/app/presentation/provider/bloc/fetching_bloc/fetch_wallet_bloc/fetch_wallet_bloc.dart';
 
+import '../../../../../auth/data/datasources/auth_local_datasource.dart';
 import '../../../../../core/common/custom_actionbutton_widget.dart';
 import '../../../../../core/common/custom_formfield_widget.dart';
 import '../../../../../core/stripe/stripe_payment_sheet.dart';
@@ -121,6 +122,7 @@ class _TopUpWidetInWalletState extends State<TopUpWidetInWallet>
                               controller: _amountController,
                               validate: (value) => ValidatorHelper.validateWallet(currentBalance.toString(), _amountController.text.trim()),
                             ),
+                            
                             ConstantWidgets.hight30(context),
                             BlocBuilder<CurrencyConversionCubit,CurrencyConversionState>(
                               builder: (context, conversionState) {
@@ -135,8 +137,12 @@ class _TopUpWidetInWalletState extends State<TopUpWidetInWallet>
                                   screenWidth: widget.screenWidth,
                                   label: labelText,
                                   onTap: () async {
-                                    if (!_formKey.currentState!.validate()) { return;}
-                    
+                                     if (!_formKey.currentState!.validate()) { return;}
+                                    
+                                    final credentials = await SecureStorageService.getUserCredentials();
+                                   final String? userId = credentials['userId'];
+                                   if (userId == null || userId.isEmpty) return;
+                                   if (!context.mounted) return;
                                     final bool success =  await StripePaymentSheetHandler.instance.presentPaymentSheet(
                                       context: context,
                                       amount: conversionState is CurrencyConversionSuccess
@@ -148,7 +154,7 @@ class _TopUpWidetInWalletState extends State<TopUpWidetInWallet>
                                     if (!context.mounted) return;
                                     if (success) {
                                       final inrAmount = double.tryParse( _amountController.text.trim()) ?? 0.0;
-                                      context.read<WalletCubit>().updateWallet( userId: wallet.userId, amount: inrAmount);
+                                      context.read<WalletCubit>().updateWallet( userId: userId, amount: inrAmount);
                                       _amountController.clear();
                                     } else {return;}
                                   },
@@ -158,13 +164,66 @@ class _TopUpWidetInWalletState extends State<TopUpWidetInWallet>
                           ],
                         );
                         }
+                        } else if(walletState is FetchWalletFailure) {
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                             Icon(Icons.error),
+                             Text('sOops! Something went wrong. Please try again in a moment. We couldn’t complete your request.')
+                            ],
+                          );
                         }
-                        return Column(
-                         crossAxisAlignment:  CrossAxisAlignment.start,
+                        return  Column(
                           children: [
-                           Icon(Icons.error_outline_rounded, color: AppPalette.redClr,),
-                           Text('We couldn’t retrieve your wallet balance at the moment. Please try again shortly.'),
-                         ],
+                            buildTextFormField(
+                                  label: 'Top Up to wallet',
+                                  hintText: 'Enter top up amount',
+                                  prefixIcon: Icons.add_card_rounded,
+                                  context: context,
+                                  controller: _amountController,
+                                  validate: (value) => ValidatorHelper.validateWallet('0.00', _amountController.text.trim()),
+                                ),
+                                
+                            ConstantWidgets.hight30(context),
+                            BlocBuilder<CurrencyConversionCubit,CurrencyConversionState>(
+                              builder: (context, conversionState) {
+                                final inrText = _amountController.text.trim();
+                                String labelText =
+                                    _amountController.text.trim().isEmpty
+                                        ? 'Top up'
+                                        : 'Top up ₹$inrText';
+                    
+                                return ButtonComponents.actionButton(
+                                  screenHeight: widget.screenHeight,
+                                  screenWidth: widget.screenWidth,
+                                  label: labelText,
+                                  onTap: () async {
+                                     if (!_formKey.currentState!.validate()) { return;}
+                                    
+                                    final credentials = await SecureStorageService.getUserCredentials();
+                                   final String? userId = credentials['userId'];
+                                   if (userId == null || userId.isEmpty) return;
+                                   if (!context.mounted) return;
+                                    final bool success =  await StripePaymentSheetHandler.instance.presentPaymentSheet(
+                                      context: context,
+                                      amount: conversionState is CurrencyConversionSuccess
+                                          ? conversionState.convertedAmount
+                                          : 0.0,
+                                      currency: 'usd',
+                                      label: 'Top Up ₹ $inrText',
+                                    );
+                                    if (!context.mounted) return;
+                                    if (success) {
+                                      final inrAmount = double.tryParse( _amountController.text.trim()) ?? 0.0;
+                                      context.read<WalletCubit>().updateWallet( userId: userId, amount: inrAmount);
+                                      _amountController.clear();
+                                    } else {return;}
+                                  },
+                                );
+                              },
+                            ),
+                          ],
                         );
                       },
                     ), Column(

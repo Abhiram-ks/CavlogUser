@@ -66,6 +66,7 @@ dependencies:
   live_currency_rate: ^1.0.8
   table_calendar: ^3.2.0
   confetti: ^0.8.0
+  readmore: ^3.0.0
   #for streat map
   flutter_map: ^8.1.1
   geolocator: ^13.0.4
@@ -73,6 +74,7 @@ dependencies:
   geocoding: ^3.0.0
   intl: ^0.20.2
   flutter_stripe: ^11.5.0
+  rxdart: ^0.28.0
 
 dev_dependencies:
   flutter_test:

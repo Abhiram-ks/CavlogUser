@@ -28,12 +28,13 @@ IconButton iconsFilledDetail(
       required double screenWidth,
       required IconData icon,
       required VoidCallback onTap,
+      Color ? colors,
       required String text}) {
     return Column(
       children: [
         iconsFilledDetail(
           icon: icon,
-          forgroudClr: Color(0xFFFEBA43),
+          forgroudClr:colors ?? Color(0xFFFEBA43),
           context: context,
           borderRadius: 15,
           padding: screenWidth * .05,

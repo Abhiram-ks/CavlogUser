@@ -89,3 +89,7 @@ String formatCurrency(double amount) {
 }
 
 
+String formatDate(DateTime dateTime) {
+  final dateFormat = DateFormat('dd-MMM-yyyy');
+  return dateFormat.format(dateTime);
+}

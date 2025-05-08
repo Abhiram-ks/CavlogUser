@@ -19,7 +19,7 @@ class FetchWalletsRepositoryImpl implements FetchWalletsRepository {
           .snapshots()
           .map((doc) {
             if (doc.exists && doc.data() != null) {
-                return WalletModel.fromMap(doc.data()!);
+               return WalletModel.fromMap(doc.data()!);
             }
             return null;
           })

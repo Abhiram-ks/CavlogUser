@@ -1,13 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:user_panel/app/data/models/barber_model.dart';
 import 'package:user_panel/app/presentation/widget/search_widget/details_screen_widget/details_call_helper_function.dart';
 import 'package:user_panel/app/presentation/widget/search_widget/details_screen_widget/details_screen_actionbuttos.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constant/constant.dart';
+import '../../../provider/cubit/fetch_wishlist_singlebarber_cubit/fetch_wishlist_singlebarber_cubit.dart';
+import '../../../provider/cubit/wishlist_function_cubit/wishlist_function_cubit.dart';
 import '../../profile_widget/profile_scrollable_section.dart';
-
 
 class DetailTopPortionWidget extends StatelessWidget {
   const DetailTopPortionWidget({
@@ -64,20 +66,20 @@ class DetailTopPortionWidget extends StatelessWidget {
               Text(
                 () {
                   final gender = barber.gender?.toLowerCase();
-                  if(gender == 'male') return 'Male';
-                  if(gender == 'female') return 'Female';
+                  if (gender == 'male') return 'Male';
+                  if (gender == 'female') return 'Female';
                   return 'Unisex';
-                } (),
+                }(),
                 style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: (() {
-                      final gender = barber.gender?.toLowerCase();
-                      if (gender == 'male') return AppPalette.blueClr;
-                      if (gender == 'female') return Colors.pink;
-                      return AppPalette.orengeClr;
-                    })(),
-                    ),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: (() {
+                    final gender = barber.gender?.toLowerCase();
+                    if (gender == 'male') return AppPalette.blueClr;
+                    if (gender == 'female') return Colors.pink;
+                    return AppPalette.orengeClr;
+                  })(),
+                ),
               ),
               Text(
                 "Open",
@@ -91,8 +93,7 @@ class DetailTopPortionWidget extends StatelessWidget {
           ),
           ConstantWidgets.hight20(context),
           Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: screenWidth * .02),
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * .02),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -116,12 +117,29 @@ class DetailTopPortionWidget extends StatelessWidget {
                     icon: Icons.location_on_sharp,
                     onTap: () {},
                     text: 'Direction'),
-                detailsPageActions(
-                    context: context,
-                    screenWidth: screenWidth,
-                    icon: CupertinoIcons.heart_fill,
-                    onTap: () {},
-                    text: 'Favorite'),
+                BlocBuilder<FetchWishlistSinglebarberCubit,
+                    FetchWishlistSinglebarberState>(
+                  builder: (context, state) {
+                    bool isLiked = false;
+                    if (state is FetchWishlistSinglebarberLoaded) {
+                      isLiked = state.isLiked;
+                    }
+
+                    return detailsPageActions(
+                      context: context,
+                      colors: isLiked ? AppPalette.redClr : const Color(0xFFFEBA43),
+                      screenWidth: screenWidth,
+                      icon: CupertinoIcons.heart_fill,
+                      onTap: () async {
+                        context.read<WishlistFunctionCubit>().toggleWishlist(
+                              barberId: barber.uid,
+                              isCurrentlyLiked: isLiked,
+                            );
+                      },
+                      text: 'Favorite',
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -130,5 +148,3 @@ class DetailTopPortionWidget extends StatelessWidget {
     );
   }
 }
-
-

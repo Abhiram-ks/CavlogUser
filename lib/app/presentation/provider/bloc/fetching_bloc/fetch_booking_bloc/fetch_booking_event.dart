@@ -11,9 +11,3 @@ class FetchBookingDatasFilteringTransaction extends FetchBookingEvent {
 
   FetchBookingDatasFilteringTransaction({required this.fillterText});
 }
-
-class FetchBookingDataFilteringBooking extends FetchBookingEvent{
-  final String fillterText;
-  
-  FetchBookingDataFilteringBooking({required this.fillterText});
-}

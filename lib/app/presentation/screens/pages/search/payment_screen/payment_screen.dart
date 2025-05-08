@@ -51,7 +51,7 @@ class PaymentScreen extends StatelessWidget {
         return Scaffold(
           backgroundColor: AppPalette.whiteClr,
           body: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             child: ColoredBox(
               color: AppPalette.orengeClr,
               child: SafeArea(
@@ -150,9 +150,7 @@ class _PaymentBottomSectionWidgetState
               mainAxisSize: MainAxisSize.min,
               children: [
                 ConstantWidgets.width20(context),
-                Text('Date & time',
-                    style: GoogleFonts.plusJakartaSans(
-                        fontWeight: FontWeight.bold),
+                Text('Date & time',  style: GoogleFonts.plusJakartaSans( fontWeight: FontWeight.bold),
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis),
               ],
@@ -233,7 +231,8 @@ class _PaymentBottomSectionWidgetState
               ],
             ),
             ConstantWidgets.hight20(context),
-            Column(children: [
+            Column(
+              children: [
               ...widget.selectedServices.map((service) {
                 final String serviceName = service['serviceName'];
                 final double serviceAmount = service['serviceAmount'];

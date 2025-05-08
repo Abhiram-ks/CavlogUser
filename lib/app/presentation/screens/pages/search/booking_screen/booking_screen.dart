@@ -40,7 +40,7 @@ class BookingScreen extends StatelessWidget {
         return ColoredBox(
           color: AppPalette.hintClr,
           child: SafeArea(
-              child: Scaffold(
+           child: Scaffold(
             appBar: CustomAppBar(),
             body: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -51,11 +51,9 @@ class BookingScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Book Appointment',
-                          style: GoogleFonts.plusJakartaSans(
-                              fontSize: 28, fontWeight: FontWeight.bold)),
+                      style: GoogleFonts.plusJakartaSans( fontSize: 28, fontWeight: FontWeight.bold)),
                       ConstantWidgets.hight10(context),
-                      Text(
-                          'Almost there! Pick a date, choose services, select a time slot, and proceed to payment.'),
+                      Text('Almost there! Pick a date, choose services, select a time slot, and proceed to payment.'),
                       ConstantWidgets.hight10(context),
                     ],
                   ),

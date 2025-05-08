@@ -1,16 +1,18 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:user_panel/app/data/repositories/fetch_barber_repo.dart';
+import 'package:user_panel/app/data/repositories/fetch_booking_with_barber_model.dart';
+import 'package:user_panel/app/presentation/screens/settings/settings_subscreens/my_booking_detail_screen.dart';
 import 'package:user_panel/core/common/custom_appbar_widget.dart';
+import 'package:user_panel/core/common/custom_lottie_widget.dart';
 import 'package:user_panel/core/themes/colors.dart';
-
+import 'package:user_panel/core/utils/image/app_images.dart';
 import '../../../../../core/utils/constant/constant.dart';
-import '../../../../data/repositories/fetch_booking_transaction_repo.dart';
-import '../../../provider/bloc/fetching_bloc/fetch_booking_bloc/fetch_booking_bloc.dart';
-import '../../pages/home/wallet_screen/wallet_sreen.dart';
+import '../../../provider/bloc/fetching_bloc/fetch_booking_with_barber_bloc/fetch_booking_with_barber_bloc.dart';
+import '../../../widget/home_widget/wallet_widget/wallet_transaction_card_widget.dart';
 
 class MyBookingScreen extends StatelessWidget {
   const MyBookingScreen({super.key});
@@ -18,7 +20,13 @@ class MyBookingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => FetchBookingBloc(FetchBookingRepositoryImpl()),
+      create: (context) {
+        final fetchBarberRepo = FetchBarberRepositoryImpl();
+        final barberService = BarberService(fetchBarberRepo);
+        final repository = FetchBookingAndBarberRepositoryImpl(barberService);
+
+        return FetchBookingWithBarberBloc(repository);
+      },
       child: LayoutBuilder(
         builder: (context, constraints) {
           double screenHeight = constraints.maxHeight;
@@ -29,7 +37,7 @@ class MyBookingScreen extends StatelessWidget {
             child: SafeArea(
               child: Scaffold(
                 appBar: CustomAppBar(),
-                body: MyBookingWidgets(screenWidth: screenWidth, screenHeight: screenHeight),
+                body: MyBookingWidgets( screenWidth: screenWidth, screenHeight: screenHeight),
               ),
             ),
           );
@@ -54,11 +62,13 @@ class MyBookingWidgets extends StatefulWidget {
 }
 
 class _MyBookingWidgetsState extends State<MyBookingWidgets> {
-    @override
+  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<FetchBookingBloc>().add(FetchBookingDatsRequest());
+      context
+          .read<FetchBookingWithBarberBloc>()
+          .add(FetchBookingWithBarberRequest());
     });
   }
 
@@ -68,8 +78,7 @@ class _MyBookingWidgetsState extends State<MyBookingWidgets> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding:
-              EdgeInsets.symmetric(horizontal: widget.screenWidth * 0.04),
+          padding: EdgeInsets.symmetric(horizontal: widget.screenWidth * 0.04),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -94,7 +103,9 @@ class _MyBookingWidgetsState extends State<MyBookingWidgets> {
           ),
         ),
         Expanded(
-          child: MyBookingListWIdget(screenWidth: widget.screenWidth, screenHeight: widget.screenHeight),
+          child: MyBookingListWIdget(
+              screenWidth: widget.screenWidth,
+              screenHeight: widget.screenHeight),
         ),
       ],
     );
@@ -117,21 +128,22 @@ class MyBookingListWIdget extends StatelessWidget {
       backgroundColor: AppPalette.whiteClr,
       color: AppPalette.buttonClr,
       onRefresh: () async {
-        context.read<FetchBookingBloc>().add(FetchBookingDatsRequest());
+        context.read<FetchBookingWithBarberBloc>().add(FetchBookingWithBarberRequest());
       },
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
         child: Column(
           children: [
-            BlocBuilder<FetchBookingBloc, FetchBookingState>(
+            BlocBuilder<FetchBookingWithBarberBloc,
+                FetchBookingWithBarberState>(
               builder: (context, state) {
-                if (state is FetchBookingLoading) {
+                if (state is FetchBookingWithBarberLoading) {
                   return Shimmer.fromColors(
                     baseColor: Colors.grey[300] ?? AppPalette.greyClr,
                     highlightColor: AppPalette.whiteClr,
                     child: SizedBox(
-                      height: screenHeight * 0.5,
+                      height: screenHeight * 0.8,
                       child: ListView.separated(
                         separatorBuilder: (context, index) =>
                             ConstantWidgets.hight10(context),
@@ -149,64 +161,71 @@ class MyBookingListWIdget extends StatelessWidget {
                             stusColor: AppPalette.greyClr,
                             dateTime: DateTime.now().toString(),
                             method: 'Online Banking',
-                            description:
-                                "Sent: Online Banking transfer of ₹500.00",
+                            description: "Sent: Online Banking transfer of ₹500.00",
                           );
                         },
                       ),
                     ),
                   );
-                } else if (state is FetchBookingEmpty) {
+                } else if (state is FetchBookingWithBarberEmpty) {
                   return Center(
                     child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(CupertinoIcons.calendar),
-                          Text("Your booking history will appear here once you make a reservation."),
-                          Text("No bookings found yet!",style: TextStyle(color: AppPalette.orengeClr))
+                          ConstantWidgets.hight50(context),
+                          LottieFilesCommon.load(assetPath: LottieImages.emptyData,height: screenHeight * 0.35,width: screenWidth *.6),
+                          Text("No activity found — time to take action!",style: TextStyle(color: AppPalette.blackClr))
                         ]),
                   );
-                } else if (state is FetchBookingSuccess) {
+                } else if (state is FetchBookingWithBarberLoaded) {
                   return ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     padding: EdgeInsets.zero,
-                    itemCount: state.bookings.length,
+                    itemCount: state.combo.length,
                     separatorBuilder: (_, __) =>
                         ConstantWidgets.hight10(context),
                     itemBuilder: (context, index) {
-                      final booking = state.bookings[index];
-                      final isDebited =
-                          booking.transaction.toLowerCase().contains('debited');
+                      final booking = state.combo[index];
 
                       return TrasactionCardsWalletWidget(
-                        ontap: () {},
-                        screenHeight: screenHeight,
-                        amount: isDebited
-                            ? '- ₹${booking.amountPaid.toStringAsFixed(2)}'
-                            : '+ ₹${booking.amountPaid.toStringAsFixed(2)}',
-                        amountColor:
-                            isDebited ? AppPalette.redClr : AppPalette.greenClr,
-                        dateTime: DateFormat('dd/MM/yyyy').format(booking.createdAt),
-                        description:"Booked ${booking.serviceType.length} services and ${booking.slotTime.length} slots",
-                        id: 'OTP: ${booking.otp}',
-                        method: booking.paymentMethod,
-                        status: booking.serviceStatus,
-                        statusIcon: switch (booking.serviceStatus.toLowerCase()) {
-                          'completed' => Icons.check_circle_outline_outlined,
-                          'pending' => Icons.pending_actions_rounded,
-                          'cancelled' => Icons.free_cancellation_rounded,
-                          _ => Icons.help_outline,
-                        },
-                        stusColor: switch (booking.serviceStatus.toLowerCase()) {
-                          'completed' => AppPalette.greenClr,
-                          'pending' => AppPalette.orengeClr,
-                          'cancelled' => AppPalette.redClr,
-                         _ => AppPalette.hintClr,                  
-                          }
-                      
-                      );
+                          ontap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => MyBookingDetailScreen(docId: booking.booking.bookingId!, barberId: booking.booking.barberId, userId: booking.booking.userId),));
+                          },
+                          screenHeight: screenHeight,
+                          amount: () {
+                            final gender = booking.barber.gender?.toLowerCase();
+                            if (gender == 'male') return 'Male';
+                            if (gender == 'female') return 'Female';
+                            return 'Unisex';
+                          }(),
+                          amountColor:(() {
+                      final gender = booking.barber.gender?.toLowerCase();
+                      if (gender == 'male') return AppPalette.blueClr;
+                      if (gender == 'female') return Colors.pink;
+                      return AppPalette.orengeClr;
+                    })(),
+                          dateTime: DateFormat('dd/MM/yyyy')
+                              .format(booking.booking.createdAt),
+                          description: booking.barber.ventureName,
+                          id: 'OTP: ${booking.booking.otp}',
+                          method: booking.barber.address,
+                          status: booking.booking.serviceStatus,
+                          statusIcon: switch (
+                              booking.booking.serviceStatus.toLowerCase()) {
+                            'completed' => Icons.check_circle_outline_outlined,
+                            'pending' => Icons.pending_actions_rounded,
+                            'cancelled' => Icons.free_cancellation_rounded,
+                            _ => Icons.help_outline,
+                          },
+                          stusColor: switch (
+                              booking.booking.serviceStatus.toLowerCase()) {
+                            'completed' => AppPalette.greenClr,
+                            'pending' => AppPalette.orengeClr,
+                            'cancelled' => AppPalette.redClr,
+                            _ => AppPalette.hintClr,
+                          });
                     },
                   );
                 }
@@ -221,8 +240,8 @@ class MyBookingListWIdget extends StatelessWidget {
                       InkWell(
                           onTap: () async {
                             context
-                                .read<FetchBookingBloc>()
-                                .add(FetchBookingDatsRequest());
+                                .read<FetchBookingWithBarberBloc>()
+                                .add(FetchBookingWithBarberRequest());
                           },
                           child: Row(
                             children: [
@@ -317,7 +336,7 @@ class MybookingFilteringCards extends StatelessWidget {
               icon: Icons.history_rounded,
               colors: Colors.black,
               onTap: () {
-                 context.read<FetchBookingBloc>().add(FetchBookingDatsRequest());
+                context.read<FetchBookingWithBarberBloc>().add(FetchBookingWithBarberRequest());
               },
             ),
             VerticalDivider(color: AppPalette.hintClr),
@@ -326,7 +345,7 @@ class MybookingFilteringCards extends StatelessWidget {
               icon: Icons.check_circle_outline_sharp,
               colors: Colors.green,
               onTap: () {
-                 context.read<FetchBookingBloc>().add(FetchBookingDataFilteringBooking(fillterText: 'completed'));
+                context.read<FetchBookingWithBarberBloc>().add(FetchBookingWithBarberFileterRequest(filtering: 'completed'));
               },
             ),
             VerticalDivider(color: AppPalette.hintClr),
@@ -335,7 +354,7 @@ class MybookingFilteringCards extends StatelessWidget {
               icon: Icons.free_cancellation_rounded,
               colors: AppPalette.redClr,
               onTap: () {
-                  context.read<FetchBookingBloc>().add(FetchBookingDataFilteringBooking(fillterText: 'cancelled'));
+                 context.read<FetchBookingWithBarberBloc>().add(FetchBookingWithBarberFileterRequest(filtering: 'cancelled'));
               },
             ),
             VerticalDivider(color: AppPalette.hintClr),
@@ -344,7 +363,7 @@ class MybookingFilteringCards extends StatelessWidget {
               icon: Icons.pending_actions_rounded,
               colors: AppPalette.orengeClr,
               onTap: () {
-                  context.read<FetchBookingBloc>().add(FetchBookingDataFilteringBooking(fillterText: 'pending'));
+                 context.read<FetchBookingWithBarberBloc>().add(FetchBookingWithBarberFileterRequest(filtering: 'pending'));
               },
             ),
           ],

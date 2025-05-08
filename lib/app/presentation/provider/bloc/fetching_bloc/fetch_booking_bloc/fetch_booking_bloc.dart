@@ -18,7 +18,6 @@ class FetchBookingBloc extends Bloc<FetchBookingEvent, FetchBookingState> {
   FetchBookingBloc(this._bookingTransactionRepository) : super(FetchBookingInitial()) {
     on<FetchBookingDatsRequest>(_onFetchBookingDatsRequest);
     on<FetchBookingDatasFilteringTransaction>(_onFilterBookingTransaction);
-    on<FetchBookingDataFilteringBooking>(_onFilterBooking);
 
   }
 
@@ -30,7 +29,6 @@ class FetchBookingBloc extends Bloc<FetchBookingEvent, FetchBookingState> {
     try {
       final credentials = await SecureStorageService.getUserCredentials();
       final String? userId = credentials['userId'];
-      log('Fetching user id from secure storage: $userId');
 
       if (userId == null || userId.isEmpty) {
         emit(FetchBookingFailure('User ID not found. Please log in again.'));
@@ -91,42 +89,4 @@ Future<void> _onFilterBookingTransaction(
     emit(FetchBookingFailure('An unexpected error occurred: ${e.toString()}'));
   }
 }
-
-
-
-Future<void> _onFilterBooking(
-  FetchBookingDataFilteringBooking event,
-  Emitter<FetchBookingState> emit,
-) async {
-  emit(FetchBookingLoading());
-  try {
-    final credentials = await SecureStorageService.getUserCredentials();
-    final String? userId = credentials['userId'];
-    if (userId == null || userId.isEmpty) {
-      emit(FetchBookingFailure('User ID not found. Please log in again.'));
-      return;
-    }
-
-    await emit.forEach<List<BookingModel>>(
-      _bookingTransactionRepository.streamBookings(userId: userId),
-      onData: (datas) {
-        final filteredBooking = datas
-            .where((data) => data.serviceStatus.toLowerCase().contains(event.fillterText.toLowerCase())).toList();
-
-        if (filteredBooking.isEmpty) {
-          return FetchBookingEmpty();
-        } else {
-          return FetchBookingSuccess(bookings: filteredBooking);
-        }
-      },
-      onError: (error, stackTrace) {
-        return FetchBookingFailure('Filtering failed: $error');
-      },
-    );
-  } catch (e) {
-    emit(FetchBookingFailure('An unexpected error occurred: ${e.toString()}'));
-  }
-}
-
-
 }

@@ -79,9 +79,11 @@ class HomeScreen extends StatelessWidget {
                                     style: IconButton.styleFrom(
                                       backgroundColor: AppPalette.whiteClr,
                                     ),
-                                    icon: Icon(Icons.favorite,
-                                        color: AppPalette.redClr,), // icon color
-                                    onPressed: () {},
+                                    icon: Icon(Icons.favorite_border,
+                                        color: AppPalette.blackClr,), 
+                                    onPressed: () {
+                                      Navigator.pushNamed(context, AppRoutes.wishList);
+                                    },
                                   ),
                                 ],
                               ),

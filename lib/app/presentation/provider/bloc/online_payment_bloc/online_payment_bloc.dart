@@ -8,7 +8,6 @@ import '../../../../data/datasources/barber_wallet_remote_datasources.dart';
 import '../../../../data/models/booking_model.dart';
 import '../../../../data/models/slot_model.dart';
 import '../../../../data/repositories/slot_cheking_repo.dart';
-import '../../../../domain/usecases/data_listing_usecase.dart';
 import '../../../../domain/usecases/generate_booking_otp.dart';
 part 'online_payment_event.dart';
 part 'online_payment_state.dart';
@@ -38,7 +37,6 @@ class OnlinePaymentBloc extends Bloc<OnlinePaymentEvent, OnlinePaymentState> {
      } catch (e) {
        emit(OnlinePaymentFailure("Slot booking must be atomic to prevent double booking."));
      }
-  
   }
 
   Future<void> _handleOnlinePaymentRequest( OnlinePaymentRequest event,
