@@ -6,7 +6,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:user_panel/app/data/repositories/barbershop_repo.dart';
 import 'package:user_panel/app/data/repositories/fetch_banner_repo.dart';
-import 'package:user_panel/app/presentation/widget/home_widget/nearbyshop_widget/nearby_barbershop_screen.dart';
+import 'package:user_panel/app/presentation/screens/pages/home/nearby_barbershop_screen/nearby_barbershop_screen.dart';
 import 'package:user_panel/core/routes/routes.dart';
 import 'package:user_panel/core/utils/constant/constant.dart';
 import '../../../../../auth/domain/usecases/get_location_usecase.dart';
