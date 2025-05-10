@@ -23,6 +23,7 @@ Shimmer detailshowWidgetLoading(BarberModel barber, double screenHeight, double 
                             barber.image ?? AppImages.barberEmpty,
                             barber.detailImage ?? AppImages.barberEmpty
                           ],
+                          show: true,
                           screenHeight: screenHeight,
                           screenWidth: screenWidth),
                       DetailTopPortionWidget(

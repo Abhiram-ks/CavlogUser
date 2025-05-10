@@ -52,12 +52,9 @@ class LocationMapWidget extends StatelessWidget {
                 options: MapOptions(
                   initialCenter: state.position,
                   onTap: (tapPosition, point) async {
-                    context
-                        .read<LocationBloc>()
-                        .add(UpdateLocationEvent(point));
+                    context.read<LocationBloc>().add(UpdateLocationEvent(point));
                     try {
-                      List<Placemark> placemarks =
-                          await placemarkFromCoordinates(
+                      List<Placemark> placemarks = await placemarkFromCoordinates(
                               point.latitude, point.longitude);
                       if (placemarks.isNotEmpty) {
                         final Placemark place = placemarks.first;
@@ -138,7 +135,7 @@ class LocationMapWidget extends StatelessWidget {
                     ),
                     prefixIcon: const Icon(Icons.search),
                     prefixIconColor: AppPalette.blackClr),
-                onChanged: (query) {
+                  onChanged: (query) {
                   debouncer.run(() {
                     context
                         .read<SerchlocatonBloc>()
@@ -168,8 +165,7 @@ class LocationMapWidget extends StatelessWidget {
                             onTap: () {
                               double lat = double.parse(suggestion['lat']);
                               double lon = double.parse(suggestion['lon']);
-                              searchController.text =
-                                  suggestion['display_name'];
+                              searchController.text = suggestion['display_name'];
                               widget.addressController.text =
                                   suggestion['display_name'];
                               context.read<SerchlocatonBloc>().add(

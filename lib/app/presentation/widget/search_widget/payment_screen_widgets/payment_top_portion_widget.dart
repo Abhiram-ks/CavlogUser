@@ -116,7 +116,9 @@ class _PaymentTopPortionState extends State<PaymentTopPortion> {
                                 screenHeight: widget.screenHeight,
                                 screenWidth: widget.screenWidth),
                            ),
-                         )));
+                         ))
+                         )
+                         ;
                       },
                     )
           )

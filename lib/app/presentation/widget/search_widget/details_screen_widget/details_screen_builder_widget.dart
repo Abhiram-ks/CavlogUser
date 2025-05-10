@@ -46,6 +46,7 @@ class DetailScreenWidgetBuilder extends StatelessWidget {
             children: [
               ImageScolingWidget(
                   imageList: [barber.image ?? AppImages.barberEmpty,barber.detailImage ?? AppImages.barberEmpty],
+                  show: true,
                   screenHeight: screenHeight,screenWidth: screenWidth),
               DetailTopPortionWidget(
                   screenWidth: screenWidth, barber: barber),

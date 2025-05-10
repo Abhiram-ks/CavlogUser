@@ -32,3 +32,16 @@ class AddressFormatter {
     return address;
   }
 }
+
+
+Future<String> getFormattedAddress(double lat, double lng) async {
+  try {
+    final placemarks = await placemarkFromCoordinates(lat, lng);
+    if (placemarks.isNotEmpty) {
+      return AddressFormatter.formatAddress(placemarks.first);
+    }
+    return "Address not found";
+  } catch (e) {
+    return "Error getting address";
+  }
+}

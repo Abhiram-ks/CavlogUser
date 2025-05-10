@@ -4,7 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:user_panel/app/data/repositories/fetch_barber_repo.dart';
 import 'package:user_panel/app/data/repositories/fetch_post_with_barber_mode.dart';
+import 'package:user_panel/app/domain/repositories/share_function_services.dart';
 import 'package:user_panel/app/presentation/provider/bloc/fetching_bloc/fetch_post_with_barber_bloc/fetch_post_with_barber_bloc.dart';
+import 'package:user_panel/app/presentation/provider/cubit/share_post_cubit/share_post_cubit.dart';
 import 'package:user_panel/core/common/custom_appbar_widget.dart';
 import 'package:user_panel/core/themes/colors.dart';
 import 'package:user_panel/core/utils/constant/constant.dart';
@@ -28,6 +30,7 @@ class PostScreen extends StatelessWidget {
             create: (context) => FetchPostWithBarberBloc(
                 PostService(FetchBarberRepositoryImpl()))),
         BlocProvider(create: (_) => LikePostCubit()),
+        BlocProvider(create: (_) => ShareCubit(ShareServicesImpl()))
       ],
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -75,7 +78,6 @@ class PostScreenWidget extends StatefulWidget {
 }
 
 class _PostScreenWidgetState extends State<PostScreenWidget> {
-
   @override
   void initState() {
     super.initState();
@@ -83,8 +85,6 @@ class _PostScreenWidgetState extends State<PostScreenWidget> {
       context.read<FetchPostWithBarberBloc>().add(FetchPostWithBarberRequest());
     });
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +126,14 @@ class _PostScreenWidgetState extends State<PostScreenWidget> {
                   postUrl: data.post.imageUrl,
                   shopUrl: data.barber.image ?? AppImages.loginImageAbove,
                   chatOnTap: () {},
-                  shareOnTap: () {},
+                  shareOnTap: () {
+                    context.read<ShareCubit>().sharePost(
+                          text: data.post.description,
+                          ventureName: data.barber.ventureName,
+                          location: data.barber.address,
+                          imageUrl: data.post.imageUrl,
+                        );
+                  },
                   likesOnTap: () {
                     context.read<LikePostCubit>().toggleLike(
                         barberId: data.barber.uid,

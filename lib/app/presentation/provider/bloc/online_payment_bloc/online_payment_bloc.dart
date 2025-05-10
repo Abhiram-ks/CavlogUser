@@ -1,9 +1,9 @@
 import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:user_panel/app/data/datasources/booking_remote_datasources.dart';
 import '../../../../../auth/data/datasources/auth_local_datasource.dart';
+import '../../../../../core/notification/local_notification_services.dart';
 import '../../../../data/datasources/barber_wallet_remote_datasources.dart';
 import '../../../../data/models/booking_model.dart';
 import '../../../../data/models/slot_model.dart';
@@ -90,6 +90,11 @@ class OnlinePaymentBloc extends Bloc<OnlinePaymentEvent, OnlinePaymentState> {
       final bookingCreated = await bookingRemoteDatasources.booking(booking: booking);
 
       if (bookingCreated) {
+          await LocalNotificationServices.showNotification(
+          title: 'Booking Confirmation - Appointment Scheduled',
+          body: 'Your appointment has been booked successfully. Tap here to view details.💈',
+          payload: 'booking_success',
+        );
         emit(OnlinePaymentSuccess());
       } else {
         emit(OnlinePaymentFailure(  'Booking creation failed. Contact support if amount was deducted.'));

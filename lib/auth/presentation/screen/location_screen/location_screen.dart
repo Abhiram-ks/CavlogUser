@@ -29,8 +29,7 @@ class _LocationMapPageState extends State<LocationMapPage> {
       return Scaffold(
          resizeToAvoidBottomInset: false,
         body: BlocProvider(
-          create: (context) => LocationBloc(GetLocationUseCase())
-            ..add(GetCurrentLocationEvent()),
+          create: (context) => LocationBloc(GetLocationUseCase())..add(GetCurrentLocationEvent()),
           child: LocationMapWidget(
               mapController: _mapController,
               searchController: searchController,

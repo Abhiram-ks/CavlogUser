@@ -5,8 +5,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:user_panel/app/data/models/barber_model.dart';
 import 'package:user_panel/app/presentation/widget/search_widget/details_screen_widget/details_call_helper_function.dart';
 import 'package:user_panel/app/presentation/widget/search_widget/details_screen_widget/details_screen_actionbuttos.dart';
+import 'package:user_panel/core/common/custom_snackbar_widget.dart';
+import '../../../../../auth/presentation/provider/bloc/location_bloc/location_bloc.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constant/constant.dart';
+import '../../../../domain/usecases/direction_navigation.dart';
+import '../../../../domain/usecases/geo_coding_helper_usecase.dart';
 import '../../../provider/cubit/fetch_wishlist_singlebarber_cubit/fetch_wishlist_singlebarber_cubit.dart';
 import '../../../provider/cubit/wishlist_function_cubit/wishlist_function_cubit.dart';
 import '../../profile_widget/profile_scrollable_section.dart';
@@ -115,7 +119,27 @@ class DetailTopPortionWidget extends StatelessWidget {
                     context: context,
                     screenWidth: screenWidth,
                     icon: Icons.location_on_sharp,
-                    onTap: () {},
+                    onTap: () async {
+                      try {
+                        final position = await context.read<LocationBloc>().getLocationUseCase();
+                        final barberLatLng = await GeocodingHelper.addressToLatLng(barber.address);
+
+                        await MapHelper.openGoogleMaps(
+                          sourceLat: position.latitude,
+                          sourceLng: position.longitude,
+                          destLat: barberLatLng.latitude,
+                          destLng: barberLatLng.longitude,
+                        );
+                      } catch (e) {
+                        if (!context.mounted) return;
+                        CustomeSnackBar.show(
+                          context: context,
+                          title: 'Unable to Access Directions',
+                          description:'Oops! Something went wrong while fetching the route. Please try again shortly.',
+                          titleClr: AppPalette.blackClr,
+                        );
+                      }
+                    },
                     text: 'Direction'),
                 BlocBuilder<FetchWishlistSinglebarberCubit,
                     FetchWishlistSinglebarberState>(
@@ -127,7 +151,8 @@ class DetailTopPortionWidget extends StatelessWidget {
 
                     return detailsPageActions(
                       context: context,
-                      colors: isLiked ? AppPalette.redClr : const Color(0xFFFEBA43),
+                      colors:
+                          isLiked ? AppPalette.redClr : const Color(0xFFFEBA43),
                       screenWidth: screenWidth,
                       icon: CupertinoIcons.heart_fill,
                       onTap: () async {

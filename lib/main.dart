@@ -31,9 +31,11 @@ import 'package:user_panel/auth/presentation/provider/cubit/icon_cubit/icon_cubi
 import 'package:user_panel/auth/presentation/provider/cubit/timer_cubit/timer_cubit.dart';
 import 'package:user_panel/core/cloudinary/cloudinary_config.dart';
 import 'package:user_panel/core/cloudinary/cloudinary_service.dart';
+import 'package:user_panel/core/notification/local_notification_services.dart';
 import 'package:user_panel/core/routes/routes.dart';
 import 'package:user_panel/core/stripe/stripe_config.dart';
 import 'package:user_panel/core/themes/theme_manager.dart';
+import 'package:user_panel/core/utils/permission/notification_permission.dart';
 import 'package:user_panel/firebase_options.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'app/presentation/provider/cubit/voice_search_cubit/voice_search_cubit.dart' show VoiceSearchCubit;
@@ -42,6 +44,8 @@ import 'auth/presentation/provider/bloc/reset_password/reset_password_bloc.dart'
 void main() async {
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
+  await requestNotificationPermission();
+  await LocalNotificationServices.init();
   CloudinaryConfig.initialize();
   StripeConfig.initialize();
   await Firebase.initializeApp(

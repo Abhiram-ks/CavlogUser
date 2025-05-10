@@ -13,11 +13,13 @@ class ImageScolingWidget extends StatelessWidget {
     required this.imageList,
     required this.screenHeight,
     required this.screenWidth,
+    required this.show,
   });
 
   final List<String> imageList;
   final double screenHeight;
   final double screenWidth;
+  final bool show;
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +33,9 @@ class ImageScolingWidget extends StatelessWidget {
               bottomLeft: Radius.circular(25),
               bottomRight: Radius.circular(25),
             ),
-            child: Container(
+            child: SizedBox(
               height: screenHeight * 0.29,
               width: screenWidth,
-              color: Colors.black,
               child: Stack(
                 alignment: Alignment.center,
                 children: [
@@ -55,6 +56,8 @@ class ImageScolingWidget extends StatelessWidget {
                             );
                     },
                   ),
+                  
+                      if(show)
                   Positioned(
                       top: 40,
                       left: 20,
@@ -68,7 +71,7 @@ class ImageScolingWidget extends StatelessWidget {
                             AppPalette.blackClr.withAlpha((0.45 * 255).toInt()),
                         onTap: () => Navigator.pop(context),
                       )),
-                  Positioned(
+                   Positioned(
                     bottom: 8,
                     child: BlocBuilder<ImageSliderCubit, int>(
                       builder: (context, state) {

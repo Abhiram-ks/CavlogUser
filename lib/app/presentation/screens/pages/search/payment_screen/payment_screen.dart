@@ -78,7 +78,7 @@ class PaymentScreen extends StatelessWidget {
             builder: (context, convertionState) {
               String labelText = 'Loading...';
               if (convertionState is CurrencyConversionSuccess) {
-                labelText = '₹${totalInINR.toStringAsFixed(2)} / \$${convertionState.convertedAmount.toStringAsFixed(2)}';
+                labelText = '₹${totalInINR.toStringAsFixed(2)}';
               } else if (convertionState is CurrencyConversionFailure) {
                 labelText = '₹${totalInINR.toStringAsFixed(2)}';
               }
