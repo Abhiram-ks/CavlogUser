@@ -53,7 +53,7 @@ class FetchBookingBloc extends Bloc<FetchBookingEvent, FetchBookingState> {
     } catch (e, st) {
       log('Exception while fetching bookings: $e\n$st');
       emit(FetchBookingFailure('An unexpected error occurred. Please check your connection.'));
-    }
+    }          
   }
 
 Future<void> _onFilterBookingTransaction(

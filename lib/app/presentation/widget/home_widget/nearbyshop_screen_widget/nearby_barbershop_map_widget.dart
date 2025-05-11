@@ -4,9 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:user_panel/app/presentation/provider/bloc/nearby_barbers_bloc/nearby_barbers_bloc.dart';
 import 'package:user_panel/app/presentation/provider/cubit/distance_filtering_cubit/distance_filtering_cubit.dart';
-import 'package:user_panel/app/presentation/widget/home_widget/nearbyshop_widget/nearby_barbershop_map_creation_widget.dart';
-import 'package:user_panel/app/presentation/widget/home_widget/nearbyshop_widget/nearby_shop_distanceconverter.dart';
-import 'package:user_panel/app/presentation/widget/home_widget/nearbyshop_widget/nearby_shop_widget.dart';
+import 'package:user_panel/app/presentation/widget/home_widget/nearbyshop_screen_widget/nearby_barbershop_map_creation_widget.dart';
+import 'package:user_panel/app/presentation/widget/home_widget/nearbyshop_screen_widget/nearby_shop_distanceconverter.dart';
+import 'package:user_panel/app/presentation/widget/home_widget/nearbyshop_screen_widget/nearby_shop_widget.dart';
 
 import '../../../../../auth/presentation/provider/bloc/location_bloc/location_bloc.dart';
 import '../../../../../core/themes/colors.dart';

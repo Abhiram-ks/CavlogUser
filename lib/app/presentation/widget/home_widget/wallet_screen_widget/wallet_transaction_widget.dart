@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:user_panel/app/presentation/widget/home_widget/wallet_widget/wallet_filter_buttons_widget.dart';
+import 'package:user_panel/app/presentation/widget/home_widget/wallet_screen_widget/wallet_filter_buttons_widget.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constant/constant.dart';
 import '../../../provider/bloc/fetching_bloc/fetch_booking_bloc/fetch_booking_bloc.dart';

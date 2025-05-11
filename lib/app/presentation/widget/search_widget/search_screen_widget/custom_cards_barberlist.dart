@@ -71,41 +71,43 @@ class ListForBarbers extends StatelessWidget {
               flex: 2,
               child: Stack(
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        shopName,
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
+                  SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          shopName,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      ConstantWidgets.hight10(context),
-                      profileviewWidget(
-                        screenWidth,
-                        context,
-                        Icons.location_on,
-                        shopAddress,
-                        AppPalette.greyClr,
-                        maxline: 1,
-                        textColor: AppPalette.greyClr,
-                      ),
-                      RatingBarIndicator(
-                        rating: rating,
-                        unratedColor: AppPalette.hintClr,
-                        itemBuilder: (context, index) => Icon(
-                          Icons.star,
-                          color: AppPalette.buttonClr,
+                        ConstantWidgets.hight10(context),
+                        profileviewWidget(
+                          screenWidth,
+                          context,
+                          Icons.location_on,
+                          shopAddress,
+                          AppPalette.greyClr,
+                          maxline: 1,
+                          textColor: AppPalette.greyClr,
                         ),
-                        itemCount: 5,
-                        itemSize: 18.0,
-                        direction: Axis.horizontal,
-                      ),
-                    ],
+                        RatingBarIndicator(
+                          rating: rating,
+                          unratedColor: AppPalette.hintClr,
+                          itemBuilder: (context, index) => Icon(
+                            Icons.star,
+                            color: AppPalette.buttonClr,
+                          ),
+                          itemCount: 5,
+                          itemSize: 18.0,
+                          direction: Axis.horizontal,
+                        ),
+                      ],
+                    ),
                   ),
                   Positioned(
                     bottom: 5,

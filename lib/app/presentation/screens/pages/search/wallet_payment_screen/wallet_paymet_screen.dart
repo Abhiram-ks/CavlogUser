@@ -17,7 +17,7 @@ import '../../../../../domain/usecases/data_listing_usecase.dart';
 import '../../../../provider/bloc/fetching_bloc/fetch_wallet_bloc/fetch_wallet_bloc.dart';
 import '../../../../provider/bloc/wallet_payment_bloc/wallet_payment_bloc.dart';
 import '../../../../provider/cubit/booking_cubits/date_selection_cubit/date_selection_cubit.dart';
-import '../../../../widget/home_widget/wallet_widget/walet_balace_cards_widget.dart';
+import '../../../../widget/home_widget/wallet_screen_widget/walet_balace_cards_widget.dart';
 import '../payment_screen/payment_screen.dart';
 
 class WalletPaymetScreen extends StatelessWidget {

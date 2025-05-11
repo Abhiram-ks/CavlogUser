@@ -7,8 +7,7 @@ class MapHelper {
     required double destLat,
     required double destLng,
   }) async {
-    final googleUrl = Uri.parse(
-        'https://www.google.com/maps/dir/?api=1&origin=$sourceLat,$sourceLng&destination=$destLat,$destLng&travelmode=driving');
+    final googleUrl = Uri.parse('https://www.google.com/maps/dir/?api=1&origin=$sourceLat,$sourceLng&destination=$destLat,$destLng&travelmode=driving');
 
     if (await canLaunchUrl(googleUrl)) {
       await launchUrl(googleUrl, mode: LaunchMode.externalApplication);

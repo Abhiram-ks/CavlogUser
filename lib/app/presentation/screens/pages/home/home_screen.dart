@@ -1,12 +1,10 @@
-import 'dart:developer';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:user_panel/app/data/repositories/barbershop_repo.dart';
 import 'package:user_panel/app/data/repositories/fetch_banner_repo.dart';
-import 'package:user_panel/app/presentation/screens/pages/home/nearby_barbershop_screen/nearby_barbershop_screen.dart';
 import 'package:user_panel/core/routes/routes.dart';
 import 'package:user_panel/core/utils/constant/constant.dart';
 import '../../../../../auth/domain/usecases/get_location_usecase.dart';
@@ -14,11 +12,15 @@ import '../../../../../auth/presentation/provider/bloc/location_bloc/location_bl
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/image/app_images.dart';
 import '../../../../domain/repositories/barbershop_services_repo.dart';
-import '../../../../domain/usecases/geodesic_circle_usecase.dart';
 import '../../../provider/bloc/fetching_bloc/fetch_banners_bloc/fetch_banners_bloc.dart';
 import '../../../provider/bloc/nearby_barbers_bloc/nearby_barbers_bloc.dart';
+import '../../../provider/cubit/cubit/booking_timeline_cubit.dart';
+import '../../../provider/cubit/cubit/booking_timeline_state.dart';
+import '../../../widget/home_widget/home_screen_widget/home_screen_nearby.dart';
 import '../../../widget/profile_widget/profile_scrollable_section.dart';
 import '../../../widget/search_widget/details_screen_widget/details_imagescroll_widget.dart';
+import '../../../widget/search_widget/details_screen_widget/details_screen_actionbuttos.dart';
+import '../../../widget/search_widget/search_screen_widget/custom_cards_barberlist.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -27,11 +29,14 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (_) => TimelineCubit()),
         BlocProvider(
             create: (context) => FetchBannersBloc(FetchBannerRepositoryImpl())),
-        BlocProvider(create: (context) => NearbyBarbersBloc(
+        BlocProvider(
+            create: (context) => NearbyBarbersBloc(
                 GetNearbyBarberShops(BarberShopRepositoryImpl()))),
-        BlocProvider( create: (context) => LocationBloc(GetLocationUseCase())
+        BlocProvider(
+            create: (context) => LocationBloc(GetLocationUseCase())
               ..add(GetCurrentLocationEvent()))
       ],
       child: LayoutBuilder(
@@ -207,6 +212,72 @@ class _HomeScreenBodyWIdgetState extends State<HomeScreenBodyWIdget> {
                   mapController: _mapController,
                   screenHeight: widget.screenHeight,
                   screenWidth: widget.screenWidth,
+                ),
+                ConstantWidgets.hight30(context),
+                Text(
+                  'Track Booking Status',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                ConstantWidgets.hight10(context),
+                HorizontalIconTimeline(
+                  screenWidth: MediaQuery.of(context).size.width,
+                  screenHeight: MediaQuery.of(context).size.height,
+                  createdAt: DateTime.parse('2025-05-05T15:10:38+05:30'),
+                  duration: 90,
+                  slotTimes: [
+                    DateTime.parse('2025-05-12T08:00:00+05:30'),
+                    DateTime.parse('2025-05-12T08:45:00+05:30'),
+                  ],
+                  onTapMessage: () {
+                    print('Message tapped');
+                  },
+                  onTapCall: () {
+                    print('Call tapped');
+                  },
+                  onTapDirection: () {
+                    print('Direction tapped');
+                  },
+                  onTapCancel: () {
+                    print('Cancel tapped');
+                  },
+                  imageUrl: AppImages.barberEmpty,
+                  onTapBarber: () {
+                    print('Barber tapped');
+                  },
+                  shopName: 'Masterpiece - The Classic Cut Barbershop',
+                  isBlocked: false,
+                  shopAddress:
+                      '123 Kingsway Avenue, Downtown District, Springfield, IL 62704',
+                ), Divider(),
+                HorizontalIconTimeline(
+                  screenWidth: MediaQuery.of(context).size.width,
+                  screenHeight: MediaQuery.of(context).size.height,
+                  createdAt: DateTime.parse('2025-05-05T15:10:38+05:30'),
+                  duration: 90,
+                  slotTimes: [
+                    DateTime.parse('2025-05-12T08:00:00+05:30'),
+                    DateTime.parse('2025-05-12T08:45:00+05:30'),
+                  ],
+                  onTapMessage: () {
+                    print('Message tapped');
+                  },
+                  onTapCall: () {
+                    print('Call tapped');
+                  },
+                  onTapDirection: () {
+                    print('Direction tapped');
+                  },
+                  onTapCancel: () {
+                    print('Cancel tapped');
+                  },
+                  imageUrl: AppImages.barberEmpty,
+                  onTapBarber: () {
+                    print('Barber tapped');
+                  },
+                  shopName: 'Masterpiece - The Classic Cut Barbershop',
+                  isBlocked: false,
+                  shopAddress:
+                      '123 Kingsway Avenue, Downtown District, Springfield, IL 62704',
                 )
               ],
             ),
@@ -217,236 +288,224 @@ class _HomeScreenBodyWIdgetState extends State<HomeScreenBodyWIdget> {
   }
 }
 
-class NearbyShowMapWidget extends StatelessWidget {
-  const NearbyShowMapWidget({
+class HorizontalIconTimeline extends StatefulWidget {
+  final double screenWidth;
+  final double screenHeight;
+  final VoidCallback onTapMessage;
+  final VoidCallback onTapCall;
+  final VoidCallback onTapDirection;
+  final VoidCallback onTapCancel;
+  final String imageUrl;
+  final VoidCallback onTapBarber;
+  final String shopName;
+  final bool isBlocked;
+  final String shopAddress;
+  final DateTime createdAt;
+  final List<DateTime> slotTimes;
+  final int duration;
+
+  const HorizontalIconTimeline({
     super.key,
-    required this.screenHeight,
     required this.screenWidth,
-    required this.mapController,
+    required this.screenHeight,
+    required this.onTapMessage,
+    required this.onTapCall,
+    required this.onTapDirection,
+    required this.onTapCancel,
+    required this.imageUrl,
+    required this.onTapBarber,
+    required this.shopName,
+    required this.isBlocked,
+    required this.shopAddress,
+    required this.createdAt,
+    required this.slotTimes,
+    required this.duration,
   });
 
-  final double screenHeight;
-  final double screenWidth;
-  final MapController mapController;
+  @override
+  State<HorizontalIconTimeline> createState() => _HorizontalIconTimelineState();
+}
+
+class _HorizontalIconTimelineState extends State<HorizontalIconTimeline> {
+  final List<IconData> icons = [
+    Icons.event,
+    Icons.timer_outlined,
+    Icons.cut_outlined,
+    Icons.verified,
+  ];
+
+  final List<String> labels = [
+    'Booked',
+    'waiting',
+    'InProgress',
+    'Finished',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<TimelineCubit>().updateTimeline(
+          createdAt: widget.createdAt,
+          slotTimes: widget.slotTimes,
+          duration: widget.duration,
+        );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: screenHeight * .3,
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(13),
-        border: Border.all(
-          color: AppPalette.hintClr,
-          width: 1,
-        ),
+        color: AppPalette.whiteClr,
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(13),
-        child: Stack(
-          children: [
-            BlocBuilder<LocationBloc, LocationState>(
-              builder: (context, locationState) {
-                if (locationState is LocationLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: AppPalette.buttonClr),
-                  );
-                } else if (locationState is LocationLoaded) {
-                  final LatLng currentPosition = locationState.position;
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          BlocBuilder<TimelineCubit, TimelineState>(
+            builder: (context, state) {
+              int currentStep = 0;
+              switch (state.currentStep) {
+                case TimelineStep.created:
+                  currentStep = 0;
+                  break;
+                case TimelineStep.waiting:
+                  currentStep = 1;
+                  break;
+                case TimelineStep.inProgress:
+                  currentStep = 2;
+                  break;
+                case TimelineStep.completed:
+                  currentStep = 3;
+                  break;
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: List.generate(icons.length, (index) {
+                      final isActive = index <= currentStep;
+                      Color iconColor =
+                          isActive ? AppPalette.blackClr : AppPalette.greyClr;
+                      if (index == 3) iconColor = AppPalette.greenClr;
 
-                  context.read<NearbyBarbersBloc>().add(
-                        LoadNearbyBarbers(currentPosition.latitude,
-                            currentPosition.longitude, 5000),
-                      );
-
-                  return BlocBuilder<NearbyBarbersBloc, NearbyBarbersState>(
-                    builder: (context, barberState) {
-                      log('state of the barbers is $barberState');
-                      List<Marker> markers = [
-                        Marker(
-                          point: currentPosition,
-                          width: 40,
-                          height: 40,
-                          child: const Icon(Icons.my_location,
-                              color: AppPalette.redClr, size: 20),
+                      return Expanded(
+                        child: Column(
+                          children: [
+                            Icon(icons[index], color: iconColor),
+                            ConstantWidgets.hight10(context),
+                            Text(
+                              labels[index],
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: iconColor,
+                                fontWeight: isActive
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
                         ),
-                      ];
-
-                      if (barberState is NearbyBarbersLoaded) {
-                        markers.addAll(barberState.barbers.map((barber) {
-                          return Marker(
-                            point: LatLng(barber.lat, barber.lng),
-                            width: 40,
-                            height: 40,
-                            child: Icon(Icons.content_cut, color: AppPalette.blackClr, size: 10),
-                          );
-                        }));
-                      }
-
-                      return FlutterMap(
-                        mapController: mapController,
-                        options: MapOptions(
-                          initialCenter: currentPosition,
-                          initialZoom: 14.5,
-                        interactionOptions: const InteractionOptions(flags: InteractiveFlag.all),
-                        ),
-                        children: [
-                          TileLayer(
-                            urlTemplate:
-                                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                            userAgentPackageName: 'com.yourcompany.yourapp',
-                          ),
-                          PolygonLayer(
-                                  polygons: [
-                                    Polygon(
-                                      points: createGeodesicCircle( currentPosition, 5000),
-                                      color: AppPalette.blueClr
-                                          .withAlpha((0.2 * 255).toInt()),
-                                      borderColor: AppPalette.blueClr,
-                                      borderStrokeWidth: 1,
-                                    ),
-                                  ],
-                                ),
-                          MarkerLayer(markers: markers),
-                        ],
                       );
-                    },
-                  );
-                }
+                    }),
+                  ),
+                  ConstantWidgets.hight10(context),
+                  Row(
+                    children: List.generate(icons.length * 2 - 1, (index) {
+                      if (index % 2 == 0) {
+                        final stepIndex = index ~/ 2;
+                        final isActive = stepIndex <= currentStep;
+                        final isCurrentStep = stepIndex == currentStep;
 
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.location_off),
-                      Text('Failed to load map!',
-                          style: TextStyle(color: AppPalette.redClr)),
-                      const Text('Unexpected error! Please try again.'),
-                    ],
-                  ),
-                );
-              },
-            ),
-            Positioned(
-                bottom: 10,
-                left: 10,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: AppPalette.blueClr,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: BlocBuilder<NearbyBarbersBloc, NearbyBarbersState>(
-                    builder: (context, state) {
-                      if (state is NearbyBarbersLoading) {
-                        return Text(
-                          'Nearby Shops: Loading...',
-                          style: TextStyle(color: AppPalette.whiteClr),
-                        );
-                      } else if (state is NearbyBarbersLoaded) {
-                        return InkWell(
-                          onTap: () {},
-                          child: Text(
-                            'Nearby Shops: ${state.barbers.length} result(s)',
-                            style: TextStyle(color: AppPalette.whiteClr),
+                        return Container(
+                          width: 18,
+                          height: 18,
+                          decoration: BoxDecoration(
+                            color: isActive
+                                ? AppPalette.orengeClr
+                                : Colors.grey.shade300,
+                            shape: BoxShape.circle,
+                            border: isCurrentStep
+                                ? Border.all(
+                                    color: AppPalette.buttonClr, width: 2)
+                                : null,
                           ),
+                          child: Center(
+                              child: isCurrentStep
+                                  ? CircularProgressIndicator(
+                                      color: AppPalette.orengeClr,
+                                    )
+                                  : null),
                         );
                       } else {
-                        return InkWell(
-                          onTap: () {
-                            context
-                                .read<LocationBloc>()
-                                .add(GetCurrentLocationEvent());
-                          },
-                          child: const Text(
-                            'Search... failed',
-                            style: TextStyle(color: AppPalette.whiteClr),
+                        final lineIndex = index ~/ 2;
+                        final isActive = lineIndex < currentStep;
+
+                        return Expanded(
+                          child: Container(
+                            height: 3,
+                            color: isActive
+                                ? AppPalette.buttonClr
+                                : Colors.grey.shade300,
                           ),
                         );
                       }
-                    },
+                    }),
                   ),
-                ),
+                ],
+              );
+            },
+          ),
+          ConstantWidgets.hight10(context),
+          ListForBarbers(
+            ontap: widget.onTapBarber,
+            screenHeight: widget.screenHeight,
+            screenWidth: widget.screenWidth,
+            imageURl: widget.imageUrl,
+            rating: 4,
+            shopName: widget.shopName,
+            shopAddress: widget.shopAddress,
+            isBlocked: widget.isBlocked,
+          ),
+          ConstantWidgets.hight10(context),
+          Divider(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              detailsPageActions(
+                context: context,
+                screenWidth: widget.screenWidth,
+                icon: CupertinoIcons.info_circle_fill,
+                onTap: widget.onTapMessage,
+                text: 'Details',
               ),
-              Positioned(
-                top: 10,
-                left: 10,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: AppPalette.whiteClr,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: BlocBuilder<NearbyBarbersBloc, NearbyBarbersState>(
-                    builder: (context, state) {
-                      if (state is NearbyBarbersLoading) {
-                        return CircularProgressIndicator(color: AppPalette.orengeClr,);
-                      } else if (state is NearbyBarbersLoaded){
-                           return InkWell(
-                          onTap: () {},
-                          child: Text(
-                            'Nearby barber shops (5 km search area)',
-                            style: TextStyle(color: AppPalette.blackClr),
-                          ),
-                        );
-                      }
-                        return InkWell(
-                          onTap: () {},
-                          child: Text(
-                            'connection failed. Please try again.',
-                            style: TextStyle(color: AppPalette.blackClr),
-                          ),
-                        );
-                      
-                    },
-                  ),
-                ),
+              detailsPageActions(
+                context: context,
+                screenWidth: widget.screenWidth,
+                icon: Icons.phone_in_talk_rounded,
+                onTap: widget.onTapCall,
+                text: 'Call',
               ),
-            Positioned(
-              bottom: 10,
-              right: 10,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                decoration: BoxDecoration(
-                  color: AppPalette.orengeClr,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: BlocBuilder<LocationBloc, LocationState>(
-                  builder: (context, state) {
-                    if (state is LocationLoading) {
-                      return  Text(
-                        'Loading...',
-                        style: TextStyle(color: AppPalette.whiteClr),
-                      );
-                    }else if (state is LocationLoaded){
-                      final LatLng currentPosition = state.position;
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => NearbyBarbershopScreen(currentPosition: currentPosition)));
-                      },
-                      child: const Text(
-                        'Find now',
-                        style: TextStyle(color: AppPalette.whiteClr),
-                      ),
-                    );
-                    }else{
-                    return InkWell(
-                      onTap: () {
-                        context.read<LocationBloc>().add(GetCurrentLocationEvent());
-                      },
-                      child: const Text('Retry',
-                        style: TextStyle(color: AppPalette.whiteClr),
-                      ),
-                    );
-                    }
-                  },
-                ),
+              detailsPageActions(
+                context: context,
+                screenWidth: widget.screenWidth,
+                icon: Icons.location_on_sharp,
+                onTap: widget.onTapDirection,
+                text: 'Direction',
               ),
-            ),
-          ],
-        ),
+              detailsPageActions(
+                context: context,
+                colors: AppPalette.redClr,
+                screenWidth: widget.screenWidth,
+                icon: CupertinoIcons.calendar_badge_minus,
+                onTap: widget.onTapCancel,
+                text: 'Cancel',
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

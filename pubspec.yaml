@@ -80,6 +80,7 @@ dependencies:
   flutter_stripe: ^11.5.0
   rxdart: ^0.28.0
   path_provider: ^2.1.5
+  timelines_plus: ^1.0.6
 
 dev_dependencies:
   flutter_test:
