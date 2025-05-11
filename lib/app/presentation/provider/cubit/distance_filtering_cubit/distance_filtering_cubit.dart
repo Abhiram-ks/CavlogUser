@@ -6,3 +6,9 @@ class DistanceFilterCubit extends Cubit<DistanceFilter> {
 
   void selectDistance(DistanceFilter distance) => emit(distance);
 }
+
+class SearchInputCubit extends Cubit<bool> {
+  SearchInputCubit() : super(true); 
+
+  void update(String text) => emit(text.isEmpty);
+}

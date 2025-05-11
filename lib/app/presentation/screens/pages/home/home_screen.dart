@@ -14,6 +14,7 @@ import '../../../../../auth/presentation/provider/bloc/location_bloc/location_bl
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/image/app_images.dart';
 import '../../../../domain/repositories/barbershop_services_repo.dart';
+import '../../../../domain/usecases/geodesic_circle_usecase.dart';
 import '../../../provider/bloc/fetching_bloc/fetch_banners_bloc/fetch_banners_bloc.dart';
 import '../../../provider/bloc/nearby_barbers_bloc/nearby_barbers_bloc.dart';
 import '../../../widget/profile_widget/profile_scrollable_section.dart';
@@ -287,12 +288,6 @@ class NearbyShowMapWidget extends StatelessWidget {
                           initialCenter: currentPosition,
                           initialZoom: 14.5,
                         interactionOptions: const InteractionOptions(flags: InteractiveFlag.all),
-                          // interactionOptions: const InteractionOptions(
-                          //   flags: InteractiveFlag.all &
-                          //       ~InteractiveFlag.pinchZoom &
-                          //       ~InteractiveFlag.doubleTapZoom &
-                          //       ~InteractiveFlag.scrollWheelZoom,
-                          // ),
                         ),
                         children: [
                           TileLayer(
