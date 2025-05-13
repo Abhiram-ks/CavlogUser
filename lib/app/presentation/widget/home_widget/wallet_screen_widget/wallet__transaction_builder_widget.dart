@@ -72,18 +72,18 @@ RefreshIndicator walletTransactionWidgetBuilder(BuildContext context, double scr
                           itemBuilder: (context, index) {
                             final booking = state.bookings[index];
                             final isDebited = booking.transaction.toLowerCase().contains('debited');
-
+                            final isOnline = booking.paymentMethod.toLowerCase().contains('online banking');
                             return TrasactionCardsWalletWidget(
                              ontap: () {
                              Navigator.push(context, MaterialPageRoute(builder: (context) => MyBookingDetailScreen(docId: booking.bookingId!, barberId: booking.barberId, userId: booking.userId),)); },
                               screenHeight: screenHeight,
                               amount: isDebited
                                   ? '- ₹${booking.amountPaid.toStringAsFixed(2)}'
-                                  : '+ ₹${booking.amountPaid.toStringAsFixed(2)}',
+                                  : '+ ₹${booking.refund?.toStringAsFixed(2)}',
                               amountColor: isDebited ? AppPalette.redClr : AppPalette.greenClr,
                               dateTime: DateFormat('dd/MM/yyyy').format(booking.createdAt),
-                              description:'${isDebited ? 'Sent' : 'Received'}: ${booking.paymentMethod} transfer of ₹${booking.amountPaid.toStringAsFixed(2)}',
-                              id: 'ID:${booking.bookingId}',
+                              description:'${isDebited ? 'Sent' : 'Refunded'}: ${booking.paymentMethod} transfer of ₹${booking.amountPaid.toStringAsFixed(2)}',
+                              id: isOnline ? 'Id: ${booking.invoiceId}' : 'Paid via wallet - No id available',
                               method:'Method: ${booking.paymentMethod}',
                               status: booking.status,
                               statusIcon: booking.status.toLowerCase() == 'completed'

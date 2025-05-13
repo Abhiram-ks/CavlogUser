@@ -17,16 +17,18 @@ void handleWalletPaymentStates({required BuildContext context,required WalletPay
        if (balance >= 100) {
           if (isShortfallAmount == 0.0) {
              context.read<WalletPaymentBloc>().add(WalletPaymentRequest(
+             invoiceId: '',
              bookingAmount:bookingAmount,
              barberId: barberUid,
              selectedServices: selectedServices,
              selectedSlots:selectedSlots,
              platformFee: platformFee));
             } else {
-             final bool success =  await StripePaymentSheetHandler.instance.presentPaymentSheet(context: context, amount: isShortfallAmount, currency: 'usd',label:  'Pay   $isShortfallAmount');
+             final String? success =  await StripePaymentSheetHandler.instance.presentPaymentSheet(context: context, amount: isShortfallAmount, currency: 'usd',label:  'Pay   $isShortfallAmount');
              if (!context.mounted) return;
-                if (success) {
+                if (success != null) {
                   context.read<WalletPaymentBloc>().add(WalletPaymentRequest(
+                  invoiceId: success,
                   bookingAmount:bookingAmount,
                   barberId: barberUid,
                   selectedServices: selectedServices,

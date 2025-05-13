@@ -13,6 +13,7 @@ class AutoComplitedBookingCubit extends Cubit<AutoComplitedBookingState> {
     Future<void> completeBooking(String docId) async {
 
     final success = await cancelBookingRepository.updateBookingStatus(
+      refund: 0.0,
       docId: docId,
       serviceStatus: 'Completed',
       transactionStatus: 'Debited',

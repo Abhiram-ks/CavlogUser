@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:user_panel/app/data/models/booking_model.dart';
+import 'package:user_panel/app/data/repositories/chenge_slot_status.dart';
 import 'package:user_panel/app/presentation/widget/home_widget/cancel_booking_screen_widget/handle_cancel_booking_state.dart';
 import 'package:user_panel/core/common/custom_bottomsheet_widget.dart';
 import 'package:user_panel/core/themes/colors.dart';
+import '../../../../../../auth/presentation/provider/cubit/button_progress_cubit/button_progress_cubit.dart';
 import '../../../../../../auth/presentation/widget/otp_widget/otp_customform_widget.dart';
 import '../../../../../../core/common/custom_actionbutton_widget.dart';
 import '../../../../../../core/common/custom_appbar_widget.dart';
@@ -13,6 +15,7 @@ import '../../../../../data/datasources/barber_wallet_remote_datasources.dart';
 import '../../../../../data/repositories/cancel_booking_repo.dart';
 import '../../../../../data/repositories/refund_cancel_repo.dart';
 import '../../../../provider/bloc/cancel_booking_bloc/booking_cancel_bloc.dart';
+import '../../../settings/settings_subscreens/my_booking_detail_screen.dart';
 
 class CancelBookingScreen extends StatelessWidget {
   final BookingModel booking;
@@ -25,6 +28,7 @@ class CancelBookingScreen extends StatelessWidget {
         refundRepo: RefundCancelRepositoryDatasourceImpl(),
         transactionRemoteDataSource: WalletTransactionRemoteDataSourceImpl(),
         cancelBookingRepository: CancelBookingRepositoryImpl(),
+        chengeSlotStatusRepository: ChengeSlotStatusRepositoryImple()
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -54,13 +58,25 @@ class CancelBookingScreen extends StatelessWidget {
                                       fontWeight: FontWeight.bold)),
                               ConstantWidgets.hight10(context),
                               Text(
-                                  'Almost there! Please enter your booking OTP below. If the entered OTP matches the booking OTP, your booking will be automatically cancelled. The refund will then be credited to your wallet shortly.'),
+                                  'Almost there! Please enter your booking Code below. If the entered Code matches the booking Code, your booking will be automatically cancelled. The refund will then be credited to your wallet shortly.'),
                               ConstantWidgets.hight10(context),
-                              Text(
-                                "Booking Details",
-                                style: GoogleFonts.plusJakartaSans(
-                                    fontWeight: FontWeight.w100,
-                                    color: AppPalette.blueClr),
+                              InkWell(
+                                onTap: () {
+                                   Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MyBookingDetailScreen(
+                                        docId: booking.bookingId!,
+                                        barberId: booking.barberId,
+                                        userId: booking.userId),
+                                  ));
+                                },
+                                child: Text(
+                                  "Booking Details",
+                                  style: GoogleFonts.plusJakartaSans(
+                                      fontWeight: FontWeight.w100,
+                                      color: AppPalette.blueClr),
+                                ),
                               ),
                               ConstantWidgets.hight20(context),
                               BookingCalcelOtpFiled(
@@ -110,7 +126,6 @@ class _BookingCalcelOtpFiledState extends State<BookingCalcelOtpFiled> {
 
   void machingOTP(String userOTP, BuildContext context) async {
     final bookingOTP = widget.booking.otp;
-
     final bookingCancelBloc = context.read<BookingCancelBloc>();
     bookingCancelBloc.add(BookingOTPChecking(bookingOTP: bookingOTP, inputOTP: userOTP));
   }
@@ -144,7 +159,7 @@ class _BookingCalcelOtpFiledState extends State<BookingCalcelOtpFiled> {
                   screenHeight: widget.screenHight,
                   screenWidth: widget.screenWidth,
                   label: 'Verify',
-                  onTap: () => onOtpChanged),
+                  onTap: onOtpChanged,),
             ),
             ConstantWidgets.hight30(context),
             Text("Do you know our cancellation policy?"),

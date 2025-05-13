@@ -12,10 +12,11 @@ final class OnlinePaymentCheckSlots extends OnlinePaymentEvent{
 
 final class OnlinePaymentRequest extends OnlinePaymentEvent{
   final String barberId;
+  final String invoiceId;
   final List<SlotModel> selectedSlots;
   final List<Map<String, dynamic>> selectedServices;
   final double platformFee;
   final double bookingAmount;
 
-  OnlinePaymentRequest({required this.barberId,required this.selectedSlots, required this.selectedServices,required this.platformFee,required this.bookingAmount});
+  OnlinePaymentRequest({required this.invoiceId,required this.barberId,required this.selectedSlots, required this.selectedServices,required this.platformFee,required this.bookingAmount});
 }

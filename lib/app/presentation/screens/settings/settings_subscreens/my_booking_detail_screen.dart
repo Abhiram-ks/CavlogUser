@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:user_panel/app/data/models/booking_model.dart';
 import 'package:user_panel/app/presentation/provider/bloc/fetching_bloc/fetch_specific_booking_bloc/fetch_specific_booking_bloc.dart';
+import 'package:user_panel/core/stripe/stripe_invoice.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constant/constant.dart';
-import '../../../../data/repositories/fetch_specific_booking_repo.dart' show FetchSpecificBookingRepositoryImpl;
+import '../../../../data/repositories/fetch_specific_booking_repo.dart'
+    show FetchSpecificBookingRepositoryImpl;
 import '../../../../domain/usecases/data_listing_usecase.dart';
 import '../../../widget/search_widget/booking_screen_widget/booking_chips_maker.dart';
 import '../../../widget/search_widget/payment_screen_widgets/payment_top_portion_widget.dart';
@@ -24,7 +26,8 @@ class MyBookingDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => FetchSpecificBookingBloc(FetchSpecificBookingRepositoryImpl()),
+      create: (context) =>
+          FetchSpecificBookingBloc(FetchSpecificBookingRepositoryImpl()),
       child: LayoutBuilder(
         builder: (context, constraints) {
           double screenHeight = constraints.maxHeight;
@@ -59,8 +62,6 @@ class MyBookingDetailScreen extends StatelessWidget {
     );
   }
 }
-
-
 
 class MyBookingDetailScreenWidget extends StatefulWidget {
   final double screenHeight;
@@ -115,22 +116,22 @@ class _MyBookingDetailScreenWidgetState
   }
 }
 
-
-
 class MyBookingDetailsScreenListsWidget extends StatelessWidget {
   final double screenWidth;
-   final BookingModel model;
+  final BookingModel model;
   final double screenHight;
   const MyBookingDetailsScreenListsWidget({
-    super.key, required this.screenWidth, required this.screenHight, 
-  required this.model,
+    super.key,
+    required this.screenWidth,
+    required this.screenHight,
+    required this.model,
   });
-
 
   @override
   Widget build(BuildContext context) {
+     final isOnline = model.paymentMethod.toLowerCase().contains('online banking');
     final double totalServiceAmount = model.serviceType.values.fold(0.0, (sum, value) => sum + value);
-    final double platformFee = calculatePlatformFee(totalServiceAmount); 
+    final double platformFee = calculatePlatformFee(totalServiceAmount);
     return Container(
       width: screenWidth,
       decoration: BoxDecoration(
@@ -141,8 +142,7 @@ class MyBookingDetailsScreenListsWidget extends StatelessWidget {
           color: AppPalette.whiteClr),
       child: Padding(
         padding: EdgeInsets.symmetric(
-            horizontal: screenWidth * .04,
-            vertical: screenHight * .03),
+            horizontal: screenWidth * .04, vertical: screenHight * .03),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -150,7 +150,9 @@ class MyBookingDetailsScreenListsWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 ConstantWidgets.width20(context),
-                Text('Date & time',  style: GoogleFonts.plusJakartaSans( fontWeight: FontWeight.bold),
+                Text('Date & time',
+                    style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.bold),
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis),
               ],
@@ -160,15 +162,14 @@ class MyBookingDetailsScreenListsWidget extends StatelessWidget {
               "Your appointment has been successfully scheduled for ${model.slotTime.length} slot(s). Below are the date(s) and time(s):",
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
-    
             ),
-             SingleChildScrollView(
+            SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Wrap(
                 spacing: 5.0,
                 runSpacing: 5.0,
                 children: model.slotTime.map((slot) {
-                  final formattedDate =  formatDate(slot);
+                  final formattedDate = formatDate(slot);
                   String formattedStartTime = formatTimeRange(slot);
 
                   return ClipChipMaker.build(
@@ -190,7 +191,7 @@ class MyBookingDetailsScreenListsWidget extends StatelessWidget {
                     style: GoogleFonts.plusJakartaSans(
                         fontWeight: FontWeight.bold),
                     maxLines: 1,
-                overflow: TextOverflow.ellipsis),
+                    overflow: TextOverflow.ellipsis),
               ],
             ),
             ConstantWidgets.hight10(context),
@@ -199,26 +200,27 @@ class MyBookingDetailsScreenListsWidget extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-         SingleChildScrollView(
-  scrollDirection: Axis.horizontal,
-  child: Wrap(
-    spacing: 5.0,
-    runSpacing: 5.0,
-    children: model.serviceType.entries.map((entry) {
-      final String serviceName = entry.key;
-      final double serviceAmount = entry.value;
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Wrap(
+                spacing: 5.0,
+                runSpacing: 5.0,
+                children: model.serviceType.entries.map((entry) {
+                  final String serviceName = entry.key;
+                  final double serviceAmount = entry.value;
 
-      return ClipChipMaker.build(
-        text: '$serviceName - ₹${serviceAmount.toStringAsFixed(0)}',
-        actionColor: const Color.fromARGB(255, 239, 241, 246),
-        textColor: AppPalette.blackClr,
-        backgroundColor: AppPalette.whiteClr,
-        borderColor: AppPalette.hintClr,
-        onTap: () {},
-      );
-    }).toList(),
-  ),
-), ConstantWidgets.hight10(context),
+                  return ClipChipMaker.build(
+                    text: '$serviceName - ₹${serviceAmount.toStringAsFixed(0)}',
+                    actionColor: const Color.fromARGB(255, 239, 241, 246),
+                    textColor: AppPalette.blackClr,
+                    backgroundColor: AppPalette.whiteClr,
+                    borderColor: AppPalette.hintClr,
+                    onTap: () {},
+                  );
+                }).toList(),
+              ),
+            ),
+            ConstantWidgets.hight10(context),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -229,67 +231,103 @@ class MyBookingDetailsScreenListsWidget extends StatelessWidget {
                     overflow: TextOverflow.ellipsis),
               ],
             ),
-             paymentSummaryTextWidget(
-                context: context,
-                prefixText: 'Time Required(minutes)',
-                prefixTextStyle: GoogleFonts.plusJakartaSans(
-                    fontWeight: FontWeight.w500, color: AppPalette.blueClr),
-                suffixText: model.duration.toString(),
-                suffixTextStyle: GoogleFonts.plusJakartaSans(
-                    fontWeight: FontWeight.w500, color: AppPalette.blackClr),
-              ),
+            paymentSummaryTextWidget(
+              context: context,
+              prefixText: 'Time Required(minutes)',
+              prefixTextStyle: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w500, color: AppPalette.blueClr),
+              suffixText: model.duration.toString(),
+              suffixTextStyle: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w500, color: AppPalette.blackClr),
+            ),
+            paymentSummaryTextWidget(
+              context: context,
+              prefixText: 'Payment Method',
+              prefixTextStyle: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w500, color: AppPalette.blackClr),
+              suffixText: model.paymentMethod,
+              suffixTextStyle: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w500, color: AppPalette.blackClr),
+            ),
+            paymentSummaryTextWidget(
+              context: context,
+              prefixText: 'Payment Status',
+              prefixTextStyle: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w500,
+                  color: () {
+                    final status = model.status.toLowerCase();
+                    if (status == 'completed') return AppPalette.greenClr;
+                    if (status == 'cancelled') return AppPalette.redClr;
+                    if (status == 'pending') return AppPalette.orengeClr;
+                  }()),
+              suffixText: model.status,
+              suffixTextStyle: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w500, color: AppPalette.blackClr),
+            ),
+            paymentSummaryTextWidget(
+              context: context,
+              prefixText: 'Money Flow',
+              prefixTextStyle: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w500,
+                  color: () {
+                    final status = model.transaction.toLowerCase();
+                    if (status == 'credited') return AppPalette.greenClr;
+                    if (status == 'debited') return AppPalette.redClr;
+                  }()),
+              suffixText: model.transaction,
+              suffixTextStyle: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w500, color: AppPalette.blackClr),
+            ),
+            paymentSummaryTextWidget(
+              context: context,
+              prefixText: 'Booking State',
+              prefixTextStyle: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w500,
+                  color: () {
+                    final status = model.serviceStatus.toLowerCase();
+                    if (status == 'completed') return AppPalette.greenClr;
+                    if (status == 'cancelled') return AppPalette.redClr;
+                    if (status == 'pending') return AppPalette.orengeClr;
+                  }()),
+              suffixText: model.serviceStatus,
+              suffixTextStyle: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w500, color: AppPalette.blackClr),
+            ),
+            if (model.serviceStatus.toLowerCase() == 'cancelled')
               paymentSummaryTextWidget(
                 context: context,
-                prefixText: 'Payment Method',
-                prefixTextStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500, color: AppPalette.blackClr),
-                suffixText: model.paymentMethod,
-                suffixTextStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500, color: AppPalette.blackClr),
-              ),
-               paymentSummaryTextWidget(
-                context: context,
-                prefixText: 'Payment Status',
-                prefixTextStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500, color: () {
-                            final status = model.status.toLowerCase();
-                            if (status == 'completed') return  AppPalette.greenClr;
-                            if (status == 'cancelled') return AppPalette.redClr;
-                            if (status == 'pending') return AppPalette.orengeClr;
-                          }()),
-                suffixText: model.status,
-                suffixTextStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500, color: AppPalette.blackClr),
-              ),
-               paymentSummaryTextWidget(
-                context: context,
-                prefixText: 'Money Flow',
-                prefixTextStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500, color: () {
-                            final status = model.transaction.toLowerCase();
-                            if (status == 'credited') return  AppPalette.greenClr;
-                            if (status == 'debited') return AppPalette.redClr;
-                          }()),
-                suffixText: model.transaction,
-                suffixTextStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500, color: AppPalette.blackClr),
-              ),
-              paymentSummaryTextWidget(
-                context: context,
-                prefixText: 'Booking State',
-                prefixTextStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500, color: () {
-                            final status = model.serviceStatus.toLowerCase();
-                            if (status == 'completed') return  AppPalette.greenClr;
-                            if (status == 'cancelled') return AppPalette.redClr;
-                            if (status == 'pending') return AppPalette.orengeClr;
-                          }()),
-                suffixText: model.serviceStatus,
-                suffixTextStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500, color: AppPalette.blackClr),
-              ),paymentSummaryTextWidget(
-                context: context,
-                prefixText: 'OTP',
-                prefixTextStyle: GoogleFonts.plusJakartaSans(
-                    fontWeight: FontWeight.bold, color: AppPalette.blackClr),
-                suffixText: model.otp,
+                prefixText: 'Refunded Amount',
+                suffixText: '₹ ${model.refund?.toStringAsFixed(2)}',
+                prefixTextStyle:  GoogleFonts.plusJakartaSans(),
                 suffixTextStyle: GoogleFonts.plusJakartaSans(
-                    fontWeight: FontWeight.bold, color: AppPalette.blackClr),
+                  fontWeight: FontWeight.w500,
+                  color: AppPalette.blackClr,
+                ),
               ),
-              ConstantWidgets.hight30(context),
-              Row(
+            paymentSummaryTextWidget(
+              context: context,
+              prefixText: 'Booking Code',
+              prefixTextStyle: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.bold, color: AppPalette.blackClr),
+              suffixText: model.otp,
+              suffixTextStyle: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.bold, color: AppPalette.blackClr),
+            ),
+
+            InkWell(
+              onTap: () {
+                launchStripePaymentPage(model.invoiceId);
+              },
+              child: paymentSummaryTextWidget(
+                context: context,
+                prefixText: 'Payment Id',
+                prefixTextStyle: GoogleFonts.plusJakartaSans(),
+                suffixText:isOnline? model.invoiceId : 'Paid via wallet',
+                suffixTextStyle: GoogleFonts.plusJakartaSans(),
+              ),
+            ),
+            ConstantWidgets.hight30(context),
+            Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text('Payment summary',
@@ -303,43 +341,42 @@ class MyBookingDetailsScreenListsWidget extends StatelessWidget {
             Column(
               children: [
                 ...model.serviceType.entries.map((entry) {
-               final String serviceName = entry.key;
-               final double serviceAmount = entry.value;
+                  final String serviceName = entry.key;
+                  final double serviceAmount = entry.value;
 
-
-                return paymentSummaryTextWidget(
+                  return paymentSummaryTextWidget(
+                    context: context,
+                    prefixText: serviceName,
+                    suffixText: '₹ ${serviceAmount.toStringAsFixed(0)}',
+                    prefixTextStyle: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.w400),
+                    suffixTextStyle: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.w400),
+                  );
+                }),
+                paymentSummaryTextWidget(
                   context: context,
-                  prefixText: serviceName,
-                  suffixText: '₹ ${serviceAmount.toStringAsFixed(0)}',
-                  prefixTextStyle:
-                      GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w400),
-                  suffixTextStyle:
-                      GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w400),
-                );
-                
-              }),
-              paymentSummaryTextWidget(
-                context: context,
-                prefixText: 'Platform fee(1%)',
-                prefixTextStyle: GoogleFonts.plusJakartaSans(
-                    fontWeight: FontWeight.w500, color: AppPalette.blackClr),
-                suffixText: '₹ $platformFee',
-                suffixTextStyle: GoogleFonts.plusJakartaSans(
-                    fontWeight: FontWeight.w500, color: AppPalette.blueClr),
-              ),
-              ConstantWidgets.hight20(context),
-              Divider(color: AppPalette.hintClr ),
-              paymentSummaryTextWidget(
-                context: context,
-                prefixText: 'Total price',
-                prefixTextStyle: GoogleFonts.plusJakartaSans(
-                    fontWeight: FontWeight.w500, color: AppPalette.greenClr),
-                suffixText: '₹ ${model.amountPaid.toStringAsFixed(2)}',
-                suffixTextStyle: GoogleFonts.plusJakartaSans(
-                    fontWeight: FontWeight.w500, color: AppPalette.blackClr),
-              ),
+                  prefixText: 'Platform fee(1%)',
+                  prefixTextStyle: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w500, color: AppPalette.blackClr),
+                  suffixText: '₹ $platformFee',
+                  suffixTextStyle: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w500, color: AppPalette.blueClr),
+                ),
+                ConstantWidgets.hight20(context),
+                Divider(color: AppPalette.hintClr),
+                paymentSummaryTextWidget(
+                  context: context,
+                  prefixText: 'Total price',
+                  prefixTextStyle: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w500, color: AppPalette.greenClr),
+                  suffixText: '₹ ${model.amountPaid.toStringAsFixed(2)}',
+                  suffixTextStyle: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w500, color: AppPalette.blackClr),
+                ),
               ],
-            ),ConstantWidgets.hight30(context)
+            ),
+            ConstantWidgets.hight30(context)
           ],
         ),
       ),

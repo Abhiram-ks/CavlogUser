@@ -47,13 +47,14 @@ void handleOnlinePaymentStates({required BuildContext context,required OnlinePay
               context: context,title: "Payment processing failed.", description: "Oops! There was an issue with your slot booking or payment method. Please try again.",titleClr: AppPalette.redClr);
               return;
           }
-          final bool success =  await StripePaymentSheetHandler.instance .presentPaymentSheet( context: context, amount: usdAmount, currency: 'usd',label: 'Pay $labelText');
+          final String? success =  await StripePaymentSheetHandler.instance .presentPaymentSheet( context: context, amount: usdAmount, currency: 'usd',label: 'Pay $labelText');
           if (!context.mounted) return;
-          if (success) {
+          if (success != null) {
           context.read<OnlinePaymentBloc>().add(OnlinePaymentRequest(
             bookingAmount:totalInINR,barberId: barberUid,
             selectedServices: selectedServices,selectedSlots:selectedSlots,
-            platformFee: platformFee
+            platformFee: platformFee,
+            invoiceId: success
           ));
           } else {
             CustomeSnackBar.show( context: context,title: "Payment processing failed.", description: "Oops! There was an issue with your slot booking or payment method. Please try again.",titleClr: AppPalette.redClr);

@@ -10,7 +10,7 @@ class StripePaymentSheetHandler {
 
   static final StripePaymentSheetHandler instance = StripePaymentSheetHandler._();
 
-  Future<bool> presentPaymentSheet({
+  Future<String?> presentPaymentSheet({
     required BuildContext context,
     required double amount,
     required String label,
@@ -26,6 +26,7 @@ class StripePaymentSheetHandler {
       );
 
       final String clientSecret = intentPaymentData['client_secret'];
+      final String paymentId = intentPaymentData['id'];
 
 
       await stripe.initPaymentSheet(
@@ -44,10 +45,11 @@ class StripePaymentSheetHandler {
       );
 
       await stripe.presentPaymentSheet();
-      return true;
+      log('paymet id is like $paymentId');
+      return paymentId;
     } catch (e) {
       log('Payment Error: $e');
-      return false;
+      return null;
     }
   }
 }

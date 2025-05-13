@@ -86,7 +86,7 @@ class TrasactionCardsWalletWidget extends StatelessWidget {
                     id,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
-                    style: TextStyle(color: Colors.grey),
+                    style: TextStyle(color:AppPalette.blueClr),
                   ),
                 ],
               ),

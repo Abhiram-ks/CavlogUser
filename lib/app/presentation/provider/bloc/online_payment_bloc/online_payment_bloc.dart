@@ -120,11 +120,16 @@ Future<BookingModel> prepareBookingModelOnline({
   };
 
   final List<DateTime> slotTimes = event.selectedSlots.map((slot) => slot.startTime).toList();
+  final List<String> slotId = event.selectedSlots.map((id) => id.subDocId).toList();
+  final String slotDate = event.selectedSlots.map((slotId) => slotId.docId).toList().first;
 
   final int totalDuration = event.selectedSlots
       .fold(0, (sum, slot) => sum + slot.duration.inMinutes);
 
   return BookingModel(
+    slotDate: slotDate,
+    slotId: slotId,
+    invoiceId: event.invoiceId,
     userId: userId,
     barberId: event.barberId,
     duration: totalDuration,

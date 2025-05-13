@@ -143,7 +143,7 @@ class _TopUpWidetInWalletState extends State<TopUpWidetInWallet>
                                    final String? userId = credentials['userId'];
                                    if (userId == null || userId.isEmpty) return;
                                    if (!context.mounted) return;
-                                    final bool success =  await StripePaymentSheetHandler.instance.presentPaymentSheet(
+                                    final String? success =  await StripePaymentSheetHandler.instance.presentPaymentSheet(
                                       context: context,
                                       amount: conversionState is CurrencyConversionSuccess
                                           ? conversionState.convertedAmount
@@ -152,7 +152,7 @@ class _TopUpWidetInWalletState extends State<TopUpWidetInWallet>
                                       label: 'Top Up ₹ $inrText',
                                     );
                                     if (!context.mounted) return;
-                                    if (success) {
+                                    if (success != null) {
                                       final inrAmount = double.tryParse( _amountController.text.trim()) ?? 0.0;
                                       context.read<WalletCubit>().updateWallet( userId: userId, amount: inrAmount);
                                       _amountController.clear();
@@ -205,7 +205,7 @@ class _TopUpWidetInWalletState extends State<TopUpWidetInWallet>
                                    final String? userId = credentials['userId'];
                                    if (userId == null || userId.isEmpty) return;
                                    if (!context.mounted) return;
-                                    final bool success =  await StripePaymentSheetHandler.instance.presentPaymentSheet(
+                                    final String? success =  await StripePaymentSheetHandler.instance.presentPaymentSheet(
                                       context: context,
                                       amount: conversionState is CurrencyConversionSuccess
                                           ? conversionState.convertedAmount
@@ -214,7 +214,7 @@ class _TopUpWidetInWalletState extends State<TopUpWidetInWallet>
                                       label: 'Top Up ₹ $inrText',
                                     );
                                     if (!context.mounted) return;
-                                    if (success) {
+                                    if (success!= null) {
                                       final inrAmount = double.tryParse( _amountController.text.trim()) ?? 0.0;
                                       context.read<WalletCubit>().updateWallet( userId: userId, amount: inrAmount);
                                       _amountController.clear();

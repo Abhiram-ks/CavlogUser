@@ -13,12 +13,17 @@ class BookingModel {
   final String status;
   final String serviceStatus;
   final String? bookingId;
+  final double? refund;
   final String otp;
   final String transaction;
+  final String invoiceId;
+  final String slotDate;
+  final List<String> slotId;
   
 
   BookingModel({
     this.bookingId,
+    this.refund,
     required this.serviceStatus, 
     required this.userId,
     required this.barberId,
@@ -31,11 +36,16 @@ class BookingModel {
     required this.status,
     required this.otp,
     required this.transaction,
+    required this.invoiceId,
+    required this.slotId,
+    required this.slotDate
   });
 
   factory BookingModel.fromMap(String bookingId, Map<String, dynamic> map) {
     return BookingModel(
+      refund: (map['refund'] as num?)?.toDouble() ?? 0.0,
       bookingId: bookingId,
+      invoiceId: map['invoice_id'] as String? ?? '',
       serviceStatus: map['service_status'] as String? ?? 'Pending',
       userId: map['userId'] as String? ?? '',
       barberId: map['barberId'] as String? ?? '',
@@ -47,6 +57,11 @@ class BookingModel {
               ?.map((ts) => (ts is Timestamp) ? ts.toDate() : DateTime.now())
               .toList() ??
           [],
+      slotId: (map['slot_id'] as List<dynamic>?)
+              ?.map((id) => id.toString())
+              .toList() ??
+      [],
+      slotDate: map['slotDate'] as String? ?? '',
       amountPaid: (map['amountPaid'] as num?)?.toDouble() ?? 0.0,
       status: map['status'] as String? ?? 'Pending',
       otp: map['otp'] as String? ?? '',
@@ -56,6 +71,8 @@ class BookingModel {
 
   Map<String, dynamic> toMap() {
     return {
+      'refund':refund,
+      'invoice_id': invoiceId,
       'userId': userId,
       'barberId': barberId,
       'duration': duration,
@@ -63,6 +80,8 @@ class BookingModel {
       'createdAt': Timestamp.fromDate(createdAt),
       'serviceType': serviceType,
       'slotTime': slotTime.map((dt) => Timestamp.fromDate(dt)).toList(),
+      'slot_id': slotId,
+      'slotDate':slotDate,
       'amountPaid': amountPaid,
       'status': status,
       'otp': otp,

@@ -17,6 +17,7 @@ final class WalletPaymentRequest extends WalletPaymentEvent {
   final List<Map<String, dynamic>> selectedServices;
   final double platformFee;
   final double bookingAmount;
+  final String invoiceId;
 
-  WalletPaymentRequest({required this.selectedSlots,required this.selectedServices,required this.bookingAmount, required this.barberId, required this.platformFee});
+  WalletPaymentRequest({required this.invoiceId,required this.selectedSlots,required this.selectedServices,required this.bookingAmount, required this.barberId, required this.platformFee});
 }

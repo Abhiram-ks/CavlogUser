@@ -209,7 +209,7 @@ class MyBookingListWIdget extends StatelessWidget {
                           dateTime: DateFormat('dd/MM/yyyy')
                               .format(booking.booking.createdAt),
                           description: booking.barber.ventureName,
-                          id: 'OTP: ${booking.booking.otp}',
+                          id: 'Booking Code: ${booking.booking.otp}',
                           method: booking.barber.address,
                           status: booking.booking.serviceStatus,
                           statusIcon: switch (
