@@ -34,7 +34,7 @@ void handleOtpState(
           ? "We couldn't send the OTP. Error: ${state.error}"
           : "We couldn't resend the email. Error: ${state.error}",
       titleClr: AppPalette.redClr,
-    );
+    );1
   }
 }
 

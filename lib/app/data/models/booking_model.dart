@@ -15,6 +15,7 @@ class BookingModel {
   final String? bookingId;
   final String otp;
   final String transaction;
+  
 
   BookingModel({
     this.bookingId,

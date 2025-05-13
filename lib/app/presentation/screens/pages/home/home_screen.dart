@@ -4,23 +4,35 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:user_panel/app/data/repositories/barbershop_repo.dart';
+import 'package:user_panel/app/data/repositories/cancel_booking_repo.dart';
 import 'package:user_panel/app/data/repositories/fetch_banner_repo.dart';
+import 'package:user_panel/app/domain/usecases/direction_navigation.dart';
+import 'package:user_panel/app/presentation/provider/cubit/auto_completed_booking_cubit/auto_complited_booking_cubit.dart';
+import 'package:user_panel/app/presentation/screens/pages/home/cancel_booking_screen/cancel_booking_screen.dart';
 import 'package:user_panel/core/routes/routes.dart';
 import 'package:user_panel/core/utils/constant/constant.dart';
 import '../../../../../auth/domain/usecases/get_location_usecase.dart';
 import '../../../../../auth/presentation/provider/bloc/location_bloc/location_bloc.dart';
+import '../../../../../core/common/custom_snackbar_widget.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/image/app_images.dart';
+import '../../../../data/repositories/fetch_barber_repo.dart';
+import '../../../../data/repositories/fetch_booking_with_barber_model.dart';
 import '../../../../domain/repositories/barbershop_services_repo.dart';
+import '../../../../domain/usecases/geo_coding_helper_usecase.dart';
 import '../../../provider/bloc/fetching_bloc/fetch_banners_bloc/fetch_banners_bloc.dart';
+import '../../../provider/bloc/fetching_bloc/fetch_booking_with_barber_bloc/fetch_booking_with_barber_bloc.dart';
 import '../../../provider/bloc/nearby_barbers_bloc/nearby_barbers_bloc.dart';
-import '../../../provider/cubit/cubit/booking_timeline_cubit.dart';
-import '../../../provider/cubit/cubit/booking_timeline_state.dart';
+import '../../../provider/cubit/booking_timeline-cubit/booking_timeline_cubit.dart';
+import '../../../provider/cubit/booking_timeline-cubit/booking_timeline_state.dart';
 import '../../../widget/home_widget/home_screen_widget/home_screen_nearby.dart';
 import '../../../widget/profile_widget/profile_scrollable_section.dart';
+import '../../../widget/search_widget/details_screen_widget/details_call_helper_function.dart';
 import '../../../widget/search_widget/details_screen_widget/details_imagescroll_widget.dart';
 import '../../../widget/search_widget/details_screen_widget/details_screen_actionbuttos.dart';
 import '../../../widget/search_widget/search_screen_widget/custom_cards_barberlist.dart';
+import '../../settings/settings_subscreens/my_booking_detail_screen.dart';
+import '../search/detail_screen/detail_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -29,15 +41,16 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => TimelineCubit()),
-        BlocProvider(
-            create: (context) => FetchBannersBloc(FetchBannerRepositoryImpl())),
-        BlocProvider(
-            create: (context) => NearbyBarbersBloc(
-                GetNearbyBarberShops(BarberShopRepositoryImpl()))),
-        BlocProvider(
-            create: (context) => LocationBloc(GetLocationUseCase())
-              ..add(GetCurrentLocationEvent()))
+        BlocProvider(create: (context) {
+          final fetchBarberRepo = FetchBarberRepositoryImpl();
+          final barberService = BarberService(fetchBarberRepo);
+          final repository = FetchBookingAndBarberRepositoryImpl(barberService);
+          
+          return FetchBookingWithBarberBloc(repository);
+        }),
+        BlocProvider( create: (_) => FetchBannersBloc(FetchBannerRepositoryImpl())),
+        BlocProvider( create: (_) => NearbyBarbersBloc( GetNearbyBarberShops(BarberShopRepositoryImpl()))),
+        BlocProvider( create: (_) => LocationBloc(GetLocationUseCase()) ..add(GetCurrentLocationEvent())),
       ],
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -56,80 +69,90 @@ class HomeScreen extends StatelessWidget {
                       backgroundColor: AppPalette.blackClr,
                       expandedHeight: screenHeight * 0.13,
                       pinned: true,
-                      flexibleSpace: FlexibleSpaceBar(
-                        collapseMode: CollapseMode.parallax,
-                        background: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: screenWidth * 0.04),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: 4,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    profileviewWidget(
-                                      screenWidth,
-                                      context,
-                                      Icons.location_on,
-                                      'Wayanad, sulthan bathery',
-                                      AppPalette.redClr,
+                      flexibleSpace: LayoutBuilder(
+                        builder:  (context, constraints) {
+                         bool isCollapsed = constraints.biggest.height <=
+                          kToolbarHeight + MediaQuery.of(context).padding.top;
+                          return FlexibleSpaceBar(
+                            collapseMode: CollapseMode.parallax,
+                           title: isCollapsed
+                          ?  Text(
+                                   'C Λ V L O G',
+                                  style: TextStyle(color: AppPalette.whiteClr),
+                                )
+                          : Text(''),
+                            background: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: screenWidth * 0.04),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 4,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        profileviewWidget(
+                                          screenWidth,
+                                          context,
+                                          Icons.location_on,
+                                          'Wayanad, sulthan bathery',
+                                          AppPalette.redClr,
+                                        ),
+                                        ConstantWidgets.hight10(context),
+                                        Text(
+                                          'Hello, Abhiramks',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    ConstantWidgets.hight10(context),
-                                    Text(
-                                      'Hello, Abhiramks',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                  ),
+                                  Flexible(
+                                    flex: 3,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        IconButton.filled(
+                                          style: IconButton.styleFrom(
+                                            backgroundColor: AppPalette.whiteClr,
+                                          ),
+                                          icon: Icon(
+                                            Icons.account_balance_wallet_outlined,
+                                            color: AppPalette.blackClr,
+                                          ),
+                                          onPressed: () {
+                                            Navigator.pushNamed(
+                                                context, AppRoutes.wallet);
+                                          },
+                                        ),
+                                        IconButton.filled(
+                                          style: IconButton.styleFrom(
+                                            backgroundColor: AppPalette.whiteClr,
+                                          ),
+                                          icon: Icon(
+                                            Icons.favorite_border,
+                                            color: AppPalette.blackClr,
+                                          ),
+                                          onPressed: () {
+                                            Navigator.pushNamed(
+                                                context, AppRoutes.wishList);
+                                          },
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                              Flexible(
-                                flex: 3,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    IconButton.filled(
-                                      style: IconButton.styleFrom(
-                                        backgroundColor: AppPalette.whiteClr,
-                                      ),
-                                      icon: Icon(
-                                        Icons.account_balance_wallet_outlined,
-                                        color: AppPalette.blackClr,
-                                      ),
-                                      onPressed: () {
-                                        Navigator.pushNamed(
-                                            context, AppRoutes.wallet);
-                                      },
-                                    ),
-                                    IconButton.filled(
-                                      style: IconButton.styleFrom(
-                                        backgroundColor: AppPalette.whiteClr,
-                                      ),
-                                      icon: Icon(
-                                        Icons.favorite_border,
-                                        color: AppPalette.blackClr,
-                                      ),
-                                      onPressed: () {
-                                        Navigator.pushNamed(
-                                            context, AppRoutes.wishList);
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                            ),
+                          );
+                        }
                       ),
                     ),
-
-                    /// Body Content
                     SliverToBoxAdapter(
                       child: HomeScreenBodyWIdget(
                           screenHeight: screenHeight, screenWidth: screenWidth),
@@ -167,6 +190,9 @@ class _HomeScreenBodyWIdgetState extends State<HomeScreenBodyWIdget> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<FetchBannersBloc>().add(FetchBannersRequest());
+      context
+          .read<FetchBookingWithBarberBloc>()
+          .add(FetchBookingWithBarberFileterRequest(filtering: 'pending'));
     });
   }
 
@@ -214,71 +240,176 @@ class _HomeScreenBodyWIdgetState extends State<HomeScreenBodyWIdget> {
                   screenWidth: widget.screenWidth,
                 ),
                 ConstantWidgets.hight30(context),
-                Text(
-                  'Track Booking Status',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                Column(
+                  children: [
+                    Text(
+                      'Track Booking Status',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
                 ),
                 ConstantWidgets.hight10(context),
-                HorizontalIconTimeline(
-                  screenWidth: MediaQuery.of(context).size.width,
-                  screenHeight: MediaQuery.of(context).size.height,
-                  createdAt: DateTime.parse('2025-05-05T15:10:38+05:30'),
-                  duration: 90,
-                  slotTimes: [
-                    DateTime.parse('2025-05-12T08:00:00+05:30'),
-                    DateTime.parse('2025-05-12T08:45:00+05:30'),
-                  ],
-                  onTapMessage: () {
-                    print('Message tapped');
+                BlocBuilder<FetchBookingWithBarberBloc,
+                    FetchBookingWithBarberState>(
+                  builder: (context, state) {
+                    if (state is FetchBookingWithBarberLoading) {
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey[300] ?? AppPalette.greyClr,
+                        highlightColor: AppPalette.whiteClr,
+                        child: HorizontalIconTimelineHelper(
+                          screenWidth: MediaQuery.of(context).size.width,
+                          screenHeight: MediaQuery.of(context).size.height,
+                          createdAt:
+                              DateTime.parse('2025-05-05T15:10:38+05:30'),
+                          duration: 90,
+                          bookingId: '',
+                          slotTimes: [
+                            DateTime.parse('2025-05-12T08:00:00+05:30'),
+                            DateTime.parse('2025-05-12T08:45:00+05:30'),
+                          ],
+                          onTapInformation: () {},
+                          onTapCall: () {},
+                          onTapDirection: () {},
+                          onTapCancel: () {},
+                          imageUrl: AppImages.barberEmpty,
+                          onTapBarber: () {},
+                          rating: 4,
+                          shopName: 'Masterpiece - The Classic Cut Barbershop',
+                          isBlocked: false,
+                          shopAddress:
+                              '123 Kingsway Avenue, Downtown District, Springfield, IL 62704',
+                        ),
+                      );
+                    } else if (state is FetchBookingWithBarberEmpty) {
+                      return Center(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ConstantWidgets.hight30(context),
+                              Icon(Icons.event_busy),
+                              Text('No Bookings Yet!',
+                                  style:
+                                      TextStyle(color: AppPalette.orengeClr)),
+                              Text("No activity found — time to take action!"),
+                              ConstantWidgets.hight30(context),
+                            ]),
+                      );
+                    } else if (state is FetchBookingWithBarberLoaded) {
+                      return ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.zero,
+                        itemCount: state.combo.length,
+                        separatorBuilder: (_, __) =>
+                            ConstantWidgets.hight10(context),
+                        itemBuilder: (context, index) {
+                          final booking = state.combo[index];
+
+                          return HorizontalIconTimelineHelper(
+                            screenWidth: MediaQuery.of(context).size.width,
+                            screenHeight: MediaQuery.of(context).size.height,
+                            createdAt: booking.booking.createdAt,
+                            duration: booking.booking.duration,
+                            slotTimes: booking.booking.slotTime,
+                            bookingId: booking.booking.bookingId ?? '',
+                            rating: booking.barber.rating ?? 0.0,
+                            onTapInformation: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MyBookingDetailScreen(
+                                        docId: booking.booking.bookingId!,
+                                        barberId: booking.booking.barberId,
+                                        userId: booking.booking.userId),
+                                  ));
+                            },
+                            onTapCall: () {
+                              CallHelper.makeCall(
+                                  booking.barber.phoneNumber, context);
+                            },
+                            onTapDirection: () async {
+                              try {
+                                final position = await context
+                                    .read<LocationBloc>()
+                                    .getLocationUseCase();
+                                final barberLatLng =
+                                    await GeocodingHelper.addressToLatLng(
+                                        booking.barber.address);
+
+                                await MapHelper.openGoogleMaps(
+                                  sourceLat: position.latitude,
+                                  sourceLng: position.longitude,
+                                  destLat: barberLatLng.latitude,
+                                  destLng: barberLatLng.longitude,
+                                );
+                              } catch (e) {
+                                if (!context.mounted) return;
+                                CustomeSnackBar.show(
+                                  context: context,
+                                  title: 'Unable to Access Directions',
+                                  description:
+                                      'Oops! Something went wrong while fetching the route. Please try again shortly.',
+                                  titleClr: AppPalette.blackClr,
+                                );
+                              }
+                            },
+                            onTapCancel: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CancelBookingScreen(booking: booking.booking,),
+                                )),
+                            imageUrl:
+                                booking.barber.image ?? AppImages.barberEmpty,
+                            onTapBarber: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DetailBarberScreen(
+                                          barberId: booking.barber.uid,
+                                        ))),
+                            shopName: booking.barber.ventureName,
+                            isBlocked: booking.barber.isblok,
+                            shopAddress: booking.barber.address,
+                          );
+                        },
+                      );
+                    }
+                    return Center(
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ConstantWidgets.hight30(context),
+                            Icon(Icons.event_busy),
+                            Text('Oops! Something went wrong!',
+                                style: TextStyle(color: AppPalette.redClr)),
+                            Text(
+                                "We're having trouble processing your request."),
+                            InkWell(
+                                onTap: () async {
+                                  context
+                                      .read<FetchBookingWithBarberBloc>()
+                                      .add(FetchBookingWithBarberFileterRequest(
+                                          filtering: 'pending'));
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.refresh,
+                                      color: AppPalette.blueClr,
+                                    ),
+                                    ConstantWidgets.width20(context),
+                                    Text("Refresh",
+                                        style: TextStyle(
+                                            color: AppPalette.blueClr,
+                                            fontWeight: FontWeight.bold)),
+                                  ],
+                                ))
+                          ]),
+                    );
                   },
-                  onTapCall: () {
-                    print('Call tapped');
-                  },
-                  onTapDirection: () {
-                    print('Direction tapped');
-                  },
-                  onTapCancel: () {
-                    print('Cancel tapped');
-                  },
-                  imageUrl: AppImages.barberEmpty,
-                  onTapBarber: () {
-                    print('Barber tapped');
-                  },
-                  shopName: 'Masterpiece - The Classic Cut Barbershop',
-                  isBlocked: false,
-                  shopAddress:
-                      '123 Kingsway Avenue, Downtown District, Springfield, IL 62704',
-                ), Divider(),
-                HorizontalIconTimeline(
-                  screenWidth: MediaQuery.of(context).size.width,
-                  screenHeight: MediaQuery.of(context).size.height,
-                  createdAt: DateTime.parse('2025-05-05T15:10:38+05:30'),
-                  duration: 90,
-                  slotTimes: [
-                    DateTime.parse('2025-05-12T08:00:00+05:30'),
-                    DateTime.parse('2025-05-12T08:45:00+05:30'),
-                  ],
-                  onTapMessage: () {
-                    print('Message tapped');
-                  },
-                  onTapCall: () {
-                    print('Call tapped');
-                  },
-                  onTapDirection: () {
-                    print('Direction tapped');
-                  },
-                  onTapCancel: () {
-                    print('Cancel tapped');
-                  },
-                  imageUrl: AppImages.barberEmpty,
-                  onTapBarber: () {
-                    print('Barber tapped');
-                  },
-                  shopName: 'Masterpiece - The Classic Cut Barbershop',
-                  isBlocked: false,
-                  shopAddress:
-                      '123 Kingsway Avenue, Downtown District, Springfield, IL 62704',
-                )
+                ),
               ],
             ),
           ),
@@ -288,10 +419,10 @@ class _HomeScreenBodyWIdgetState extends State<HomeScreenBodyWIdget> {
   }
 }
 
-class HorizontalIconTimeline extends StatefulWidget {
+class HorizontalIconTimelineHelper extends StatelessWidget {
   final double screenWidth;
   final double screenHeight;
-  final VoidCallback onTapMessage;
+  final VoidCallback onTapInformation;
   final VoidCallback onTapCall;
   final VoidCallback onTapDirection;
   final VoidCallback onTapCancel;
@@ -299,28 +430,104 @@ class HorizontalIconTimeline extends StatefulWidget {
   final VoidCallback onTapBarber;
   final String shopName;
   final bool isBlocked;
+  final double rating;
   final String shopAddress;
   final DateTime createdAt;
+  final String bookingId;
   final List<DateTime> slotTimes;
   final int duration;
 
-  const HorizontalIconTimeline({
+  const HorizontalIconTimelineHelper({
     super.key,
     required this.screenWidth,
     required this.screenHeight,
-    required this.onTapMessage,
+    required this.onTapInformation,
     required this.onTapCall,
     required this.onTapDirection,
     required this.onTapCancel,
     required this.imageUrl,
     required this.onTapBarber,
     required this.shopName,
+    required this.rating,
     required this.isBlocked,
     required this.shopAddress,
     required this.createdAt,
     required this.slotTimes,
     required this.duration,
+    required this.bookingId,
   });
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => TimelineCubit()
+            ..updateTimeline(
+              createdAt: createdAt,
+              slotTimes: slotTimes,
+              duration: duration,
+            ),
+        ),
+        BlocProvider(create: (_) =>  AutoComplitedBookingCubit(CancelBookingRepositoryImpl()))
+      ],
+      child: HorizontalIconTimeline(
+          bookingId: bookingId,
+          screenWidth: screenWidth,
+          screenHeight: screenHeight,
+          onTapInformation: onTapInformation,
+          onTapCall: onTapCall,
+          onTapDirection: onTapDirection,
+          onTapCancel: onTapCancel,
+          imageUrl: imageUrl,
+          onTapBarber: onTapBarber,
+          shopName: shopName,
+          rating: rating,
+          isBlocked: isBlocked,
+          shopAddress: shopAddress,
+          createdAt: createdAt,
+          slotTimes: slotTimes,
+          duration: duration),
+    );
+  }
+}
+
+class HorizontalIconTimeline extends StatefulWidget {
+  final double screenWidth;
+  final double screenHeight;
+  final VoidCallback onTapInformation;
+  final VoidCallback onTapCall;
+  final VoidCallback onTapDirection;
+  final VoidCallback onTapCancel;
+  final String imageUrl;
+  final String bookingId;
+  final VoidCallback onTapBarber;
+  final String shopName;
+  final bool isBlocked;
+  final double rating;
+  final String shopAddress;
+  final DateTime createdAt;
+  final List<DateTime> slotTimes;
+  final int duration;
+
+  const HorizontalIconTimeline(
+      {super.key,
+      required this.screenWidth,
+      required this.screenHeight,
+      required this.onTapInformation,
+      required this.onTapCall,
+      required this.onTapDirection,
+      required this.onTapCancel,
+      required this.imageUrl,
+      required this.onTapBarber,
+      required this.shopName,
+      required this.rating,
+      required this.isBlocked,
+      required this.shopAddress,
+      required this.createdAt,
+      required this.slotTimes,
+      required this.duration,
+      required this.bookingId});
 
   @override
   State<HorizontalIconTimeline> createState() => _HorizontalIconTimelineState();
@@ -356,9 +563,8 @@ class _HorizontalIconTimelineState extends State<HorizontalIconTimeline> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppPalette.whiteClr,
-        borderRadius: BorderRadius.circular(12),
-      ),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppPalette.hintClr)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -377,6 +583,16 @@ class _HorizontalIconTimelineState extends State<HorizontalIconTimeline> {
                   break;
                 case TimelineStep.completed:
                   currentStep = 3;
+                  final sortedSlotTimes = List<DateTime>.from(widget.slotTimes)..sort();
+
+                  final endTime = sortedSlotTimes.last;
+                  if (DateTime.now().isAfter(endTime)) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      context.read<AutoComplitedBookingCubit>().completeBooking(
+                            widget.bookingId,
+                          );
+                    });
+                  }
                   break;
               }
               return Column(
@@ -388,7 +604,6 @@ class _HorizontalIconTimelineState extends State<HorizontalIconTimeline> {
                       final isActive = index <= currentStep;
                       Color iconColor =
                           isActive ? AppPalette.blackClr : AppPalette.greyClr;
-                      if (index == 3) iconColor = AppPalette.greenClr;
 
                       return Expanded(
                         child: Column(
@@ -464,7 +679,7 @@ class _HorizontalIconTimelineState extends State<HorizontalIconTimeline> {
             screenHeight: widget.screenHeight,
             screenWidth: widget.screenWidth,
             imageURl: widget.imageUrl,
-            rating: 4,
+            rating: widget.rating,
             shopName: widget.shopName,
             shopAddress: widget.shopAddress,
             isBlocked: widget.isBlocked,
@@ -478,7 +693,7 @@ class _HorizontalIconTimelineState extends State<HorizontalIconTimeline> {
                 context: context,
                 screenWidth: widget.screenWidth,
                 icon: CupertinoIcons.info_circle_fill,
-                onTap: widget.onTapMessage,
+                onTap: widget.onTapInformation,
                 text: 'Details',
               ),
               detailsPageActions(
@@ -495,14 +710,18 @@ class _HorizontalIconTimelineState extends State<HorizontalIconTimeline> {
                 onTap: widget.onTapDirection,
                 text: 'Direction',
               ),
-              detailsPageActions(
-                context: context,
-                colors: AppPalette.redClr,
-                screenWidth: widget.screenWidth,
-                icon: CupertinoIcons.calendar_badge_minus,
-                onTap: widget.onTapCancel,
-                text: 'Cancel',
-              ),
+              if (context.read<TimelineCubit>().state.currentStep ==
+                      TimelineStep.created ||
+                  context.read<TimelineCubit>().state.currentStep ==
+                      TimelineStep.waiting)
+                detailsPageActions(
+                  context: context,
+                  colors: AppPalette.redClr,
+                  screenWidth: widget.screenWidth,
+                  icon: CupertinoIcons.calendar_badge_minus,
+                  onTap: widget.onTapCancel,
+                  text: 'Cancel',
+                ),
             ],
           ),
         ],

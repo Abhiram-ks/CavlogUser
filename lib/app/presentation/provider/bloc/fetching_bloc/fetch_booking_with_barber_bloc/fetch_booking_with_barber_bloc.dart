@@ -69,7 +69,7 @@ class FetchBookingWithBarberBloc extends Bloc<FetchBookingWithBarberEvent, Fetch
       return;
     }
 
-    await emit.forEach<List<BookingWithBarberModel>>(
+         await emit.forEach<List<BookingWithBarberModel>>(
        _repository.streamBookingsWithBarber(userId: userId),
        onData: (bookings) {
         final filteredBooking = bookings.where((booking) => booking.booking.serviceStatus.toLowerCase().contains(event.filtering.toLowerCase())).toList();

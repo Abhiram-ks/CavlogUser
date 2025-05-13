@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:user_panel/app/presentation/provider/cubit/cubit/booking_timeline_state.dart';
+import 'package:user_panel/app/presentation/provider/cubit/booking_timeline-cubit/booking_timeline_state.dart';
 
 class TimelineCubit extends Cubit<TimelineState> {
   TimelineCubit() : super(TimelineState(TimelineStep.created));
