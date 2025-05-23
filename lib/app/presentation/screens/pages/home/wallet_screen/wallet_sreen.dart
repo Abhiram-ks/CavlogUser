@@ -12,10 +12,10 @@ import '../../../../../data/repositories/fetch_wallets_repo.dart';
 import '../../../../provider/bloc/fetching_bloc/fetch_wallet_bloc/fetch_wallet_bloc.dart';
 import '../../../../provider/cubit/booking_cubits/corrency_convertion_cubit/corrency_conversion_cubit.dart';
 import '../../../../provider/cubit/wallet_cubit/wallet_cubit.dart';
-import '../../../../widget/home_widget/wallet_screen_widget/wallet_history_widget.dart';
-import '../../../../widget/home_widget/wallet_screen_widget/wallet_overview_cards_widget.dart';
-import '../../../../widget/home_widget/wallet_screen_widget/wallet_top_portion_widget.dart';
-import '../../../../widget/home_widget/wallet_screen_widget/wallet_transaction_widget.dart';
+import '../../../../widget/home_widget/wallet_widget/wallet_history_widget.dart';
+import '../../../../widget/home_widget/wallet_widget/wallet_overview_cards_widget.dart';
+import '../../../../widget/home_widget/wallet_widget/wallet_top_portion_widget.dart';
+import '../../../../widget/home_widget/wallet_widget/wallet_transaction_widget.dart';
 class WalletSreen extends StatelessWidget {
   const WalletSreen({super.key});
 

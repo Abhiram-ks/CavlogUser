@@ -27,9 +27,7 @@ class FetchBookingWithBarberBloc extends Bloc<FetchBookingWithBarberEvent, Fetch
     try {
       final credentials = await SecureStorageService.getUserCredentials();
       final String? userId = credentials['userId'];
-
-      log('Fetched user ID from secure storage: $userId');
-
+      
       if (userId == null || userId.isEmpty) {
         emit(FetchBookingWithBarberFailure('User ID not found. Please log in again.'));
         return;

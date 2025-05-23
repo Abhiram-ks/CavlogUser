@@ -6,6 +6,7 @@ import 'package:user_panel/app/data/models/barber_model.dart';
 import 'package:user_panel/app/presentation/widget/search_widget/details_screen_widget/details_call_helper_function.dart';
 import 'package:user_panel/app/presentation/widget/search_widget/details_screen_widget/details_screen_actionbuttos.dart';
 import 'package:user_panel/core/common/custom_snackbar_widget.dart';
+import '../../../../../auth/data/datasources/auth_local_datasource.dart';
 import '../../../../../auth/presentation/provider/bloc/location_bloc/location_bloc.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constant/constant.dart';
@@ -13,6 +14,7 @@ import '../../../../domain/usecases/direction_navigation.dart';
 import '../../../../domain/usecases/geo_coding_helper_usecase.dart';
 import '../../../provider/cubit/fetch_wishlist_singlebarber_cubit/fetch_wishlist_singlebarber_cubit.dart';
 import '../../../provider/cubit/wishlist_function_cubit/wishlist_function_cubit.dart';
+import '../../../screens/pages/chat/individual_chat_screen.dart';
 import '../../profile_widget/profile_scrollable_section.dart';
 
 class DetailTopPortionWidget extends StatelessWidget {
@@ -105,7 +107,23 @@ class DetailTopPortionWidget extends StatelessWidget {
                     context: context,
                     screenWidth: screenWidth,
                     icon: CupertinoIcons.chat_bubble_2_fill,
-                    onTap: () {},
+                         onTap: () async {
+                            final credentials =
+                                await SecureStorageService.getUserCredentials();
+                            final String? userId = credentials['userId'];
+                            if (userId == null) return;
+
+                            Navigator.push(
+                              // ignore: use_build_context_synchronously
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => IndividualChatScreen(
+                                  barberId: barber.uid,
+                                  userId: userId,
+                                ),
+                              ),
+                            );
+                          },
                     text: 'Message'),
                 detailsPageActions(
                     context: context,

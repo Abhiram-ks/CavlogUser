@@ -1,6 +1,6 @@
 part of 'fetch_banners_bloc.dart';
 
-sealed class FetchBannersState {}
+abstract class FetchBannersState {}
 
 final class FetchBannersInitial extends FetchBannersState {}
 final class FetchBannersLoading extends FetchBannersState {}

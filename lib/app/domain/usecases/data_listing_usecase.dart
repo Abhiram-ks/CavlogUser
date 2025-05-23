@@ -93,3 +93,15 @@ String formatDate(DateTime dateTime) {
   final dateFormat = DateFormat('dd-MMM-yyyy');
   return dateFormat.format(dateTime);
 }
+
+
+String formatDateToSlotDocId(DateTime date) {
+  final DateFormat formatter = DateFormat('dd-MM-yyyy');
+  return formatter.format(date);
+}
+
+/// Converts "dd-MM-yyyy" string back to DateTime
+DateTime parseSlotDocIdToDate(String formattedDate) {
+  final DateFormat formatter = DateFormat('dd-MM-yyyy');
+  return formatter.parse(formattedDate);
+}

@@ -13,5 +13,3 @@ final class ImagePickerError extends ImagePickerState {
   final String errorMessage;
   ImagePickerError(this.errorMessage);
 }
-
-

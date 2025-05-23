@@ -7,6 +7,7 @@ class BookingModel {
   final int duration;
   final String paymentMethod;
   final DateTime createdAt;
+  final DateTime date;
   final Map<String, double> serviceType;
   final List<DateTime> slotTime;
   final double amountPaid;
@@ -38,7 +39,8 @@ class BookingModel {
     required this.transaction,
     required this.invoiceId,
     required this.slotId,
-    required this.slotDate
+    required this.slotDate,
+    required this.date
   });
 
   factory BookingModel.fromMap(String bookingId, Map<String, dynamic> map) {
@@ -52,6 +54,7 @@ class BookingModel {
       duration: map['duration'] is int ? map['duration'] : int.tryParse(map['duration'].toString()) ?? 0,
       paymentMethod: map['paymentMethod'] as String? ?? '',
       createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      date: (map['date'] as Timestamp?)?.toDate() ?? DateTime.now(),
       serviceType: (map['serviceType'] as Map?)?.map( (key, value) => MapEntry(key.toString(), (value is num) ? value.toDouble() : 0.0) ) ?? {},
       slotTime: (map['slotTime'] as List<dynamic>?)
               ?.map((ts) => (ts is Timestamp) ? ts.toDate() : DateTime.now())
@@ -71,6 +74,7 @@ class BookingModel {
 
   Map<String, dynamic> toMap() {
     return {
+      'date':date,
       'refund':refund,
       'invoice_id': invoiceId,
       'userId': userId,

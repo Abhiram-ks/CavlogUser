@@ -9,7 +9,6 @@ import 'package:user_panel/app/data/repositories/fetch_banner_repo.dart';
 import 'package:user_panel/app/domain/usecases/direction_navigation.dart';
 import 'package:user_panel/app/presentation/provider/cubit/auto_completed_booking_cubit/auto_complited_booking_cubit.dart';
 import 'package:user_panel/app/presentation/screens/pages/home/cancel_booking_screen/cancel_booking_screen.dart';
-import 'package:user_panel/core/routes/routes.dart';
 import 'package:user_panel/core/utils/constant/constant.dart';
 import '../../../../../auth/domain/usecases/get_location_usecase.dart';
 import '../../../../../auth/presentation/provider/bloc/location_bloc/location_bloc.dart';
@@ -25,8 +24,9 @@ import '../../../provider/bloc/fetching_bloc/fetch_booking_with_barber_bloc/fetc
 import '../../../provider/bloc/nearby_barbers_bloc/nearby_barbers_bloc.dart';
 import '../../../provider/cubit/booking_timeline-cubit/booking_timeline_cubit.dart';
 import '../../../provider/cubit/booking_timeline-cubit/booking_timeline_state.dart';
+import '../../../widget/home_widget/home_screen_widget/home_screen_customscrollview_widget.dart';
 import '../../../widget/home_widget/home_screen_widget/home_screen_nearby.dart';
-import '../../../widget/profile_widget/profile_scrollable_section.dart';
+import '../../../widget/home_widget/pending_booking_widget/pending_booking_card.dart';
 import '../../../widget/search_widget/details_screen_widget/details_call_helper_function.dart';
 import '../../../widget/search_widget/details_screen_widget/details_imagescroll_widget.dart';
 import '../../../widget/search_widget/details_screen_widget/details_screen_actionbuttos.dart';
@@ -50,7 +50,7 @@ class HomeScreen extends StatelessWidget {
         }),
         BlocProvider( create: (_) => FetchBannersBloc(FetchBannerRepositoryImpl())),
         BlocProvider( create: (_) => NearbyBarbersBloc( GetNearbyBarberShops(BarberShopRepositoryImpl()))),
-        BlocProvider( create: (_) => LocationBloc(GetLocationUseCase()) ..add(GetCurrentLocationEvent())),
+        BlocProvider( create: (_) => LocationBloc(GetLocationUseCase())..add(GetCurrentLocationEvent())),
       ],
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -62,103 +62,7 @@ class HomeScreen extends StatelessWidget {
             child: SafeArea(
               child: Scaffold(
                 resizeToAvoidBottomInset: true,
-                body: CustomScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  slivers: [
-                    SliverAppBar(
-                      backgroundColor: AppPalette.blackClr,
-                      expandedHeight: screenHeight * 0.13,
-                      pinned: true,
-                      flexibleSpace: LayoutBuilder(
-                        builder:  (context, constraints) {
-                         bool isCollapsed = constraints.biggest.height <=
-                          kToolbarHeight + MediaQuery.of(context).padding.top;
-                          return FlexibleSpaceBar(
-                            collapseMode: CollapseMode.parallax,
-                           title: isCollapsed
-                          ?  Text(
-                                   'C Λ V L O G',
-                                  style: TextStyle(color: AppPalette.whiteClr),
-                                )
-                          : Text(''),
-                            background: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: screenWidth * 0.04),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    flex: 4,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        profileviewWidget(
-                                          screenWidth,
-                                          context,
-                                          Icons.location_on,
-                                          'Wayanad, sulthan bathery',
-                                          AppPalette.redClr,
-                                        ),
-                                        ConstantWidgets.hight10(context),
-                                        Text(
-                                          'Hello, Abhiramks',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Flexible(
-                                    flex: 3,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        IconButton.filled(
-                                          style: IconButton.styleFrom(
-                                            backgroundColor: AppPalette.whiteClr,
-                                          ),
-                                          icon: Icon(
-                                            Icons.account_balance_wallet_outlined,
-                                            color: AppPalette.blackClr,
-                                          ),
-                                          onPressed: () {
-                                            Navigator.pushNamed(
-                                                context, AppRoutes.wallet);
-                                          },
-                                        ),
-                                        IconButton.filled(
-                                          style: IconButton.styleFrom(
-                                            backgroundColor: AppPalette.whiteClr,
-                                          ),
-                                          icon: Icon(
-                                            Icons.favorite_border,
-                                            color: AppPalette.blackClr,
-                                          ),
-                                          onPressed: () {
-                                            Navigator.pushNamed(
-                                                context, AppRoutes.wishList);
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }
-                      ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: HomeScreenBodyWIdget(
-                          screenHeight: screenHeight, screenWidth: screenWidth),
-                    ),
-                  ],
-                ),
+                body: HomePageCustomScrollViewWidget(screenHeight: screenHeight, screenWidth: screenWidth),
               ),
             ),
           );
@@ -167,6 +71,8 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
+
 
 class HomeScreenBodyWIdget extends StatefulWidget {
   const HomeScreenBodyWIdget({
@@ -330,11 +236,8 @@ class _HomeScreenBodyWIdgetState extends State<HomeScreenBodyWIdget> {
                             },
                             onTapDirection: () async {
                               try {
-                                final position = await context
-                                    .read<LocationBloc>()
-                                    .getLocationUseCase();
-                                final barberLatLng =
-                                    await GeocodingHelper.addressToLatLng(
+                                final position = await context.read<LocationBloc>().getLocationUseCase();
+                                final barberLatLng =  await GeocodingHelper.addressToLatLng(
                                         booking.barber.address);
 
                                 await MapHelper.openGoogleMaps(
@@ -492,240 +395,4 @@ class HorizontalIconTimelineHelper extends StatelessWidget {
   }
 }
 
-class HorizontalIconTimeline extends StatefulWidget {
-  final double screenWidth;
-  final double screenHeight;
-  final VoidCallback onTapInformation;
-  final VoidCallback onTapCall;
-  final VoidCallback onTapDirection;
-  final VoidCallback onTapCancel;
-  final String imageUrl;
-  final String bookingId;
-  final VoidCallback onTapBarber;
-  final String shopName;
-  final bool isBlocked;
-  final double rating;
-  final String shopAddress;
-  final DateTime createdAt;
-  final List<DateTime> slotTimes;
-  final int duration;
 
-  const HorizontalIconTimeline(
-      {super.key,
-      required this.screenWidth,
-      required this.screenHeight,
-      required this.onTapInformation,
-      required this.onTapCall,
-      required this.onTapDirection,
-      required this.onTapCancel,
-      required this.imageUrl,
-      required this.onTapBarber,
-      required this.shopName,
-      required this.rating,
-      required this.isBlocked,
-      required this.shopAddress,
-      required this.createdAt,
-      required this.slotTimes,
-      required this.duration,
-      required this.bookingId});
-
-  @override
-  State<HorizontalIconTimeline> createState() => _HorizontalIconTimelineState();
-}
-
-class _HorizontalIconTimelineState extends State<HorizontalIconTimeline> {
-  final List<IconData> icons = [
-    Icons.event,
-    Icons.timer_outlined,
-    Icons.cut_outlined,
-    Icons.verified,
-  ];
-
-  final List<String> labels = [
-    'Booked',
-    'waiting',
-    'InProgress',
-    'Finished',
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    context.read<TimelineCubit>().updateTimeline(
-          createdAt: widget.createdAt,
-          slotTimes: widget.slotTimes,
-          duration: widget.duration,
-        );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppPalette.hintClr)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          BlocBuilder<TimelineCubit, TimelineState>(
-            builder: (context, state) {
-              int currentStep = 0;
-              switch (state.currentStep) {
-                case TimelineStep.created:
-                  currentStep = 0;
-                  break;
-                case TimelineStep.waiting:
-                  currentStep = 1;
-                  break;
-                case TimelineStep.inProgress:
-                  currentStep = 2;
-                  break;
-                case TimelineStep.completed:
-                  currentStep = 3;
-                  final sortedSlotTimes = List<DateTime>.from(widget.slotTimes)..sort();
-
-                  final endTime = sortedSlotTimes.last;
-                  if (DateTime.now().isAfter(endTime)) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      context.read<AutoComplitedBookingCubit>().completeBooking(
-                            widget.bookingId,
-                          );
-                    });
-                  }
-                  break;
-              }
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: List.generate(icons.length, (index) {
-                      final isActive = index <= currentStep;
-                      Color iconColor =
-                          isActive ? AppPalette.blackClr : AppPalette.greyClr;
-
-                      return Expanded(
-                        child: Column(
-                          children: [
-                            Icon(icons[index], color: iconColor),
-                            ConstantWidgets.hight10(context),
-                            Text(
-                              labels[index],
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: iconColor,
-                                fontWeight: isActive
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
-                  ),
-                  ConstantWidgets.hight10(context),
-                  Row(
-                    children: List.generate(icons.length * 2 - 1, (index) {
-                      if (index % 2 == 0) {
-                        final stepIndex = index ~/ 2;
-                        final isActive = stepIndex <= currentStep;
-                        final isCurrentStep = stepIndex == currentStep;
-
-                        return Container(
-                          width: 18,
-                          height: 18,
-                          decoration: BoxDecoration(
-                            color: isActive
-                                ? AppPalette.orengeClr
-                                : Colors.grey.shade300,
-                            shape: BoxShape.circle,
-                            border: isCurrentStep
-                                ? Border.all(
-                                    color: AppPalette.buttonClr, width: 2)
-                                : null,
-                          ),
-                          child: Center(
-                              child: isCurrentStep
-                                  ? CircularProgressIndicator(
-                                      color: AppPalette.orengeClr,
-                                    )
-                                  : null),
-                        );
-                      } else {
-                        final lineIndex = index ~/ 2;
-                        final isActive = lineIndex < currentStep;
-
-                        return Expanded(
-                          child: Container(
-                            height: 3,
-                            color: isActive
-                                ? AppPalette.buttonClr
-                                : Colors.grey.shade300,
-                          ),
-                        );
-                      }
-                    }),
-                  ),
-                ],
-              );
-            },
-          ),
-          ConstantWidgets.hight10(context),
-          ListForBarbers(
-            ontap: widget.onTapBarber,
-            screenHeight: widget.screenHeight,
-            screenWidth: widget.screenWidth,
-            imageURl: widget.imageUrl,
-            rating: widget.rating,
-            shopName: widget.shopName,
-            shopAddress: widget.shopAddress,
-            isBlocked: widget.isBlocked,
-          ),
-          ConstantWidgets.hight10(context),
-          Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              detailsPageActions(
-                context: context,
-                screenWidth: widget.screenWidth,
-                icon: CupertinoIcons.info_circle_fill,
-                onTap: widget.onTapInformation,
-                text: 'Details',
-              ),
-              detailsPageActions(
-                context: context,
-                screenWidth: widget.screenWidth,
-                icon: Icons.phone_in_talk_rounded,
-                onTap: widget.onTapCall,
-                text: 'Call',
-              ),
-              detailsPageActions(
-                context: context,
-                screenWidth: widget.screenWidth,
-                icon: Icons.location_on_sharp,
-                onTap: widget.onTapDirection,
-                text: 'Direction',
-              ),
-              if (context.read<TimelineCubit>().state.currentStep ==
-                      TimelineStep.created ||
-                  context.read<TimelineCubit>().state.currentStep ==
-                      TimelineStep.waiting)
-                detailsPageActions(
-                  context: context,
-                  colors: AppPalette.redClr,
-                  screenWidth: widget.screenWidth,
-                  icon: CupertinoIcons.calendar_badge_minus,
-                  onTap: widget.onTapCancel,
-                  text: 'Cancel',
-                ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}

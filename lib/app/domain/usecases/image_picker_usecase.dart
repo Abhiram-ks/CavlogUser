@@ -7,7 +7,7 @@ class PickImageUseCase {
 
   PickImageUseCase(this.repository);
 
-  Future<String?> call() async{
+  Future<String?> call() async {
     return await repository.pickImage();
   }
 }

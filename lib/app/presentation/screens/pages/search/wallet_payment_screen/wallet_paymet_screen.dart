@@ -13,12 +13,11 @@ import '../../../../../../core/utils/constant/constant.dart';
 import '../../../../../data/models/slot_model.dart';
 import '../../../../../data/repositories/fetch_wallets_repo.dart';
 import '../../../../../data/repositories/wallet_payment_repo.dart';
-import '../../../../../domain/usecases/data_listing_usecase.dart';
 import '../../../../provider/bloc/fetching_bloc/fetch_wallet_bloc/fetch_wallet_bloc.dart';
 import '../../../../provider/bloc/wallet_payment_bloc/wallet_payment_bloc.dart';
 import '../../../../provider/cubit/booking_cubits/date_selection_cubit/date_selection_cubit.dart';
-import '../../../../widget/home_widget/wallet_screen_widget/walet_balace_cards_widget.dart';
-import '../payment_screen/payment_screen.dart';
+import '../../../../widget/home_widget/wallet_widget/wallet_balance_card_buider_widget.dart';
+import '../../../../widget/home_widget/wallet_widget/wallet_digital_payment_summary.dart';
 
 class WalletPaymetScreen extends StatelessWidget {
   final String barberUid;
@@ -151,141 +150,4 @@ class WalletPaymetScreen extends StatelessWidget {
   }
 
 
-}
-
-  Column digitalPaymentSummaryWidget(
-      BuildContext context,
-      Color balanceColor,
-      double balance,
-      double bookingAmount,
-      double isShortfallAmount,
-      double remainingBalance) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("Digital Payment Summary",
-                style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis),
-          ],
-        ),
-        ConstantWidgets.hight20(context),
-        paymentSummaryTextWidget(
-          context: context,
-          prefixText: 'Wallet Balance',
-          prefixTextStyle: GoogleFonts.plusJakartaSans(
-              fontWeight: FontWeight.w500, color: balanceColor),
-          suffixText: '₹ ${balance.toStringAsFixed(2)}',
-          suffixTextStyle: GoogleFonts.plusJakartaSans(
-              fontWeight: FontWeight.w500, color: AppPalette.blackClr),
-        ),
-        paymentSummaryTextWidget(
-          context: context,
-          prefixText: 'Booking Amount',
-          prefixTextStyle: GoogleFonts.plusJakartaSans(
-              fontWeight: FontWeight.w500, color: AppPalette.blueClr),
-          suffixText: '₹ ${bookingAmount.toStringAsFixed(2)}',
-          suffixTextStyle: GoogleFonts.plusJakartaSans(
-              fontWeight: FontWeight.w500, color: AppPalette.blueClr),
-        ),
-        paymentSummaryTextWidget(
-          context: context,
-          prefixText: 'Shortfall Amount',
-          prefixTextStyle: GoogleFonts.plusJakartaSans(
-              fontWeight: FontWeight.w500, color: AppPalette.blackClr),
-          suffixText: '₹ ${isShortfallAmount.toStringAsFixed(2)}',
-          suffixTextStyle: GoogleFonts.plusJakartaSans(
-              fontWeight: FontWeight.w500, color: AppPalette.blackClr),
-        ),
-        paymentSummaryTextWidget(
-          context: context,
-          prefixText: 'Remaining Balance',
-          prefixTextStyle: GoogleFonts.plusJakartaSans(
-              fontWeight: FontWeight.w500, color: AppPalette.blackClr),
-          suffixText: '₹ ${remainingBalance.toStringAsFixed(2)}',
-          suffixTextStyle: GoogleFonts.plusJakartaSans(
-              fontWeight: FontWeight.w500, color: AppPalette.blackClr),
-        ),
-        ConstantWidgets.hight20(context),
-        Divider(color: AppPalette.hintClr),
-        paymentSummaryTextWidget(
-          context: context,
-          prefixText: 'Remaining Balance',
-          prefixTextStyle: GoogleFonts.plusJakartaSans(
-              fontWeight: FontWeight.w500, color: AppPalette.greenClr),
-          suffixText: '₹ ${bookingAmount.toStringAsFixed(2)}',
-          suffixTextStyle: GoogleFonts.plusJakartaSans(
-              fontWeight: FontWeight.w500, color: AppPalette.blackClr),
-        ),
-      ],
-    );
-  }
-
-  
-
-class WalletPaymentBalanceCard extends StatelessWidget {
-  final double screenWidth;
-  final double screenHeight;
-
-  const WalletPaymentBalanceCard({
-    super.key,
-    required this.screenWidth,
-    required this.screenHeight,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: screenWidth * 0.35,
-      width: double.infinity,
-      color: AppPalette.scafoldClr,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-        child: Column(
-          children: [
-            ConstantWidgets.hight10(context),
-            BlocBuilder<FetchWalletBloc, FetchWalletState>(
-              builder: (context, state) {
-                if (state is FetchWalletLoading) {
-                  return walletBalanceWidget(
-                      iconColor: AppPalette.orengeClr,
-                      context: context,
-                      balance: "Loading...",
-                      balanceColor: AppPalette.blackClr);
-                } else if (state is FetchWalletEmpty ||
-                    state is FetchWalletFailure) {
-                  return walletBalanceWidget(
-                      iconColor: AppPalette.redClr,
-                      context: context,
-                      balance: "₹ 0.00",
-                      balanceColor: AppPalette.redClr);
-                } else if (state is FetchWalletLoaded) {
-                  final double balance = state.wallet.totalAmount;
-                  final isLowBalance = balance <= 500;
-                  return walletBalanceWidget(
-                      iconColor: isLowBalance
-                          ? AppPalette.redClr
-                          : AppPalette.orengeClr,
-                      context: context,
-                      balance: formatCurrency(balance),
-                      balanceColor: isLowBalance
-                          ? AppPalette.redClr
-                          : AppPalette.blackClr);
-                }
-                return walletBalanceWidget(
-                    iconColor: AppPalette.orengeClr,
-                    context: context,
-                    balance: '₹ 0.00',
-                    balanceColor: AppPalette.blackClr);
-              },
-            ),
-            ConstantWidgets.hight10(context),
-          ],
-        ),
-      ),
-    );
-  }
 }

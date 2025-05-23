@@ -12,7 +12,7 @@ import 'package:user_panel/core/themes/colors.dart';
 import 'package:user_panel/core/utils/image/app_images.dart';
 import '../../../../../core/utils/constant/constant.dart';
 import '../../../provider/bloc/fetching_bloc/fetch_booking_with_barber_bloc/fetch_booking_with_barber_bloc.dart';
-import '../../../widget/home_widget/wallet_screen_widget/wallet_transaction_card_widget.dart';
+import '../../../widget/home_widget/wallet_widget/wallet_transaction_card_widget.dart';
 
 class MyBookingScreen extends StatelessWidget {
   const MyBookingScreen({super.key});

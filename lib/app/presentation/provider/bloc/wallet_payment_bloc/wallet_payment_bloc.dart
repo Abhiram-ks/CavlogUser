@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
 import 'package:user_panel/app/data/datasources/barber_wallet_remote_datasources.dart';
@@ -10,6 +12,7 @@ import '../../../../../auth/data/datasources/auth_local_datasource.dart';
 import '../../../../../core/notification/local_notification_services.dart';
 import '../../../../data/models/slot_model.dart';
 import '../../../../data/repositories/wallet_payment_repo.dart';
+import '../../../../domain/usecases/data_listing_usecase.dart';
 part 'wallet_payment_event.dart';
 part 'wallet_payment_state.dart';
 
@@ -145,8 +148,9 @@ Future<BookingModel> prepareBookingModel({
   final String slotDate = event.selectedSlots.map((slotId) => slotId.docId).toList().first;
 
   final int totalDuration = event.selectedSlots.fold(0, (sum, slot) => sum + slot.duration.inMinutes);
-
+  final DateTime date = parseSlotDocIdToDate(slotDate);
   return BookingModel(
+    date: date,
     slotDate: slotDate,
     slotId: slotId,
     invoiceId: event.invoiceId,

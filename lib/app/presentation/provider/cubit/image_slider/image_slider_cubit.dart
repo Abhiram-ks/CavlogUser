@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
 
+
 class ImageSliderCubit extends Cubit<int> {
   final PageController pageController = PageController();
   final List<String> imageList;

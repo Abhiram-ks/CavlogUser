@@ -61,9 +61,10 @@ class BookingCancelBloc extends Bloc<BookingCancelEvent, BookingCancelState> {
               transactionStatus: 'credited');
 
           if (response) {
+
             final bool result = await chengeSlotStatusRepository.chengeStatus(barberId: booking.barberId, docId: booking.slotDate, slotId: booking.slotId);
 
-            if (!result) {
+            if (!result) { 
               emit(BookingCancelFailure('Booking Cancel failure Status issue'));
               return;
             }

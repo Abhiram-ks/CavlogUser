@@ -26,9 +26,7 @@ class PostScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-            create: (context) => FetchPostWithBarberBloc(
-                PostService(FetchBarberRepositoryImpl()))),
+        BlocProvider(create: (context) => FetchPostWithBarberBloc(PostService(FetchBarberRepositoryImpl()))),
         BlocProvider(create: (_) => LikePostCubit()),
         BlocProvider(create: (_) => ShareCubit(ShareServicesImpl()))
       ],
@@ -96,9 +94,7 @@ class _PostScreenWidgetState extends State<PostScreenWidget> {
             color: AppPalette.buttonClr,
             backgroundColor: AppPalette.whiteClr,
             onRefresh: () async {
-              context
-                  .read<FetchPostWithBarberBloc>()
-                  .add(FetchPostWithBarberRequest());
+              context.read<FetchPostWithBarberBloc>().add(FetchPostWithBarberRequest());
             },
             child: ListView.separated(
               physics: const AlwaysScrollableScrollPhysics(),

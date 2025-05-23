@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:user_panel/app/data/datasources/booking_remote_datasources.dart';
+import 'package:user_panel/app/domain/usecases/data_listing_usecase.dart';
 import '../../../../../auth/data/datasources/auth_local_datasource.dart';
 import '../../../../../core/notification/local_notification_services.dart';
 import '../../../../data/datasources/barber_wallet_remote_datasources.dart';
@@ -52,7 +53,6 @@ class OnlinePaymentBloc extends Bloc<OnlinePaymentEvent, OnlinePaymentState> {
         return;
       }
       
-            // 1. Slot Availability Check
       final available = await slotCheckingRepository.slotCheking(
         barberId: event.barberId,
         selectedSlots: event.selectedSlots,
@@ -125,7 +125,8 @@ Future<BookingModel> prepareBookingModelOnline({
 
   final int totalDuration = event.selectedSlots
       .fold(0, (sum, slot) => sum + slot.duration.inMinutes);
-
+  final DateTime date = parseSlotDocIdToDate(slotDate);
+  
   return BookingModel(
     slotDate: slotDate,
     slotId: slotId,
@@ -141,6 +142,7 @@ Future<BookingModel> prepareBookingModelOnline({
     status: "Completed",
     otp: bookingOTP,
     transaction: 'debited',
-    serviceStatus: 'Pending'
+    serviceStatus: 'Pending',
+    date: date,
   );
 }

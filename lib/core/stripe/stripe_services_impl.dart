@@ -22,8 +22,7 @@ class StripeService implements CreatePaymentIntentUseCase {
       int convertedAmount = (amount * 100).toInt();
 
       final Dio dio = Dio();
-      final response = await dio.post(
-        'https://api.stripe.com/v1/payment_intents',
+      final response = await dio.post('https://api.stripe.com/v1/payment_intents',
         data: {
           'amount': convertedAmount.toString(),
           'currency': currency,

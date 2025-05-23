@@ -41,6 +41,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'app/presentation/provider/cubit/voice_search_cubit/voice_search_cubit.dart' show VoiceSearchCubit;
 import 'auth/presentation/provider/bloc/reset_password/reset_password_bloc.dart';
 
+
 void main() async {
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();

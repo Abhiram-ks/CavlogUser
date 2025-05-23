@@ -4,8 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:user_panel/app/presentation/widget/home_widget/nearbyshop_screen_widget/nearby_shop_distanceconverter.dart';
-
+import 'package:user_panel/app/presentation/widget/home_widget/nearbyshop_widget/nearby_shop_distanceconverter.dart' show getDistanceInMeters;
 import '../../../../../auth/presentation/provider/bloc/location_bloc/location_bloc.dart';
 import '../../../../../auth/presentation/widget/location_widget/location_formalt_converter_widget.dart';
 import '../../../../../core/themes/colors.dart';

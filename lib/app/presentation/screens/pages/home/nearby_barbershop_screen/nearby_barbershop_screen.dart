@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:user_panel/app/presentation/widget/home_widget/nearbyshop_screen_widget/nearby_shop_widget.dart' show NearbyBarberShopScreenWidget;
 import '../../../../../../auth/domain/usecases/get_location_usecase.dart';
 import '../../../../../../auth/presentation/provider/bloc/location_bloc/location_bloc.dart';
 import '../../../../../data/repositories/barbershop_repo.dart';
 import '../../../../../domain/repositories/barbershop_services_repo.dart';
 import '../../../../provider/bloc/nearby_barbers_bloc/nearby_barbers_bloc.dart';
 import '../../../../provider/cubit/distance_filtering_cubit/distance_filtering_cubit.dart';
+import '../../../../widget/home_widget/nearbyshop_widget/nearby_shop_widget.dart';
 
 
 class NearbyBarbershopScreen extends StatelessWidget {
