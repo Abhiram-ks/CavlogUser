@@ -5,7 +5,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   
   @override
   final Size preferredSize;
-
   final String? title;
   final Color? backgroundColor;
   final bool? isTitle;

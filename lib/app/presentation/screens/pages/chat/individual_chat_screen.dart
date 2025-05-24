@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,10 +12,12 @@ import 'package:user_panel/app/data/models/chat_model.dart';
 import 'package:user_panel/app/data/repositories/fetch_barber_repo.dart';
 import 'package:user_panel/app/data/repositories/image_picker_repo.dart';
 import 'package:user_panel/app/data/repositories/messagedelete_repo.dart';
+import 'package:user_panel/app/data/repositories/request_for_chatupdate_repo.dart';
 import 'package:user_panel/app/domain/usecases/image_picker_usecase.dart';
 import 'package:user_panel/app/presentation/provider/bloc/fetching_bloc/fetch_barber_bloc/fetch_barber_id_bloc.dart';
 import 'package:user_panel/app/presentation/provider/bloc/image_picker/imge_picker_bloc.dart';
 import 'package:user_panel/app/presentation/provider/bloc/send_message_bloc/send_message_bloc.dart';
+import 'package:user_panel/app/presentation/provider/cubit/status_chat_requst_bloc/status_chat_requst_cubit.dart';
 import 'package:user_panel/app/presentation/screens/pages/search/detail_screen/detail_screen.dart';
 import 'package:user_panel/app/presentation/widget/chat_widget/chat_indivitual_widget/handle_sendmessage_state.dart';
 import 'package:user_panel/auth/presentation/provider/cubit/button_progress_cubit/button_progress_cubit.dart';
@@ -56,9 +56,11 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => FetchBarberIdBloc(FetchBarberRepositoryImpl())),
         BlocProvider(
-          create: (_) => ImagePickerBloc( PickImageUseCase(ImagePickerRepositoryImpl(ImagePicker())),
+            create: (_) => FetchBarberIdBloc(FetchBarberRepositoryImpl())),
+        BlocProvider(
+          create: (_) => ImagePickerBloc(
+            PickImageUseCase(ImagePickerRepositoryImpl(ImagePicker())),
           ),
         ),
         BlocProvider(
@@ -67,6 +69,9 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
             cloudinaryService: CloudinaryService(),
           ),
         ),
+        BlocProvider(
+            create: (_) =>
+                StatusChatRequstDartCubit(RequestForChatupdateRepoImpl())),
       ],
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -89,8 +94,6 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
   }
 }
 
-
-
 class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String barberId;
   final double screenWidth;
@@ -106,11 +109,11 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<FetchBarberIdBloc>().add(FetchBarberDetailsAction( barberId));
+    context.read<FetchBarberIdBloc>().add(FetchBarberDetailsAction(barberId));
 
     return BlocBuilder<FetchBarberIdBloc, FetchBarberIdState>(
       builder: (context, state) {
-         if (state is FetchBarberDetailsSuccess) {
+        if (state is FetchBarberDetailsSuccess) {
           final barber = state.barberServices;
 
           return AppBar(
@@ -120,7 +123,11 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
             titleSpacing: 0,
             iconTheme: const IconThemeData(color: AppPalette.whiteClr),
             title: GestureDetector(
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => DetailBarberScreen(barberId: barberId))),
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          DetailBarberScreen(barberId: barberId))),
               child: Row(
                 children: [
                   ClipRRect(
@@ -140,7 +147,7 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          barber.ventureName ,
+                          barber.ventureName,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: screenWidth * 0.045,
@@ -151,78 +158,77 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                         'Online',
+                          barber.email,
                           style: TextStyle(
-                            color:AppPalette.greenClr ,
+                            color: AppPalette.greenClr,
                             fontSize: screenWidth * 0.035,
                           ),
                         ),
                       ],
                     ),
                   ),
-                    ConstantWidgets.width40(context),
+                  ConstantWidgets.width40(context),
                 ],
               ),
             ),
           );
-        } return  AppBar(
-            backgroundColor: AppPalette.blackClr,
-            automaticallyImplyLeading: true,
-            elevation: 0,
-            titleSpacing: 0,
-            iconTheme: const IconThemeData(color: AppPalette.whiteClr),
-            title: Shimmer.fromColors(
-          baseColor: Colors.grey[300] ?? AppPalette.greyClr,
-          highlightColor: AppPalette.whiteClr,
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: imageshow(
-                        imageUrl:'',
-                        imageAsset: AppImages.barberEmpty,
+        }
+        return AppBar(
+          backgroundColor: AppPalette.blackClr,
+          automaticallyImplyLeading: true,
+          elevation: 0,
+          titleSpacing: 0,
+          iconTheme: const IconThemeData(color: AppPalette.whiteClr),
+          title: Shimmer.fromColors(
+            baseColor: Colors.grey[300] ?? AppPalette.greyClr,
+            highlightColor: AppPalette.whiteClr,
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: imageshow(
+                      imageUrl: '',
+                      imageAsset: AppImages.barberEmpty,
+                    ),
+                  ),
+                ),
+                ConstantWidgets.width20(context),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Venture Name Loading...",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: screenWidth * 0.045,
+                          color: AppPalette.whiteClr,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ),
-                  ConstantWidgets.width20(context),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Venture Name Loading..." ,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: screenWidth * 0.045,
-                            color: AppPalette.whiteClr,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                      const SizedBox(height: 4),
+                      Text(
+                        'loading...',
+                        style: TextStyle(
+                          color: AppPalette.greenClr,
+                          fontSize: screenWidth * 0.035,
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                         'Online',
-                          style: TextStyle(
-                            color:AppPalette.greenClr ,
-                            fontSize: screenWidth * 0.035,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          );
+          ),
+        );
       },
     );
   }
 }
-
-
 
 class ChatWindowWidget extends StatefulWidget {
   final String userId;
@@ -247,8 +253,14 @@ class _ChatWindowWidgetState extends State<ChatWindowWidget> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final chatUpdateCubit = StatusChatRequstDartCubit(RequestForChatupdateRepoImpl());
+      chatUpdateCubit.updateChatStatus(
+        userId: widget.userId,
+        barberId: widget.barberId,
+      );
+    });
     _scrollController.addListener(_scrollListener);
-
   }
 
   void _scrollListener() {
@@ -268,19 +280,19 @@ class _ChatWindowWidgetState extends State<ChatWindowWidget> {
     }
   }
 
-Stream<List<ChatModel>> getMessagesStream() {
-  return FirebaseFirestore.instance
-      .collection('chat')
-      .where('userId', isEqualTo: widget.userId)
-      .where('barberId', isEqualTo: widget.barberId)
-      .orderBy('createdAt', descending: false)
-      .snapshots()
-      .map((snapshot) {
-        return snapshot.docs
-            .map((doc) => ChatModel.fromMap(doc.id, doc.data()))
-            .toList();
-      });
-}
+  Stream<List<ChatModel>> getMessagesStream() {
+    return FirebaseFirestore.instance
+        .collection('chat')
+        .where('userId', isEqualTo: widget.userId)
+        .where('barberId', isEqualTo: widget.barberId)
+        .orderBy('createdAt', descending: false)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => ChatModel.fromMap(doc.id, doc.data()))
+          .toList();
+    });
+  }
 
   @override
   void dispose() {
@@ -303,48 +315,51 @@ Stream<List<ChatModel>> getMessagesStream() {
                 });
               }
               if (snapshot.hasData && _scrollController.hasClients) {
-                 WidgetsBinding.instance.addPostFrameCallback((_) => scrollToBottom());
+                WidgetsBinding.instance
+                    .addPostFrameCallback((_) => scrollToBottom());
               }
-  
+
               if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: Text("Loading..."),
-              );
+                return Center(
+                  child: Text("Loading..."),
+                );
               }
 
               if (messages.isEmpty) {
-               return Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [ 
-                      ConstantWidgets.hight50(context),
-                      Center(
-                          child: Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.all(4),
-                        margin: EdgeInsets.symmetric(horizontal: 10),
-                          decoration: BoxDecoration(
-                            color: AppPalette.buttonClr.withAlpha((0.3 * 255).round()),
-                          borderRadius: BorderRadius.circular(12), 
-                          ),
-                        child: Text(
-                           '⚿ No conversations yet.Your chats are private and end-to-end encrypted. Only you and your barber can read them. Start a conversation now and enjoy seamless, secure messaging!',
-
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: AppPalette.blackClr),
-                        ),
-                      )),
-                    ],
-                  );
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ConstantWidgets.hight50(context),
+                    Center(
+                        child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(4),
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        color:
+                            AppPalette.buttonClr.withAlpha((0.3 * 255).round()),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '⚿ No conversations yet.Your chats are private and end-to-end encrypted. Only you and your barber can read them. Start a conversation now and enjoy seamless, secure messaging!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: AppPalette.blackClr),
+                      ),
+                    )),
+                  ],
+                );
               }
-              
+
               return ListView.builder(
                 controller: _scrollController,
                 itemCount: messages.length,
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 itemBuilder: (context, index) {
                   final message = messages[index];
-                  final bool showDateLabel = index == 0 ||  messages[index - 1].createdAt.day != message.createdAt.day;
+                  final bool showDateLabel = index == 0 ||
+                      messages[index - 1].createdAt.day !=
+                          message.createdAt.day;
 
                   return Column(
                     children: [
@@ -353,14 +368,17 @@ Stream<List<ChatModel>> getMessagesStream() {
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Center(
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 2),
                               decoration: BoxDecoration(
                                 color: AppPalette.hintClr,
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
-                                DateFormat('dd MMM yyyy').format(message.createdAt),
-                                style:const TextStyle(color: AppPalette.whiteClr),
+                                DateFormat('dd MMM yyyy')
+                                    .format(message.createdAt),
+                                style:
+                                    const TextStyle(color: AppPalette.whiteClr),
                               ),
                             ),
                           ),
@@ -370,8 +388,9 @@ Stream<List<ChatModel>> getMessagesStream() {
                         time: DateFormat('hh:mm a').format(message.createdAt),
                         isCurrentUser: message.senderId == widget.userId,
                         docId: message.docId ?? '',
-                        delete:  message.delete == true,
-                        softDelete:message.senderId == widget.userId && message.softDelete == true,
+                        delete: message.delete == true,
+                        softDelete: message.senderId == widget.userId &&
+                            message.softDelete == true,
                       ),
                     ],
                   );
@@ -417,8 +436,6 @@ Stream<List<ChatModel>> getMessagesStream() {
     );
   }
 }
-
-
 
 class MessageBubleWidget extends StatelessWidget {
   final String message;
@@ -479,7 +496,8 @@ class MessageBubleWidget extends StatelessWidget {
                     isDestructiveAction: true,
                     child: const Text(
                       'Delete for Everyone',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
                   ),
                   CupertinoActionSheetAction(
