@@ -6,10 +6,9 @@ import 'package:user_panel/app/presentation/widget/search_widget/rating_review_w
 import '../../../../../core/common/custom_actionbutton_widget.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constant/constant.dart';
-import '../../../../data/models/barber_model.dart';
 import '../../../provider/bloc/rating_review_bloc/rating_review_bloc.dart';
 
-void showReviewBottomSheet(BuildContext context, BarberModel barber, double screenHeight, double screenWidth) {
+void showReviewBottomSheet(BuildContext context, String barber, double screenHeight, double screenWidth) {
     double rating = 5.0;
     TextEditingController reviewController = TextEditingController();
 
@@ -32,7 +31,6 @@ void showReviewBottomSheet(BuildContext context, BarberModel barber, double scre
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(barber.ventureName),
               Text( 'Help others by sharing your honest experience. Your review will be visible to the shop.',
                   style: TextStyle(color: AppPalette.hintClr)),
               ConstantWidgets.hight10(context),
@@ -91,7 +89,7 @@ void showReviewBottomSheet(BuildContext context, BarberModel barber, double scre
 
                     if (reviewText.isNotEmpty) {
                       context.read<RatingReviewBloc>().add(RatingReviewRequest(
-                          shopId: barber.uid,
+                          shopId: barber,
                           description: reviewText,
                           starCount: rating));
                     }

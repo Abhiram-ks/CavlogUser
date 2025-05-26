@@ -11,6 +11,7 @@ import '../../../../../data/repositories/fetch_barber_repo.dart';
 import '../../../../../data/repositories/fetch_wishlist_repo.dart';
 import '../../../../provider/cubit/fetch_wishlist_singlebarber_cubit/fetch_wishlist_singlebarber_cubit.dart';
 import '../../../../widget/search_widget/details_screen_widget/details_screen_builder_widget.dart';
+
 class DetailBarberScreen extends StatefulWidget {
   final String barberId;
   const DetailBarberScreen({
@@ -27,22 +28,30 @@ class _DetailBarberScreenState extends State<DetailBarberScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<FetchBarberIdBloc>().add(FetchBarberDetailsAction(widget.barberId));
-    context.read<FetchPostsBloc>().add(FetchPostRequest(barberId: widget.barberId));
-    context.read<FetchBarberDetailsBloc>() .add(FetchBarberServicesRequested(widget.barberId));
+    context
+        .read<FetchBarberIdBloc>()
+        .add(FetchBarberDetailsAction(widget.barberId));
+    context
+        .read<FetchPostsBloc>()
+        .add(FetchPostRequest(barberId: widget.barberId));
+    context
+        .read<FetchBarberDetailsBloc>()
+        .add(FetchBarberServicesRequested(widget.barberId));
   }
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (context) {
+          final cubit = FetchWishlistSinglebarberCubit(
+              FetchWishlistRepositoryImpl(FetchBarberRepositoryImpl()));
+          cubit.listenToBarberLikedStatus(widget.barberId);
+          return cubit;
+        }),
         BlocProvider(
-  create: (context) {
-    final cubit = FetchWishlistSinglebarberCubit(FetchWishlistRepositoryImpl(FetchBarberRepositoryImpl()));
-    cubit.listenToBarberLikedStatus(widget.barberId);
-    return cubit;
-  }),
-        BlocProvider(create: (context) => WishlistFunctionCubit(WishlistRemoteDatasourcesImpl())),
+            create: (context) =>
+                WishlistFunctionCubit(WishlistRemoteDatasourcesImpl())),
       ],
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -50,7 +59,8 @@ class _DetailBarberScreenState extends State<DetailBarberScreen> {
           double screenWidth = constraints.maxWidth;
 
           return Scaffold(
-              body: DetailScreenWidgetBuilder(screenHeight: screenHeight, screenWidth: screenWidth),
+              body: DetailScreenWidgetBuilder(
+                  screenHeight: screenHeight, screenWidth: screenWidth),
               floatingActionButton: Padding(
                 padding: EdgeInsets.only(left: screenWidth * 0.09),
                 child: ButtonComponents.actionButton(

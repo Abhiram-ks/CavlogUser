@@ -2,8 +2,8 @@
 
   import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:user_panel/app/domain/usecases/data_listing_usecase.dart';
 
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constant/constant.dart';
@@ -72,6 +72,8 @@ RefreshIndicator walletTransactionWidgetBuilder(BuildContext context, double scr
                           itemBuilder: (context, index) {
                             final booking = state.bookings[index];
                             final isDebited = booking.transaction.toLowerCase().contains('debited');
+                            final date = formatDate(booking.createdAt);
+                            final formattedDate = formatTimeRange(booking.createdAt);
                             final isOnline = booking.paymentMethod.toLowerCase().contains('online banking');
                             return TrasactionCardsWalletWidget(
                              ontap: () {
@@ -81,7 +83,7 @@ RefreshIndicator walletTransactionWidgetBuilder(BuildContext context, double scr
                                   ? '- ₹${booking.amountPaid.toStringAsFixed(2)}'
                                   : '+ ₹${booking.refund?.toStringAsFixed(2)}',
                               amountColor: isDebited ? AppPalette.redClr : AppPalette.greenClr,
-                              dateTime: DateFormat('dd/MM/yyyy').format(booking.createdAt),
+                              dateTime: '$date At $formattedDate',
                               description:'${isDebited ? 'Sent' : 'Refunded'}: ${booking.paymentMethod} transfer of ₹${booking.amountPaid.toStringAsFixed(2)}',
                               id: isOnline ? 'Id: ${booking.invoiceId}' : 'Paid via wallet - No id available',
                               method:'Method: ${booking.paymentMethod}',

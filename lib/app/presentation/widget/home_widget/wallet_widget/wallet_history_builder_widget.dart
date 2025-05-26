@@ -30,7 +30,7 @@ Container historyBuiderWidget(
                 ),
               ),
               Text(
-                'Date & Time: $dateTime',
+                'At: $dateTime',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontSize: screenWidth * 0.035),

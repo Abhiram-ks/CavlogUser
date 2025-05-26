@@ -1,9 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:user_panel/app/presentation/provider/bloc/logout_bloc/logout_bloc.dart';
+import 'package:user_panel/app/presentation/screens/settings/settings_subscreens/help_screen.dart';
 import 'package:user_panel/app/presentation/widget/settings_widget/logout_widget/logout_statehandle_widget.dart';
 import 'package:user_panel/core/routes/routes.dart';
+import '../../../../core/ai_integration/gemini_service.dart';
 import '../../../../core/themes/colors.dart';
 import '../../../../core/utils/constant/constant.dart';
 import '../../widget/profile_widget/profile_settings_widget.dart';
@@ -40,13 +44,15 @@ class SettingsScreen extends StatelessWidget {
                 screenHeight: screenHeight,
                 icon: CupertinoIcons.profile_circled,
                 title: 'Profile details',
-                onTap: () => Navigator.pushNamed(context, AppRoutes.account,arguments: false)),
+                onTap: () => Navigator.pushNamed(context, AppRoutes.account,
+                    arguments: false)),
             settingsWidget(
                 context: context,
                 screenHeight: screenHeight,
                 icon: CupertinoIcons.square_pencil,
                 title: 'Edit Profile',
-                onTap: () => Navigator.pushNamed(context, AppRoutes.account,arguments: true)),
+                onTap: () => Navigator.pushNamed(context, AppRoutes.account,
+                    arguments: true)),
             settingsWidget(
                 context: context,
                 screenHeight: screenHeight,
@@ -56,13 +62,13 @@ class SettingsScreen extends StatelessWidget {
                   Navigator.pushNamed(context, AppRoutes.resetPassword,
                       arguments: false);
                 }),
-          settingsWidget(
-           context: context,
-           screenHeight: screenHeight,
-           icon: Icons.book_online,
-           title: 'My Booking',
-           onTap: () {
-           Navigator.pushNamed(context, AppRoutes.myBooking);
+            settingsWidget(
+                context: context,
+                screenHeight: screenHeight,
+                icon: Icons.book_online,
+                title: 'My Booking',
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.myBooking);
                 }),
             Divider(
               color: AppPalette.hintClr,
@@ -77,7 +83,15 @@ class SettingsScreen extends StatelessWidget {
                 screenHeight: screenHeight,
                 icon: CupertinoIcons.question_circle,
                 title: 'Help',
-                onTap: () {}),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (_) =>  HelpScreen(),
+                      
+                    ),
+                  );
+                }),
             settingsWidget(
                 context: context,
                 screenHeight: screenHeight,

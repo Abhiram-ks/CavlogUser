@@ -79,16 +79,18 @@ class WalletHistoryWidget extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final entry = historyEntries[index];
                       final amount = formatCurrency(entry.value); 
-                      final date = entry.key;
+                      final val = entry.key;
                       entry.value.toStringAsFixed(2);
-                      final timestampHash =   date.hashCode.abs().toString().padLeft(8, '0');
+                      final timestampHash =   val.hashCode.abs().toString().padLeft(8, '0');
                       final transferId = 'TXN${index + 1}$timestampHash';
-
+                      final dateSpan = dateConverter(entry.key);
+                      final date = formatDate(dateSpan);
+                      final time = formatTimeRange(dateSpan);
                       return historyBuiderWidget(
                         context: context,
                         screenWidth: screenWidth,
                         amount: amount,
-                        dateTime: date,
+                        dateTime: '$date At $time',
                         transferId: transferId,
                       );
                     },

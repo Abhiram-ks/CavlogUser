@@ -2,12 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:user_panel/app/presentation/widget/search_widget/rating_review_widget/reviews_builder_bottomsheet.dart';
-import '../../../../../core/common/custom_actionbutton_widget.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constant/constant.dart';
 import '../../../../data/models/barber_model.dart' show BarberModel;
 import '../../profile_widget/profile_scrollable_section.dart';
-import 'reviews_upload_bottomsheet.dart';
 
 class DetailsReviewWidget extends StatelessWidget {
   final BarberModel barber;
@@ -68,16 +66,6 @@ class DetailsReviewWidget extends StatelessWidget {
                 direction: Axis.horizontal,
               ),
             ],
-          ),
-          ConstantWidgets.hight30(context),
-          ButtonComponents.actionButton(
-            screenWidth: screenWidth,
-            screenHeight: screenHight,
-            label: 'Rate & Review',
-            onTap: () {
-              showReviewBottomSheet(context, barber, screenHight, screenWidth);
-            },
-            buttonColor: AppPalette.greyClr,
           ),
           ConstantWidgets.hight10(context),
           Text( 'Ratings and reiews are varified and are from people who use the same type of device that you use ⓘ',

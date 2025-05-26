@@ -14,6 +14,7 @@ class FetchChatBarberlebelBloc extends Bloc<FetchChatBarberlebelEvent, FetchChat
   final FetchMessageAndBarberRepo _repository;
   FetchChatBarberlebelBloc(this._repository) : super(FetchChatBarberlebelInitial()) {
     on<FetchChatLebelBarberRequst>(_onFetchchatwithBarberRequst);
+    on<FetchChatLebelBarberSearch>(_onFetchchatwithBarberSerch);
   }
 
   Future<void> _onFetchchatwithBarberRequst(
@@ -48,4 +49,35 @@ class FetchChatBarberlebelBloc extends Bloc<FetchChatBarberlebelEvent, FetchChat
       emit(FetchChatBarberlebelFailure());
     }
   }
+
+  void _onFetchchatwithBarberSerch(
+    FetchChatLebelBarberSearch event,
+    Emitter<FetchChatBarberlebelState> emit,
+  )async{
+    emit(FetchChatBarberlebelLoading());
+     final credentials = await SecureStorageService.getUserCredentials();
+     final String? userId = credentials['userId'];
+      
+      if (userId == null || userId.isEmpty) {
+        emit(FetchChatBarberlebelFailure());
+        return;
+      }
+    await emit.forEach<List<BarberModel>>(
+      _repository.streamChat(userid: userId),
+      onData: (barbers){
+        final filteredBarbers = barbers.where((barber) => barber.ventureName.toLowerCase().contains(event.searchController.toLowerCase())).toList();
+
+        if (filteredBarbers.isEmpty) {
+           return FetchChatBarberlebelEmpty();
+        }else {
+           return FetchChatBarberlebelSuccess(filteredBarbers);
+        }
+      },
+       onError: (error, stackTrace) {
+        return FetchChatBarberlebelFailure();
+      },
+    );
+
+  }
+
 }

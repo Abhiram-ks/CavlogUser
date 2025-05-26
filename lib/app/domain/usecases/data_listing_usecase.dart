@@ -90,10 +90,14 @@ String formatCurrency(double amount) {
 
 
 String formatDate(DateTime dateTime) {
-  final dateFormat = DateFormat('dd-MMM-yyyy');
+  final dateFormat = DateFormat('dd MMM yyyy');
   return dateFormat.format(dateTime);
 }
 
+DateTime dateConverter(String dateString) {
+  final DateFormat formatter = DateFormat("dd/MM/yyyy - HH:mm");
+  return formatter.parse(dateString);
+}
 
 String formatDateToSlotDocId(DateTime date) {
   final DateFormat formatter = DateFormat('dd-MM-yyyy');

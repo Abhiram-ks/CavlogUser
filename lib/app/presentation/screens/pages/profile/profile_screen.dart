@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:user_panel/app/presentation/screens/settings/settings_subscreens/help_screen.dart';
 import 'package:user_panel/app/presentation/widget/profile_widget/profile_scrollview_widget.dart';
 import 'package:user_panel/auth/data/models/user_model.dart';
 import 'package:user_panel/core/themes/colors.dart';
@@ -39,7 +40,26 @@ class ProfileScreen extends StatelessWidget {
                       }
                       return  profilepageloading(screenHeight, screenWidth);
                     },
-                  ))),
+                  ),
+                  
+                  floatingActionButton: FloatingActionButton(
+                onPressed: () {
+                   Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>  HelpScreen(),
+                      
+                    ),
+                  );
+                },
+                backgroundColor: AppPalette.orengeClr,
+                child: const Icon(
+                  Icons.smart_toy,
+                  color: AppPalette.whiteClr,
+                ),
+              ),
+                  )
+                  ),
         ),
       );
     });

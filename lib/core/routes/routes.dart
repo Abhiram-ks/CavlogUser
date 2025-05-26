@@ -16,6 +16,8 @@ import 'package:user_panel/auth/presentation/screen/splash_screen/splash_screen.
 import 'package:user_panel/core/common/custom_lottie_widget.dart';
 import 'package:user_panel/core/utils/image/app_images.dart';
 
+import '../../app/presentation/screens/settings/settings_subscreens/help_screen.dart';
+
 class AppRoutes {
   static const String splash = '/';
   static const String login = '/login_screen';
@@ -30,6 +32,7 @@ class AppRoutes {
   static const String wallet = '/wallet_sreen';
   static const String myBooking = '/my_booking_screen';
   static const String wishList = '/wishlist_screen';
+  static const String needHelp = '/help_screen';
 
   static Route<dynamic> generateRoute(RouteSettings settings){
     switch (settings.name) {
@@ -63,6 +66,8 @@ class AppRoutes {
           return CupertinoPageRoute(builder:(_) => MyBookingScreen());
       case wishList:
           return MaterialPageRoute(builder: (_) => WishlistScreen());
+      case needHelp:
+           return CupertinoPageRoute(builder: (_) => const HelpScreen());
       default: 
         return MaterialPageRoute(
           builder: (_) => Scaffold(

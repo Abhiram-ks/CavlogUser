@@ -4,7 +4,8 @@ import 'package:user_panel/app/data/repositories/fetch_barber_repo.dart';
 
 abstract class FetchWishlistRepository {
   Stream<List<BarberModel>> streamWishList({required String userId});
-  Stream<bool> isBarberLikedStream({required String userId, required String barberId});
+  Stream<bool> isBarberLikedStream(
+      {required String userId, required String barberId});
 }
 
 class FetchWishlistRepositoryImpl implements FetchWishlistRepository {
@@ -20,21 +21,29 @@ class FetchWishlistRepositoryImpl implements FetchWishlistRepository {
         .where('userId', isEqualTo: userId)
         .snapshots()
         .asyncMap((snapshot) async {
-      final shopIds = snapshot.docs.map((doc) => doc['shopId'] as String).toList();
-      final barberStreams = shopIds.map((id) => _barberRepository.streamBarber(id).first);
+      final shopIds = snapshot.docs
+          .map((doc) => doc['shopId'] as String?)
+          .where((id) => id != null && id.trim().isNotEmpty)
+          .cast<String>()
+          .toList();
+
+      if (shopIds.isEmpty) return [];
+
+      final barberStreams =  shopIds.map((id) => _barberRepository.streamBarber(id).first);
       final barbers = await Future.wait(barberStreams);
       return barbers;
     });
   }
 
   @override
-  Stream<bool> isBarberLikedStream({required String userId, required String barberId}) {
+  Stream<bool> isBarberLikedStream(
+      {required String userId, required String barberId}) {
     final docId = '${userId}_$barberId';
     return _firestore
-     .collection('wishlists')
-     .doc(docId)
-     .snapshots()
-     .map((snapshot) => snapshot.exists)
-     .distinct(); 
+        .collection('wishlists')
+        .doc(docId)
+        .snapshots()
+        .map((snapshot) => snapshot.exists)
+        .distinct();
   }
 }

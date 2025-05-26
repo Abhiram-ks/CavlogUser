@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:user_panel/app/data/repositories/fetch_barber_repo.dart';
 import 'package:user_panel/app/data/repositories/fetch_barber_details_repo.dart';
 import 'package:user_panel/app/data/repositories/fetch_barber_post.dart';
@@ -16,6 +17,7 @@ import 'package:user_panel/app/presentation/provider/bloc/logout_bloc/logout_blo
 import 'package:user_panel/app/presentation/provider/bloc/rating_review_bloc/rating_review_bloc.dart';
 import 'package:user_panel/app/presentation/provider/bloc/updateprofile_bloc/update_profile_bloc.dart';
 import 'package:user_panel/app/presentation/provider/cubit/buttom_nav_cubit/buttom_nav_cubit.dart';
+import 'package:user_panel/app/presentation/screens/settings/settings_subscreens/help_screen.dart';
 import 'package:user_panel/auth/data/repositories/authlogin_impl_repo.dart';
 import 'package:user_panel/auth/data/repositories/reset_password_repo.dart';
 import 'package:user_panel/auth/domain/usecases/get_location_usecase.dart';
@@ -29,6 +31,7 @@ import 'package:user_panel/auth/presentation/provider/cubit/button_progress_cubi
 import 'package:user_panel/auth/presentation/provider/cubit/checkbox_cubit/checkbox_cubit.dart';
 import 'package:user_panel/auth/presentation/provider/cubit/icon_cubit/icon_cubit.dart';
 import 'package:user_panel/auth/presentation/provider/cubit/timer_cubit/timer_cubit.dart';
+import 'package:user_panel/core/ai_integration/gemini_config.dart';
 import 'package:user_panel/core/cloudinary/cloudinary_config.dart';
 import 'package:user_panel/core/cloudinary/cloudinary_service.dart';
 import 'package:user_panel/core/notification/local_notification_services.dart';
@@ -49,6 +52,7 @@ void main() async {
   await LocalNotificationServices.init();
   CloudinaryConfig.initialize();
   StripeConfig.initialize();
+   GeminiConfig.initialize();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -87,7 +91,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => FetchBarberDetailsBloc(FetchBarberDetailsRepositoryImpl())),
         BlocProvider(create: (context) => FetchBarberIdBloc( FetchBarberRepositoryImpl())),
         BlocProvider(create: (context) => RatingReviewBloc(ReviewUploadRepositoryImpl())),
-        BlocProvider(create: (context) => FetchPostsBloc(FetchBarberPostRepositoryImpl()))
+        BlocProvider(create: (context) => FetchPostsBloc(FetchBarberPostRepositoryImpl())),
+        
+        BlocProvider(create: (_) => GeminiChatBloc(Gemini.instance)),
       ],
     child: MaterialApp(
      title: 'Cavlog',
