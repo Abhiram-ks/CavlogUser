@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:user_panel/app/presentation/provider/bloc/send_message_bloc/send_message_bloc.dart';
+import 'package:user_panel/app/presentation/provider/cubit/status_chat_requst_bloc/status_chat_requst_cubit.dart';
 import 'package:user_panel/app/presentation/widget/chat_widget/chat_indivitual_widget/chat_custombuble_widget.dart';
 import 'package:user_panel/app/presentation/widget/chat_widget/chat_indivitual_widget/chat_image_building_widget.dart';
 import 'package:user_panel/app/presentation/widget/chat_widget/chat_indivitual_widget/chat_sendmessage_textfiled.dart';
@@ -35,7 +36,7 @@ class _ChatWindowWidgetState extends State<ChatWindowWidget> {
   @override
   void initState() {
     super.initState();
- 
+      context.read<StatusChatRequstDartCubit>().updateChatStatus(userId: widget.userId, barberId: widget.barberId);
     _scrollController.addListener(_scrollListener);
   }
 

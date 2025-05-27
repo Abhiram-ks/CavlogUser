@@ -1,4 +1,5 @@
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -51,7 +52,7 @@ class ChatWindowTextFiled extends StatelessWidget {
                     },
                   ) : IconButton(onPressed: (){
                     CustomeSnackBar.show(context: context, title: "Relax. Your assistant is on it!", description: "My Assistant: Don’t worry — I’m right here if you need anything.", titleClr: AppPalette.blackClr);
-                  }, icon: Icon(Icons.smart_toy)),
+                  }, icon: Icon(CupertinoIcons.cloud_upload_fill)),
                 ),
                 textInputAction: TextInputAction.send,
               ),

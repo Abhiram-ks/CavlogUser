@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
+import 'package:user_panel/app/data/datasources/send_comment_remote_datasource.dart';
 import 'package:user_panel/app/data/repositories/fetch_barber_repo.dart';
 import 'package:user_panel/app/data/repositories/fetch_barber_details_repo.dart';
 import 'package:user_panel/app/data/repositories/fetch_barber_post.dart';
@@ -13,11 +14,12 @@ import 'package:user_panel/app/presentation/provider/bloc/fetching_bloc/fetch_ba
 import 'package:user_panel/app/presentation/provider/bloc/fetching_bloc/fetch_barber_details_bloc/fetch_barber_details_bloc.dart';
 import 'package:user_panel/app/presentation/provider/bloc/fetching_bloc/fetch_posts_bloc/fetch_posts_bloc.dart';
 import 'package:user_panel/app/presentation/provider/bloc/fetching_bloc/fetch_user_bloc/fetch_user_bloc.dart';
+import 'package:user_panel/app/presentation/provider/bloc/genini_chat_bloc/genini_chat_bloc.dart';
 import 'package:user_panel/app/presentation/provider/bloc/logout_bloc/logout_bloc.dart';
 import 'package:user_panel/app/presentation/provider/bloc/rating_review_bloc/rating_review_bloc.dart';
+import 'package:user_panel/app/presentation/provider/bloc/send_comment_bloc/send_comment_bloc.dart';
 import 'package:user_panel/app/presentation/provider/bloc/updateprofile_bloc/update_profile_bloc.dart';
 import 'package:user_panel/app/presentation/provider/cubit/buttom_nav_cubit/buttom_nav_cubit.dart';
-import 'package:user_panel/app/presentation/screens/settings/settings_subscreens/help_screen.dart';
 import 'package:user_panel/auth/data/repositories/authlogin_impl_repo.dart';
 import 'package:user_panel/auth/data/repositories/reset_password_repo.dart';
 import 'package:user_panel/auth/domain/usecases/get_location_usecase.dart';
@@ -92,6 +94,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => FetchBarberIdBloc( FetchBarberRepositoryImpl())),
         BlocProvider(create: (context) => RatingReviewBloc(ReviewUploadRepositoryImpl())),
         BlocProvider(create: (context) => FetchPostsBloc(FetchBarberPostRepositoryImpl())),
+        BlocProvider(create: (context)  => SendCommentBloc(SendCommentRemoteDatasourceImpl()),),
         
         BlocProvider(create: (_) => GeminiChatBloc(Gemini.instance)),
       ],

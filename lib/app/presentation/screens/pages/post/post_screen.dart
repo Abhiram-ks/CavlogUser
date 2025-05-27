@@ -1,10 +1,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:user_panel/app/data/datasources/send_comment_remote_datasource.dart';
 import 'package:user_panel/app/data/repositories/fetch_barber_repo.dart';
 import 'package:user_panel/app/data/repositories/fetch_post_with_barber_mode.dart';
 import 'package:user_panel/app/domain/repositories/share_function_services.dart';
 import 'package:user_panel/app/presentation/provider/bloc/fetching_bloc/fetch_post_with_barber_bloc/fetch_post_with_barber_bloc.dart';
+import 'package:user_panel/app/presentation/provider/bloc/send_comment_bloc/send_comment_bloc.dart';
 import 'package:user_panel/app/presentation/provider/cubit/share_post_cubit/share_post_cubit.dart';
 import 'package:user_panel/core/common/custom_appbar_widget.dart';
 import 'package:user_panel/core/themes/colors.dart';
@@ -18,11 +20,10 @@ class PostScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-            create: (context) => FetchPostWithBarberBloc(
+        BlocProvider(    create: (context) => FetchPostWithBarberBloc(
                 PostService(FetchBarberRepositoryImpl()))),
         BlocProvider(create: (_) => LikePostCubit()),
-        BlocProvider(create: (_) => ShareCubit(ShareServicesImpl()))
+        BlocProvider(create: (_) => ShareCubit(ShareServicesImpl())),
       ],
       child: LayoutBuilder(
         builder: (context, constraints) {

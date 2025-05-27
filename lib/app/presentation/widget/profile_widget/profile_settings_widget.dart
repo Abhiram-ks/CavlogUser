@@ -23,6 +23,7 @@ ClipRRect settingsWidget({required double screenHeight,required BuildContext con
                       Icon(icon, color:AppPalette.blackClr),
                       ConstantWidgets.width40(context),
                       Expanded(child: Text(title,style: TextStyle(color:AppPalette.blackClr,fontSize: 17), maxLines: 1, overflow:TextOverflow.ellipsis,)),
+                      Icon(Icons.arrow_forward_ios_rounded, color: AppPalette.greyClr, size: 17),
                       
                     ],
                   ),

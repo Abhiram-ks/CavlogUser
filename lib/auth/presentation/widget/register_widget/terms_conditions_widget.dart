@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:user_panel/app/presentation/screens/settings/settings_screen.dart';
 
 import '../../../../core/themes/colors.dart';
 import '../../provider/cubit/checkbox_cubit/checkbox_cubit.dart';
@@ -43,7 +44,9 @@ class TermsAndConditionsWidget extends StatelessWidget {
                 style: TextStyle(
                   color: AppPalette.blueClr,
                 ),
-                recognizer: TapGestureRecognizer()..onTap = () {},
+                recognizer: TapGestureRecognizer()..onTap = () {
+                  termsAndConditionsUrl();
+                },
               ),
             ],
           ),

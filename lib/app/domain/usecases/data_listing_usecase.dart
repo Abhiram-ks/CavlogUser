@@ -1,4 +1,5 @@
 
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../data/models/date_model.dart';
 
@@ -108,4 +109,14 @@ String formatDateToSlotDocId(DateTime date) {
 DateTime parseSlotDocIdToDate(String formattedDate) {
   final DateFormat formatter = DateFormat('dd-MM-yyyy');
   return formatter.parse(formattedDate);
+}
+
+
+// Converts "dd-MM-yyyy" string to "dd/MM/yyyy - HH:mm" format
+/// This is useful for displaying the date in a more readable format and for open ai conversation
+String formatTimeOfDay(TimeOfDay time) {
+  final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
+  final minute = time.minute.toString().padLeft(2, '0');
+  final period = time.period == DayPeriod.am ? 'AM' : 'PM';
+  return '$hour:$minute $period';
 }

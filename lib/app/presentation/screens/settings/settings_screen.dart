@@ -1,15 +1,14 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:user_panel/app/presentation/provider/bloc/logout_bloc/logout_bloc.dart';
 import 'package:user_panel/app/presentation/screens/settings/settings_subscreens/help_screen.dart';
 import 'package:user_panel/app/presentation/widget/settings_widget/logout_widget/logout_statehandle_widget.dart';
 import 'package:user_panel/core/routes/routes.dart';
-import '../../../../core/ai_integration/gemini_service.dart';
 import '../../../../core/themes/colors.dart';
 import '../../../../core/utils/constant/constant.dart';
+import '../../../domain/usecases/fedback_usecase.dart';
 import '../../widget/profile_widget/profile_settings_widget.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -97,7 +96,9 @@ class SettingsScreen extends StatelessWidget {
                 screenHeight: screenHeight,
                 icon: CupertinoIcons.bubble_left,
                 title: 'Feedback',
-                onTap: () {}),
+                onTap: () {
+                 sendFeedback();
+                }),
             settingsWidget(
                 context: context,
                 screenHeight: screenHeight,
@@ -117,25 +118,33 @@ class SettingsScreen extends StatelessWidget {
                 screenHeight: screenHeight,
                 icon: CupertinoIcons.doc,
                 title: 'Terms & Conditions',
-                onTap: () {}),
+                onTap: () {
+                termsAndConditionsUrl();
+                }),
             settingsWidget(
                 context: context,
                 screenHeight: screenHeight,
                 icon: CupertinoIcons.shield,
                 title: 'Privacy Policy',
-                onTap: () {}),
+                onTap: () {
+                   privacyPolicyUrl();
+                }),
             settingsWidget(
                 context: context,
                 screenHeight: screenHeight,
                 icon: Icons.compare_arrows,
                 title: 'Cookies Policy',
-                onTap: () {}),
-            settingsWidget(
+                onTap: () {
+                  cookiesPolicyUrl();
+                }),
+                settingsWidget(
                 context: context,
                 screenHeight: screenHeight,
-                icon: CupertinoIcons.info,
-                title: 'About',
-                onTap: () {}),
+                icon: Icons.rotate_left_rounded,
+                title: 'Service & Refund Policy',
+                onTap: () {
+                  refundPolicy();
+                }),
             Divider(
               color: AppPalette.hintClr,
             ),
@@ -167,3 +176,43 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 }
+
+
+Future<void> privacyPolicyUrl() async {
+  final Uri termsUrl = Uri.parse('https://www.freeprivacypolicy.com/live/c8b15acc-bf43-4cd7-99e1-ab61baf302b6');
+  if (await canLaunchUrl(termsUrl)) {
+    await launchUrl(termsUrl, mode: LaunchMode.externalApplication);
+  } else {
+    throw 'Could not launch $termsUrl';
+  }
+}
+
+Future<void> termsAndConditionsUrl() async {
+  final Uri termsUrl = Uri.parse('https://www.freeprivacypolicy.com/live/72716f57-9a59-4148-988f-1f3028688650');
+  if (await canLaunchUrl(termsUrl)) {
+    await launchUrl(termsUrl, mode: LaunchMode.externalApplication);
+  } else {
+    throw 'Could not launch $termsUrl';
+  }
+}
+
+Future<void> refundPolicy() async {
+  final Uri termsUrl = Uri.parse('https://www.freeprivacypolicy.com/live/04cb3257-774f-4004-8946-0ed8ba6266f9');
+  if (await canLaunchUrl(termsUrl)) {
+    await launchUrl(termsUrl, mode: LaunchMode.externalApplication);
+  } else {
+    throw 'Could not launch $termsUrl';
+  }
+}
+
+
+
+Future<void> cookiesPolicyUrl() async {
+  final Uri termsUrl = Uri.parse('https://www.freeprivacypolicy.com/live/fb8cd1d2-f768-403e-905a-78ca19ef00bd');
+  if (await canLaunchUrl(termsUrl)) {
+    await launchUrl(termsUrl, mode: LaunchMode.externalApplication);
+  } else {
+    throw 'Could not launch $termsUrl';
+  }
+}
+

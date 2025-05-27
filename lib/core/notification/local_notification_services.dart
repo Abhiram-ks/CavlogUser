@@ -1,12 +1,18 @@
-//user local notification
+
 import 'dart:io';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/foundation.dart'; 
+import 'dart:io' show Platform;
 
 class LocalNotificationServices {
   static final _plugin = FlutterLocalNotificationsPlugin();
 
   static Future<void> init() async {
+    if (kIsWeb) {
+      return;
+    }
+
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
     const ios = DarwinInitializationSettings(
       requestAlertPermission: true,
@@ -18,32 +24,35 @@ class LocalNotificationServices {
     await _plugin.initialize(settings);
 
     if (Platform.isIOS) {
-      await _plugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
+      await _plugin
+          .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
           ?.requestPermissions(alert: true, badge: true, sound: true);
     }
 
-
-      if (Platform.isAndroid) {
-        await _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestNotificationsPermission();
-      }
+    if (Platform.isAndroid) {
+      await _plugin
+          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+          ?.requestNotificationsPermission();
+    }
   }
 
   static Future<void> showNotification({
     required String title,
     required String body,
-    required String payload 
-  }) async { 
+    required String payload,
+  }) async {
+    if (kIsWeb) return; 
+
     const androidDetails = AndroidNotificationDetails(
-      'default_channel_id', 
+      'default_channel_id',
       'Default Channel',
       importance: Importance.max,
-      priority: Priority.high
+      priority: Priority.high,
     );
-    
+
     const iosDetails = DarwinNotificationDetails();
     final details = NotificationDetails(android: androidDetails, iOS: iosDetails);
 
-    await _plugin.show(0, title, body, details,payload: payload );
+    await _plugin.show(0, title, body, details, payload: payload);
   }
 }

@@ -70,27 +70,27 @@ class BottomNavigationControllers extends StatelessWidget {
                   BottomNavigationBarItem(
                     icon: Icon(Icons.home_outlined),
                     label: 'Home',
-                    activeIcon: Icon(Icons.home)
+                    activeIcon: Icon(Icons.home,color: AppPalette.buttonClr,)
                   ),
                   BottomNavigationBarItem(
                     icon:  Icon( CupertinoIcons.search),
                     label: 'Search',
-                    activeIcon: Icon(CupertinoIcons.search,),
+                    activeIcon: Icon(CupertinoIcons.search,color: AppPalette.buttonClr),
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(Icons.space_dashboard_outlined),
                     label: 'Post',
-                    activeIcon: Icon(Icons.space_dashboard)
+                    activeIcon: Icon(Icons.space_dashboard,color: AppPalette.buttonClr)
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(CupertinoIcons.chat_bubble),
                     label: 'Chats',
-                    activeIcon: Icon(CupertinoIcons.chat_bubble_fill)
+                    activeIcon: Icon(CupertinoIcons.chat_bubble_fill,color: AppPalette.buttonClr)
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(CupertinoIcons.person),
                     label: 'Account',
-                    activeIcon: Icon(CupertinoIcons.person_fill)
+                    activeIcon: Icon(CupertinoIcons.person_fill,color: AppPalette.buttonClr)
                   ),
                 ]),
             );

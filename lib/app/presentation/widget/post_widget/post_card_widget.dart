@@ -22,6 +22,7 @@ class PostScreenMainWidget extends StatelessWidget {
   final VoidCallback likesOnTap;
   final VoidCallback shareOnTap;
   final VoidCallback chatOnTap;
+  final VoidCallback commentOnTap;
   final Color favoriteColor;
   final IconData favoriteIcon;
   final String dateAndTime;
@@ -44,6 +45,7 @@ class PostScreenMainWidget extends StatelessWidget {
     required this.favoriteColor,
     required this.favoriteIcon,
     required this.dateAndTime,
+    required this.commentOnTap,
   });
 
   @override
@@ -146,13 +148,21 @@ class PostScreenMainWidget extends StatelessWidget {
               ),
               onPressed: shareOnTap,
             ),
+            
             IconButton(
+              icon: Icon(
+                Icons.insert_comment_rounded,
+              ),
+              onPressed: commentOnTap,
+            ),
+             IconButton(
               icon: Icon(
                 CupertinoIcons.chat_bubble_fill,
                 color: Colors.blueGrey,
               ),
               onPressed: chatOnTap,
             ),
+
           ],
         ),
         Padding(

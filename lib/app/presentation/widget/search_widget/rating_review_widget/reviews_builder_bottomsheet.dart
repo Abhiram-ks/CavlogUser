@@ -17,6 +17,7 @@ void showReviewDetisSheet(BuildContext context, double screenHeight,
     backgroundColor: AppPalette.scafoldClr,
     context: context,
     enableDrag: true,
+    useSafeArea: true,
     isScrollControlled: true,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 abstract class RequestForChatupdateRepository {
@@ -24,7 +26,7 @@ class RequestForChatupdateRepoImpl implements RequestForChatupdateRepository {
       if (querySnapshot.docs.isEmpty) return;
 
       final batch = _firestore.batch();
-
+      log('Updating ${querySnapshot.docs.length} chat documents for userId: $userId and barberId: $barberId');
       querySnapshot.docs
           .where((doc) => doc['isSee'] == false)
           .map((doc) => batch.update(doc.reference, {'isSee': true}))
