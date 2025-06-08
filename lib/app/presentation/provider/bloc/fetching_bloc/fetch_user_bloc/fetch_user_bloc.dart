@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:user_panel/app/data/repositories/fetch_userdata_repo.dart';
@@ -19,7 +18,6 @@ class FetchUserBloc extends Bloc<FetchUserEvent, FetchUserState> {
     try {
       final credentials = await SecureStorageService.getUserCredentials();
       final String? userId = credentials['userId'];
-      log('Fetching user id from secure storage: $userId');
 
       if (userId != null) {
         await emit.forEach<UserModel?>(
@@ -32,7 +30,6 @@ class FetchUserBloc extends Bloc<FetchUserEvent, FetchUserState> {
         emit(FetchUserInitial());
       }
     } catch (e) {
-      log('Fetching user error due to : $e');
       emit(FetchUserError('errorMessage: due to $e'));
     }
   }

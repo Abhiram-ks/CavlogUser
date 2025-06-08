@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +16,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
      try {
       await for (final user in _authRepository.login(event.email, event.password)){
         if(user != null){
-          log('message: done done done done ');
           bool response = await  RefreshHelper().refreshUser(event.context, user);
           if(response){
             emit(LoginSuccess());

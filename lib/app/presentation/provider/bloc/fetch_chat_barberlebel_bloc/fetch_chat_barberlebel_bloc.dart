@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
@@ -41,7 +40,6 @@ class FetchChatBarberlebelBloc extends Bloc<FetchChatBarberlebelEvent, FetchChat
           }
         },
            onError: (error, stackTrace) {
-          log('Stream error: $error\n$stackTrace');
           return FetchChatBarberlebelFailure();
         },
         );

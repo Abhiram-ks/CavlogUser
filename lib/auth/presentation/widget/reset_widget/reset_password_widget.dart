@@ -61,7 +61,7 @@ class _ResetPasswordWidgetState extends State<ResetPasswordWidget>
           ConstantWidgets.hight30(context),
           BlocListener<ResetPasswordBloc, ResetPasswordState>(
             listener: (context, state) {
-              handResetPasswordState(context, state);
+              handResetPasswordState(context, state,emailController);
             },
             child: ButtonComponents.actionButton(
                 screenHeight: widget.screenHeight,

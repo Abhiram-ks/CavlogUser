@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
@@ -28,7 +28,6 @@ class UpdateProfileBloc extends Bloc<UpdateProfileEvent, UpdateProfileState> {
   UpdateProfileBloc(this._cloudinaryService, this._updateUserProfileUseCase) : super(UpdateProfileInitial()) {
 
     on<UpdateProfileRequest>((event, emit) {
-      log('Image Updateing Url or path : ${event.image}');
       _userName = event.userName;
       _phoneNumber = event.phoneNumber;
       _address = event.address;
@@ -73,7 +72,6 @@ class UpdateProfileBloc extends Bloc<UpdateProfileEvent, UpdateProfileState> {
           emit(UpdateProfileFailure('Failed to update Profile.'));
         }
       } catch (e) {
-        log('Profile updation failed due to $e');
         emit(UpdateProfileFailure('Something went wrong: $e'));
       }
     });

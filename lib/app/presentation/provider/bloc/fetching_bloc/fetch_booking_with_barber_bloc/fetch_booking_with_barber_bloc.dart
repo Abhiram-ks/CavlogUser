@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
@@ -43,12 +42,10 @@ class FetchBookingWithBarberBloc extends Bloc<FetchBookingWithBarberEvent, Fetch
           }
         },
         onError: (error, stackTrace) {
-          log('Stream error: $error\n$stackTrace');
           return FetchBookingWithBarberFailure('Failed to fetch bookings. Please try again later.');
         },
       );
-    } catch (e, st) {
-      log('Exception during booking fetch: $e\n$st');
+    } catch (e) {
       emit(FetchBookingWithBarberFailure('An unexpected error occurred. Please try again later.'));
     }
   }
@@ -68,14 +65,12 @@ class FetchBookingWithBarberBloc extends Bloc<FetchBookingWithBarberEvent, Fetch
     }
 
          await emit.forEach<List<BookingWithBarberModel>>(
-       _repository.streamBookingsWithBarber(userId: userId),
+       _repository.streamBookingsWithBarberFilter(userId: userId,status: event.filtering),
        onData: (bookings) {
-        final filteredBooking = bookings.where((booking) => booking.booking.serviceStatus.toLowerCase().contains(event.filtering.toLowerCase())).toList();
-
-        if (filteredBooking.isEmpty) {
+        if (bookings.isEmpty) {
           return FetchBookingWithBarberEmpty();
         }else {
-          return FetchBookingWithBarberLoaded(combo: filteredBooking);
+          return FetchBookingWithBarberLoaded(combo: bookings);
         }
        },
         onError: (error, stackTrace) {

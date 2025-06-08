@@ -44,6 +44,7 @@ import 'package:user_panel/core/utils/permission/notification_permission.dart';
 import 'package:user_panel/firebase_options.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'app/presentation/provider/cubit/voice_search_cubit/voice_search_cubit.dart' show VoiceSearchCubit;
+import 'app/presentation/widget/chat_widget/chat_indivitual_widget/chat_sendmessage_textfiled.dart';
 import 'auth/presentation/provider/bloc/reset_password/reset_password_bloc.dart';
 
 
@@ -54,7 +55,7 @@ void main() async {
   await LocalNotificationServices.init();
   CloudinaryConfig.initialize();
   StripeConfig.initialize();
-   GeminiConfig.initialize();
+  GeminiConfig.initialize();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -88,14 +89,14 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => LogoutBloc(context.read<ButtomNavCubit>())),
         BlocProvider(create: (context) => FetchUserBloc(FetchUserRepositoryImpl())..add(FetchCurrentUserRequst())),
         BlocProvider(create: (context) => UpdateProfileBloc(CloudinaryService(), UpdateUserProfileUseCase())),
-       BlocProvider(create: (context) => FetchAllbarberBloc(FetchBarberRepositoryImpl())..add(FetchAllBarbersRequested())),
+        BlocProvider(create: (context) => FetchAllbarberBloc(FetchBarberRepositoryImpl())..add(FetchAllBarbersRequested())),
       
         BlocProvider(create: (context) => FetchBarberDetailsBloc(FetchBarberDetailsRepositoryImpl())),
         BlocProvider(create: (context) => FetchBarberIdBloc( FetchBarberRepositoryImpl())),
         BlocProvider(create: (context) => RatingReviewBloc(ReviewUploadRepositoryImpl())),
         BlocProvider(create: (context) => FetchPostsBloc(FetchBarberPostRepositoryImpl())),
         BlocProvider(create: (context)  => SendCommentBloc(SendCommentRemoteDatasourceImpl()),),
-        
+        BlocProvider(create: (_) => EmojiPickerCubit()),
         BlocProvider(create: (_) => GeminiChatBloc(Gemini.instance)),
       ],
     child: MaterialApp(

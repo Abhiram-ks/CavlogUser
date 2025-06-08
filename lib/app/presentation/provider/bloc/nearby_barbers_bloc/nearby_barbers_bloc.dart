@@ -1,8 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-
-import '../../../../domain/entitiles/barbersho_entity.dart';
-import '../../../../domain/repositories/barbershop_services_repo.dart';
+import 'package:user_panel/app/domain/entitiles/barbersho_entity.dart';
+import 'package:user_panel/app/domain/repositories/barbershop_services_repo.dart';
 
 part 'nearby_barbers_event.dart';
 part 'nearby_barbers_state.dart';

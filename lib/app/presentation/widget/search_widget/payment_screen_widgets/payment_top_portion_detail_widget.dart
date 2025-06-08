@@ -16,6 +16,7 @@ SizedBox paymentSectionBarberData(
     required String shopAddress,
     required double ratings,
     required double screenWidth,
+    Color? locationClr,
     required double screenHeight}) {
   return SizedBox(
     height: screenHeight * 0.12,
@@ -60,7 +61,7 @@ SizedBox paymentSectionBarberData(
                 shopAddress,
                 AppPalette.redClr,
                 maxline: 2,
-                textColor: AppPalette.hintClr,
+                textColor:locationClr ?? AppPalette.hintClr,
               ),
               ConstantWidgets.width40(context),
               RatingBarIndicator(

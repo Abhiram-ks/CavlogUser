@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:user_panel/app/presentation/provider/cubit/buttom_nav_cubit/buttom_nav_cubit.dart';
@@ -17,7 +16,6 @@ class LogoutBloc extends Bloc<LogoutEvent, LogoutState> {
       emit(LogoutLoading());
       try {
         final bool response = await RefreshHelper().logOut();
-        log('logout response: $response');
         if (response) {
           bottomNavCubit.selectItem(BottomNavItem.home);
           emit(LogoutSuccessState());

@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:user_panel/auth/data/datasources/auth_remote_datasource.dart';
@@ -93,9 +92,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
     on<RegisterSubmit>((event, emit)async {
       try {
-        log('Registraction message: $_fullName, $_phoneNumber, $_address, $_email, $_password');
         bool response = await AuthRemoteDataSource().signUpUser(userName: _fullName, phoneNumber: _phoneNumber, address: _address, email: _email, password: _password);
-        log('Working well $fullName  $email');
         if (response) {
           emit(RegisterSuccess());
         }else{

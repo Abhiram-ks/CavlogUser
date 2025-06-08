@@ -6,12 +6,13 @@ import 'package:user_panel/core/common/custom_snackbar_widget.dart';
 
 import '../../../../core/themes/colors.dart';
 
-void handResetPasswordState(BuildContext context, ResetPasswordState state){
+void handResetPasswordState(BuildContext context, ResetPasswordState state,TextEditingController emailController){
   final butttonCubit = context.read<ButtonProgressCubit>();
   if (state is ResetPasswordLoading) {
      butttonCubit.startLoading();
   } else if (state is ResetPasswordSuccess) {
     butttonCubit.stopLoading();
+    emailController.clear(); 
     CustomeSnackBar.show(
     context: context,
     title: "Success",
@@ -20,7 +21,28 @@ void handResetPasswordState(BuildContext context, ResetPasswordState state){
     );
   } else if (state is ResetPasswordFailure){
     butttonCubit.stopLoading();
-    CustomeSnackBar.show(context: context, title: "Password Reset Mail Failed",
-    description: "Oops! Something went wrong: ${state.errorMessage}", titleClr: AppPalette.redClr,);
+     showCupertinoDialog(
+    context: context,
+    builder: (_) => CupertinoAlertDialog(
+      title: Text('Forgot password?'),
+      content: Text('Something went wrong. Please try again.'),
+      actions: [
+        CupertinoDialogAction(
+          child: Text('Retry',style: TextStyle(color: AppPalette.redClr)),
+          onPressed: () {
+            Navigator.of(context).pop();
+            context.read<ResetPasswordBloc>().add(ResetPasswordRequestEvent(email: emailController.text.trim()));
+          },
+        ),
+        CupertinoDialogAction(
+          isDestructiveAction: true,
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text('Cancel',style: TextStyle(color: AppPalette.blackClr),),
+        ),
+      ],
+    ),
+  );
   }
 }

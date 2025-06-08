@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:user_panel/app/data/models/barber_model.dart';

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:user_panel/app/presentation/provider/bloc/fetching_bloc/fetch_specific_booking_bloc/fetch_specific_booking_bloc.dart';
+import 'package:user_panel/core/common/custom_appbar_widget.dart';
+import 'package:user_panel/core/utils/constant/constant.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../data/repositories/fetch_specific_booking_repo.dart'
     show FetchSpecificBookingRepositoryImpl;
@@ -27,27 +29,29 @@ class MyBookingDetailScreen extends StatelessWidget {
           double screenHeight = constraints.maxHeight;
           double screenWidth = constraints.maxWidth;
 
-          return Scaffold(
-            backgroundColor: AppPalette.whiteClr,
-            body: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: ColoredBox(
-                color: AppPalette.orengeClr,
-                child: SafeArea(
-                    child: Column(
-                  children: [
-                    PaymentTopPortion(
+          return ColoredBox(
+           color: AppPalette.hintClr,
+            child: SafeArea(
+              child: Scaffold(
+                appBar: CustomAppBar(),
+                body: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    children: [
+                  PaymentTopPortion(
+                    screenHeight: screenHeight,
+                    screenWidth: screenWidth,
+                    barberUId: barberId,
+                  ),
+                  ConstantWidgets.hight30(context),
+                  MyBookingDetailScreenWidget(
                       screenHeight: screenHeight,
                       screenWidth: screenWidth,
-                      barberUId: barberId,
-                    ),
-                    MyBookingDetailScreenWidget(
-                        screenHeight: screenHeight,
-                        screenWidth: screenWidth,
-                        userId: userId,
-                        bookingId: docId),
-                  ],
-                )),
+                      userId: userId,
+                      bookingId: docId),
+                                      ],
+                                    ),
+                ),
               ),
             ),
           );
@@ -56,5 +60,3 @@ class MyBookingDetailScreen extends StatelessWidget {
     );
   }
 }
-
-

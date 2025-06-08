@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:user_panel/app/presentation/provider/bloc/send_message_bloc/send_message_bloc.dart';
 import 'package:user_panel/app/presentation/provider/cubit/status_chat_requst_bloc/status_chat_requst_cubit.dart';
@@ -98,8 +99,17 @@ class _ChatWindowWidgetState extends State<ChatWindowWidget> {
 
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
-                  child: Text("Loading..."),
-                );
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SpinKitCircle(color: AppPalette.orengeClr),
+                  ConstantWidgets.hight10(context),
+                  Text('Just a moment...'),
+                  Text('Please wait while we process your request'),
+                ],
+              ),
+            );
               }
 
               if (messages.isEmpty) {

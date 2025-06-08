@@ -32,13 +32,27 @@ class ProfileScreen extends StatelessWidget {
                   body: BlocBuilder<FetchUserBloc, FetchUserState>(
                     buildWhen: (previous, current) => current is FetchUserLoaded,
                     builder: (context, state) {
-                      if (state is FetchUserLoading || state is FetchUserError) {
+                      if (state is FetchUserLoading) {
                         return profilepageloading(screenHeight, screenWidth);
                       }
                       else if (state is FetchUserLoaded){
                         return ProfileScrollviewWidget(screenHeight: screenHeight, screenWidth: screenWidth, user: state.user);
                       }
-                      return  profilepageloading(screenHeight, screenWidth);
+                                     return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(Icons.cloud_off_outlined,color: AppPalette.blackClr,size:  50,),
+              Text("Oop's Unable to complete the request."),
+              Text('Please try again later.'),
+              IconButton(onPressed: (){
+                context.read<FetchUserBloc>().add(FetchCurrentUserRequst());
+              }, 
+              icon: Icon(Icons.refresh_rounded))
+            ],
+          ),
+        );
                     },
                   ),
                   

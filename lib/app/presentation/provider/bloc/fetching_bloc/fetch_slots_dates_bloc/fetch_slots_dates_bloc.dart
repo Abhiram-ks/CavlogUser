@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import '../../../../../data/models/date_model.dart';
@@ -20,14 +18,11 @@ class FetchSlotsDatesBloc extends Bloc<FetchSlotsDatesEvent, FetchSlotsDatesStat
   Future<void> _onFetchSlotsDatesRequest(
    FetchSlotsDateRequest event, Emitter<FetchSlotsDatesState> emit) async {
    emit(FetchSlotsDateLoading());
-   log('the date fetching was working');
-   
    try {
      await _fetchSlotsRepository.streamDates(event.barberId).forEach((dates) {
        emit(FetchSlotsDatesSuccess(dates));
      });
    } catch (e) {
-     log('Error in _onFetchSlotsDatesRequest: $e');
      emit(FetchSlotsDateFailure('An error occurred'));
    }
  }

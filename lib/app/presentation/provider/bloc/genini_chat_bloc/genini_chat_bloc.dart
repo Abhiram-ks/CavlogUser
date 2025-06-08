@@ -19,8 +19,8 @@ class GeminiChatBloc extends Bloc<GeminiChatEvent, GeminiChatState> {
       try {
         StringBuffer buffer = StringBuffer();
 
-        // ignore: deprecated_member_use
         await for (final content
+            // ignore: deprecated_member_use
             in gemini.streamGenerateContent(event.prompt)) {
           if (content.output != null) {
             buffer.write(content.output);

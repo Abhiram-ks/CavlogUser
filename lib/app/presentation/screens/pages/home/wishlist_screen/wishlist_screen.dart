@@ -36,11 +36,9 @@ class WishlistScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("My Top Picks", style: GoogleFonts.plusJakartaSans(
-                                fontSize: 28, fontWeight: FontWeight.bold)),
+                        Text("My Top Picks", style: GoogleFonts.plusJakartaSans( fontSize: 28, fontWeight: FontWeight.bold)),
                         ConstantWidgets.hight10(context),
-                        Text( 'Keep track of your favorite barbershops — browse your top picks, revisit saved spots, and book again with ease.',
-                        ),
+                        Text( 'Keep track of your favorite barbershops — browse your top picks, revisit saved spots, and book again with ease.'),
                         ConstantWidgets.hight20(context)
                       ],
                     ),

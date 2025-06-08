@@ -140,7 +140,7 @@ class ProfileScrollviewWidget extends StatelessWidget {
                                       profileviewWidget(
                                         screenWidth,
                                         context,
-                                        user.google ? Icons.g_mobiledata_sharp :
+                                        user.google ? Icons.cloud_upload_rounded :
                                         Icons.location_on_rounded,
                                         user.google? 'Signed in via Google'  : user.address,
                                         user.google ? AppPalette.blueClr : AppPalette.whiteClr,

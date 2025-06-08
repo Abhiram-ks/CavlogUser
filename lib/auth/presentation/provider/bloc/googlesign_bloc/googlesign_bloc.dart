@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,7 +13,6 @@ class GooglesignBloc extends Bloc<GooglesignEvent, GooglesignState> {
     on<GoogleSignInRequested>((event, emit) async{
       emit(GoogleSignLoading());
       try {
-        log('working progress');
         AuthRemoteDataSource authRemoteDataSource = AuthRemoteDataSource();
         final user = await authRemoteDataSource.signInWithGoogle();
         if(user != null){
@@ -32,10 +30,8 @@ class GooglesignBloc extends Bloc<GooglesignEvent, GooglesignState> {
       } on FirebaseAuthException catch(e){
          List<String> errorMessage = FirebaseErrorHandler.handleFirebaseAuthError(e);
          emit(GoogleSignfailure('error: ${errorMessage.join(',')}'));
-         log('message: google error ${errorMessage.join(',')}');
       }
       catch (e) {
-        log('message: google error catch ${e.toString()}');
         emit(GoogleSignfailure('An Error Occured: ${e.toString()}'));
       }
     });

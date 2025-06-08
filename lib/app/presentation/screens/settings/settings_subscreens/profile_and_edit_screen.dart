@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:user_panel/app/domain/usecases/image_picker_usecase.dart';
 import 'package:user_panel/app/presentation/provider/bloc/fetching_bloc/fetch_user_bloc/fetch_user_bloc.dart';
 import 'package:user_panel/app/presentation/widget/settings_widget/profile_edit_widget/profile_statehandle_widget.dart';
 import 'package:user_panel/core/common/custom_actionbutton_widget.dart';
 import '../../../../../core/common/custom_appbar_widget.dart';
-import '../../../../../core/common/custom_loadingscreen_widget.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constant/constant.dart';
 import '../../../../../core/utils/image/app_images.dart';
@@ -38,10 +38,18 @@ class ProfileEditDetails extends StatelessWidget {
           body: BlocBuilder<FetchUserBloc, FetchUserState>(
             builder: (context, state) {
               if (state is FetchUserLoading) {
-                return LoadingScreen( screenHeight: screenHeight, screenWidth: screenWidth);
-              }
-              if (state is FetchUserError) {
-                LoadingScreen(screenHeight: screenHeight, screenWidth: screenWidth);
+                return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SpinKitCircle(color: AppPalette.orengeClr),
+                  ConstantWidgets.hight10(context),
+                  Text('Just a moment...'),
+                  Text('Please wait while we process your request'),
+                ],
+              ),
+            );
               }
               if (state is FetchUserLoaded) {
                 final user = state.user;
@@ -129,7 +137,21 @@ class ProfileEditDetails extends StatelessWidget {
                   ),
                 );
               }
-              return SizedBox.shrink();
+                                 return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(Icons.cloud_off_outlined,color: AppPalette.blackClr,size:  50,),
+              Text("Oop's Unable to complete the request."),
+              Text('Please try again later.'),
+              IconButton(onPressed: (){
+                context.read<FetchUserBloc>().add(FetchCurrentUserRequst());
+              }, 
+              icon: Icon(Icons.refresh_rounded))
+            ],
+          ),
+        );
             },
           ),
           floatingActionButton: isShow

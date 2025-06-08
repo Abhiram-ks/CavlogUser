@@ -86,8 +86,8 @@ class _RegisterDetailsFormWidgetState extends State<RegisterDetailsFormWidget>
                     if (widget.formKey.currentState!.validate()) {
                       buttonCubit.startLoading();
                       registerBloc.add(RegisterPersonalData(fullName: _nameController.text.trim(), phoneNumber: _phoneController.text, address: _addressController.text.trim()));
-                      await Future.delayed(const Duration(milliseconds: 20));
-                      if (mounted){ navigator.pushNamed(AppRoutes.registerCredential);}
+                      if (mounted){
+                       navigator.pushNamed(AppRoutes.registerCredential);}
                       buttonCubit.stopLoading();
                     } else {
                       CustomeSnackBar.show(

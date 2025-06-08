@@ -20,7 +20,6 @@ import 'package:user_panel/core/themes/colors.dart';
 import '../../../../../core/common/custom_snackbar_widget.dart';
 import '../../../../../core/utils/constant/constant.dart';
 import '../../../../../core/utils/image/app_images.dart';
-import '../../../screens/pages/home/home_screen.dart';
 import '../../../screens/pages/search/detail_screen/detail_screen.dart';
 import '../../search_widget/details_screen_widget/details_call_helper_function.dart';
 
@@ -46,7 +45,7 @@ class _HomeScreenBodyWIdgetState extends State<HomeScreenBodyWIdget> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<FetchBannersBloc>().add(FetchBannersRequest());
-      context.read<FetchBookingWithBarberBloc>().add(FetchBookingWithBarberFileterRequest(filtering: 'pending'));
+      context.read<FetchBookingWithBarberBloc>().add(FetchBookingWithBarberFileterRequest(filtering: 'Pending'));
       context.read<TakeReviewBloc>().add(TakeReviewFunction());
     });
   }
@@ -91,8 +90,7 @@ class _HomeScreenBodyWIdgetState extends State<HomeScreenBodyWIdget> {
             ),
             ConstantWidgets.hight10(context),
             Padding(
-              padding:
-                  EdgeInsets.symmetric(horizontal: widget.screenWidth * .04),
+              padding:EdgeInsets.symmetric(horizontal: widget.screenWidth * .04),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -115,8 +113,7 @@ class _HomeScreenBodyWIdgetState extends State<HomeScreenBodyWIdget> {
                     ],
                   ),
                   ConstantWidgets.hight10(context),
-                  BlocBuilder<FetchBookingWithBarberBloc,
-                      FetchBookingWithBarberState>(
+                  BlocBuilder<FetchBookingWithBarberBloc,  FetchBookingWithBarberState>(
                     builder: (context, state) {
                       if (state is FetchBookingWithBarberLoading) {
                         return Shimmer.fromColors(
@@ -146,23 +143,22 @@ class _HomeScreenBodyWIdgetState extends State<HomeScreenBodyWIdget> {
                                 '123 Kingsway Avenue, Downtown District, Springfield, IL 62704',
                           ),
                         );
-                      } else if (state is FetchBookingWithBarberEmpty) {
+                      }
+                       else if (state is FetchBookingWithBarberEmpty) {
                         return Center(
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 ConstantWidgets.hight30(context),
-                                Icon(Icons.event_busy),
-                                Text('No Bookings Yet!',
-                                    style:
-                                        TextStyle(color: AppPalette.orengeClr)),
-                                Text(
-                                    "No activity found — time to take action!"),
+                                Icon(Icons.cloud_off_outlined,color: AppPalette.blackClr,size: 50,),
+                                Text('No Bookings Yet!', style: TextStyle(color: AppPalette.orengeClr)),
+                                Text( "No activity found — time to take action!"),
                                 ConstantWidgets.hight30(context),
                               ]),
                         );
-                      } else if (state is FetchBookingWithBarberLoaded) {
+                      } 
+                      else if (state is FetchBookingWithBarberLoaded) {
                         return ListView.separated(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
@@ -251,33 +247,13 @@ class _HomeScreenBodyWIdgetState extends State<HomeScreenBodyWIdget> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               ConstantWidgets.hight30(context),
-                              Icon(Icons.event_busy),
-                              Text('Oops! Something went wrong!',
-                                  style: TextStyle(color: AppPalette.redClr)),
-                              Text(
-                                  "We're having trouble processing your request."),
-                              InkWell(
-                                  onTap: () async {
-                                    context
-                                        .read<FetchBookingWithBarberBloc>()
-                                        .add(
-                                            FetchBookingWithBarberFileterRequest(
-                                                filtering: 'pending'));
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.refresh,
-                                        color: AppPalette.blueClr,
-                                      ),
-                                      ConstantWidgets.width20(context),
-                                      Text("Refresh",
-                                          style: TextStyle(
-                                              color: AppPalette.blueClr,
-                                              fontWeight: FontWeight.bold)),
-                                    ],
-                                  ))
+                              Icon(Icons.cloud_off_outlined,color: AppPalette.blackClr,size: 50,),
+                              Text('Oops! Something went wrong!',style: TextStyle(color: AppPalette.redClr)),
+                              Text(  "We're having trouble processing your request."),
+                              IconButton(onPressed: (){
+                                context .read<FetchBookingWithBarberBloc>().add(FetchBookingWithBarberFileterRequest(filtering: 'Pending'));
+                              }, icon: Icon(Icons.refresh_rounded)),
+                              ConstantWidgets.hight30(context),
                             ]),
                       );
                     },

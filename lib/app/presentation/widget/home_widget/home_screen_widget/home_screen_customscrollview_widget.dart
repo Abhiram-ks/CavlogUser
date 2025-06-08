@@ -6,7 +6,6 @@ import '../../../../../core/routes/routes.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constant/constant.dart';
 import '../../../provider/bloc/fetching_bloc/fetch_user_bloc/fetch_user_bloc.dart';
-import '../../../screens/pages/home/home_screen.dart';
 import '../../profile_widget/profile_scrollable_section.dart';
 import 'home_screen_body_widget.dart';
 

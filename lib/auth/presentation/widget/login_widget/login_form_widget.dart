@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -68,7 +68,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> with FormFieldMixin {
             ConstantWidgets.hight20(context),
             BlocListener<LoginBloc, LoginState>(
               listener: (context, state) {
-                handleLoginState(context, state);
+                handleLoginState(context, state, emailController, passwordController);
               },
               child: ButtonComponents.actionButton(
                   screenHeight: widget.screenHeight,
@@ -77,7 +77,6 @@ class _LoginFormWidgetState extends State<LoginFormWidget> with FormFieldMixin {
                   onTap: ()async {
                  if (widget.formKey.currentState!.validate()) {
                    FocusScope.of(context).unfocus();
-                   log('messge: user enter email; ${emailController.text.trim()} and password: ${passwordController.text.trim()}');
                    context.read<LoginBloc>().add(LoginActionEvent(context, email:  emailController.text.trim(), password: passwordController.text.trim()));
                  } else {
                     CustomeSnackBar.show(context: context, title: 'Submission Faild',

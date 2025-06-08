@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:user_panel/app/data/datasources/send_comment_remote_datasource.dart';
@@ -33,7 +32,6 @@ class SendCommentBloc extends Bloc<SendCommentEvent, SendCommentState> {
         barberId: event.barberId,
       );
       if (success) {
-        log('success sate');
         emit(SendCommentSuccess());
       } else {
         emit(SendCommentFailure("Failed to send comment"));

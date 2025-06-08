@@ -42,7 +42,7 @@ class WalletTransactionWidget extends StatelessWidget {
                   label: 'Debited',
                   colors: AppPalette.redClr,
                   icon: Icons.arrow_downward_rounded,
-                  onTap: () => context.read<FetchBookingBloc>().add(FetchBookingDatasFilteringTransaction(fillterText: 'debited'))
+                  onTap: () => context.read<FetchBookingBloc>().add(FetchBookingDatasFilteringTransaction(fillterText: 'Debited'))
                 ),
               ],
             ),

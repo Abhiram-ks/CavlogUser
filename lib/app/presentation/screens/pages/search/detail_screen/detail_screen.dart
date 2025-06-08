@@ -60,7 +60,10 @@ class _DetailBarberScreenState extends State<DetailBarberScreen> {
 
           return Scaffold(
               body: DetailScreenWidgetBuilder(
-                  screenHeight: screenHeight, screenWidth: screenWidth),
+                screenHeight: screenHeight,
+                screenWidth: screenWidth,
+                barberId: widget.barberId,
+              ),
               floatingActionButton: Padding(
                 padding: EdgeInsets.only(left: screenWidth * 0.09),
                 child: ButtonComponents.actionButton(

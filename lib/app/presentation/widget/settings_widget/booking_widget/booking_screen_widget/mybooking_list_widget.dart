@@ -5,10 +5,8 @@ import 'package:user_panel/app/presentation/provider/bloc/fetching_bloc/fetch_bo
 import 'package:user_panel/app/presentation/screens/settings/settings_subscreens/my_booking_detail_screen.dart';
 import 'package:user_panel/app/presentation/widget/home_widget/wallet_widget/wallet_transaction_card_widget.dart';
 
-import '../../../../../../core/common/custom_lottie_widget.dart';
 import '../../../../../../core/themes/colors.dart';
 import '../../../../../../core/utils/constant/constant.dart';
-import '../../../../../../core/utils/image/app_images.dart';
 import '../../../../../domain/usecases/data_listing_usecase.dart';
 
 class MyBookingListWIdget extends StatelessWidget {
@@ -27,7 +25,9 @@ class MyBookingListWIdget extends StatelessWidget {
       backgroundColor: AppPalette.whiteClr,
       color: AppPalette.buttonClr,
       onRefresh: () async {
-        context.read<FetchBookingWithBarberBloc>().add(FetchBookingWithBarberRequest());
+        context
+            .read<FetchBookingWithBarberBloc>()
+            .add(FetchBookingWithBarberRequest());
       },
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -44,7 +44,8 @@ class MyBookingListWIdget extends StatelessWidget {
                     child: SizedBox(
                       height: screenHeight * 0.8,
                       child: ListView.separated(
-                        separatorBuilder: (context, index) =>ConstantWidgets.hight10(context),
+                        separatorBuilder: (context, index) =>
+                            ConstantWidgets.hight10(context),
                         itemCount: 10,
                         itemBuilder: (context, index) {
                           return TrasactionCardsWalletWidget(
@@ -73,15 +74,17 @@ class MyBookingListWIdget extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           ConstantWidgets.hight50(context),
-                          LottieFilesCommon.load(
-                              assetPath: LottieImages.emptyData,
-                              height: screenHeight * 0.35,
-                              width: screenWidth * .6),
+                        Icon(
+                        Icons.cloud_off_outlined,
+                        color: AppPalette.blackClr,
+                        size: 50,
+                      ),  Text("Oops! There's nothing here yet.",style: TextStyle(fontWeight: FontWeight.bold),),
                           Text("No activity found — time to take action!",
                               style: TextStyle(color: AppPalette.blackClr))
                         ]),
                   );
-                } else if (state is FetchBookingWithBarberLoaded) {
+                }
+                 else if (state is FetchBookingWithBarberLoaded) {
                   return ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -92,8 +95,7 @@ class MyBookingListWIdget extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final booking = state.combo[index];
                       final date = formatDate(booking.booking.createdAt);
-                      final formattedStartTime =
-                          formatTimeRange(booking.booking.createdAt);
+                      final formattedStartTime = formatTimeRange(booking.booking.createdAt);
 
                       return TrasactionCardsWalletWidget(
                           ontap: () {
@@ -137,38 +139,34 @@ class MyBookingListWIdget extends StatelessWidget {
                             'pending' => AppPalette.orengeClr,
                             'cancelled' => AppPalette.redClr,
                             _ => AppPalette.hintClr,
-                          });
+                          }
+                          );
                     },
                   );
                 }
-
-                return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                return Center(
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Icon(Icons.swap_horiz),
-                      Text(
-                          "Oops! Something went wrong. We're having trouble processing your request. Please try again."),
-                      InkWell(
-                          onTap: () async {
+                      ConstantWidgets.hight50(context),
+                      Icon(
+                        Icons.cloud_off_outlined,
+                        color: AppPalette.blackClr,
+                        size: 50,
+                      ),
+                      Text("Oop's Unable to complete the request."),
+                      Text('Please try again later.'),
+                      IconButton(
+                          onPressed: () {
                             context
                                 .read<FetchBookingWithBarberBloc>()
                                 .add(FetchBookingWithBarberRequest());
                           },
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.refresh,
-                                color: AppPalette.blueClr,
-                              ),
-                              ConstantWidgets.width20(context),
-                              Text("Refresh",
-                                  style: TextStyle(
-                                      color: AppPalette.blueClr,
-                                      fontWeight: FontWeight.bold)),
-                            ],
-                          ))
-                    ]);
+                          icon: Icon(Icons.refresh_rounded))
+                    ],
+                  ),
+                );
               },
             ),
             ConstantWidgets.hight20(context)

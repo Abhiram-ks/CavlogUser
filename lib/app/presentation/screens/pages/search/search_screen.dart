@@ -42,7 +42,8 @@ class _SearchScreenState extends State<SearchScreen>
   void initState() {
     super.initState();
     _voiceSearchUseCase = VoiceSearchUseCase(stt.SpeechToText());
-    GlobalSearchController.searchController.addListener(_handleControllerChange);
+    GlobalSearchController.searchController
+        .addListener(_handleControllerChange);
   }
 
   @override
@@ -61,18 +62,20 @@ class _SearchScreenState extends State<SearchScreen>
 
   Future<void> _handleRefresh() async {
     context.read<FetchAllbarberBloc>().add(FetchAllBarbersRequested());
-    await Future.delayed(const Duration(milliseconds: 600));
   }
 
   void _onSearchChanged(String searchText) {
     debouncer.run(() {
-      context.read<FetchAllbarberBloc>().add(SearchBarbersRequested(searchText));
+      context
+          .read<FetchAllbarberBloc>()
+          .add(SearchBarbersRequested(searchText));
     });
   }
 
   @override
   void dispose() {
-    GlobalSearchController.searchController.removeListener(_handleControllerChange);
+    GlobalSearchController.searchController
+        .removeListener(_handleControllerChange);
     super.dispose();
   }
 
@@ -89,7 +92,7 @@ class _SearchScreenState extends State<SearchScreen>
         BlocProvider(create: (context) => SelectServiceCubit()),
         BlocProvider(create: (context) => RatingCubit()),
         BlocProvider(create: (context) => VoiceSearchCubit()),
-        BlocProvider( create: (context) => AdiminServiceBloc(ServiceRepositoryImpl())..add(FetchServiceRequst())),
+        BlocProvider(create: (context) => AdiminServiceBloc(ServiceRepositoryImpl())..add(FetchServiceRequst())),
       ],
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
@@ -115,15 +118,15 @@ class _SearchScreenState extends State<SearchScreen>
                         pinned: true,
                         flexibleSpace: FlexibleSpaceBar(
                           collapseMode: CollapseMode.parallax,
-                          titlePadding:
-                              EdgeInsets.only(left: screenWidth * 0.04),
+                          titlePadding: EdgeInsets.only(left: screenWidth * 0.04),
                           background: Stack(
                             fit: StackFit.expand,
                             children: [
                               Positioned.fill(
                                 child: ColorFiltered(
                                   colorFilter: ColorFilter.mode(
-                                    AppPalette.greyClr.withAlpha((0.19 * 230).toInt()),
+                                    AppPalette.greyClr
+                                        .withAlpha((0.19 * 230).toInt()),
                                     BlendMode.modulate,
                                   ),
                                   child: Image.asset(
@@ -140,19 +143,21 @@ class _SearchScreenState extends State<SearchScreen>
                                   child: BlocBuilder<VoiceSearchCubit,
                                       VoiceSearchState>(
                                     builder: (context, voiceState) {
-                                      final isListening = voiceState.isListening;
+                                      final isListening =  voiceState.isListening;
 
                                       return buildTextFormField(
                                         label: '',
                                         hintText: 'Search shop...',
                                         prefixIcon: Icons.search,
                                         context: context,
-                                        controller: GlobalSearchController.searchController,
+                                        controller: GlobalSearchController .searchController,
                                         validate: ValidatorHelper.serching,
                                         borderClr: AppPalette.lightgreyclr,
                                         fillClr: AppPalette.whiteClr,
                                         isfilterFiled: true,
-                                        fillterAction: () {_scaffoldKey.currentState ?.openDrawer();
+                                        fillterAction: () {
+                                          _scaffoldKey.currentState
+                                              ?.openDrawer();
                                         },
                                         onChanged: _onSearchChanged,
                                         suffixIconData: isListening
@@ -178,8 +183,7 @@ class _SearchScreenState extends State<SearchScreen>
                         ),
                       ),
                       SliverPadding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: screenWidth * 0.03),
+                        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
                         sliver: SliverToBoxAdapter(
                           child: ConstantWidgets.hight20(context),
                         ),

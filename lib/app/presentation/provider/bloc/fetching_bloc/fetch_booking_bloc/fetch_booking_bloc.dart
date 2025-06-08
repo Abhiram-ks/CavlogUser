@@ -1,5 +1,4 @@
 
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
@@ -38,7 +37,6 @@ class FetchBookingBloc extends Bloc<FetchBookingEvent, FetchBookingState> {
       await emit.forEach<List<BookingModel>>(
         _bookingTransactionRepository.streamBookings(userId: userId),
         onData: (bookings) {
-          log('booking is $bookings');
           if (bookings.isEmpty) {
             return FetchBookingEmpty();
           } else {
@@ -46,12 +44,10 @@ class FetchBookingBloc extends Bloc<FetchBookingEvent, FetchBookingState> {
           }
         },
         onError: (error, stackTrace) {
-          log('Error in booking stream: $error\n$stackTrace');
           return FetchBookingFailure('Could not load booking data. Please try again later.');
         },
       );
-    } catch (e, st) {
-      log('Exception while fetching bookings: $e\n$st');
+    } catch (e) {
       emit(FetchBookingFailure('An unexpected error occurred. Please check your connection.'));
     }          
   }
@@ -70,15 +66,12 @@ Future<void> _onFilterBookingTransaction(
     }
 
     await emit.forEach<List<BookingModel>>(
-      _bookingTransactionRepository.streamBookings(userId: userId),
+      _bookingTransactionRepository.streamBookingsFilter(userId: userId,status: event.fillterText),
       onData: (datas) {
-        final filteredTransaction = datas
-            .where((data) => data.transaction.toLowerCase().contains(event.fillterText.toLowerCase())).toList();
-
-        if (filteredTransaction.isEmpty) {
+        if (datas.isEmpty) {
           return FetchBookingEmpty();
         } else {
-          return FetchBookingSuccess(bookings: filteredTransaction);
+          return FetchBookingSuccess(bookings: datas);
         }
       },
       onError: (error, stackTrace) {

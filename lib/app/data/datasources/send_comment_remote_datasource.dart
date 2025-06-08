@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 abstract class SendCommentRemoteDatasource {
@@ -16,20 +18,21 @@ class SendCommentRemoteDatasourceImpl implements SendCommentRemoteDatasource {
     required String barberId,
   }) async {
     try {
-      final postDocRef = firestore
-          .collection('posts')
-          .doc(barberId)
-          .collection('Post')
-          .doc(docId);
+      final postDocRef = firestore.collection('comments').doc(); // Auto-generated ID
 
       await postDocRef.set({
-        'comments': {
-          userId: comment,
-        },
-      }, SetOptions(merge: true));
+        'docId': postDocRef.id,             
+        'postDocId': docId,               
+        'userId': userId,
+        'barberId': barberId,
+        'comment': comment,
+        'createdAt': FieldValue.serverTimestamp(), 
+        'likes': [],                             
+      });
 
       return true;
     } catch (e) {
+      log('Error sending comment: $e');
       return false;
     }
   }

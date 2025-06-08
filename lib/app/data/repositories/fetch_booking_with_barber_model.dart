@@ -8,6 +8,7 @@ import 'fetch_barber_repo.dart';
 
 abstract class FetchBookingAndBarberRepository {
   Stream<List<BookingWithBarberModel>> streamBookingsWithBarber({required String userId});
+  Stream<List<BookingWithBarberModel>> streamBookingsWithBarberFilter({required String userId,required String status});
 }
 
 class FetchBookingAndBarberRepositoryImpl implements FetchBookingAndBarberRepository {
@@ -21,6 +22,16 @@ class FetchBookingAndBarberRepositoryImpl implements FetchBookingAndBarberReposi
     return _firestore
         .collection('bookings')
         .where('userId', isEqualTo: userId)
+        .snapshots()
+        .asyncMap<List<BookingWithBarberModel>>(_barberService.attachBarbersToBookings);
+  }
+
+    @override
+  Stream<List<BookingWithBarberModel>> streamBookingsWithBarberFilter({required String userId,required String status}) {
+    return _firestore
+        .collection('bookings')
+        .where('userId', isEqualTo: userId)
+        .where('service_status', isEqualTo: status)
         .snapshots()
         .asyncMap<List<BookingWithBarberModel>>(_barberService.attachBarbersToBookings);
   }

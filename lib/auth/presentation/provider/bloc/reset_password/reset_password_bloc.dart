@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:user_panel/auth/data/repositories/reset_password_repo.dart';
@@ -11,7 +10,6 @@ class ResetPasswordBloc extends Bloc<ResetPasswordEvent, ResetPasswordState> {
     on<ResetPasswordRequestEvent>((event, emit)  async{
      emit(ResetPasswordLoading());
       try {
-        log('message: Email Reset Password: ${event.email}');
         bool isEmailExists = await _repository.isEmailExists(event.email);
         if (isEmailExists) {
           bool isSent = await _repository.sendPasswordResetEmail(event.email);

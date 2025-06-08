@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import '../../../../../data/models/post_model.dart';
 import '../../../../../data/repositories/fetch_barber_post.dart';
@@ -36,7 +35,6 @@ class FetchPostsBloc extends Bloc<FetchPostsEvent, FetchPostsState> {
       );
     
   } catch (e) {
-    log('Error due to Post: $e');
     emit(FetchPostFailureState('Error: $e'));
   }
 }

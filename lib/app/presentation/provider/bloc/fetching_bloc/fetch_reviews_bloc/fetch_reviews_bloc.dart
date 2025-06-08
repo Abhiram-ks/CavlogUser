@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:user_panel/app/data/models/review_model.dart';
 import 'package:user_panel/app/data/repositories/fetch_reviews_details_repo.dart';
@@ -29,7 +29,6 @@ class FetchReviewsBloc extends Bloc<FetchReviewsEvent, FetchReviewsState> {
          onError: (_, __) => FetchReviewFailureState('Failed to fetch reviews'),
         );
     } catch (e) {
-      log('Unexpecte error occured: $e');
       emit(FetchReviewFailureState('Error ocuured: $e'));
     }
   }

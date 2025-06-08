@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
@@ -106,7 +105,6 @@ class BookingCancelBloc extends Bloc<BookingCancelEvent, BookingCancelState> {
               serviceStatus: 'Cancelled',
               transactionStatus: 'credited');
            final bool result = await chengeSlotStatusRepository.chengeStatus(barberId: booking.barberId, docId: booking.slotDate, slotId: booking.slotId);
-           log('response of db is ; $result');
           if (response && result) {
             await LocalNotificationServices.showNotification(
               title: 'Booking Cancelled Successfully',

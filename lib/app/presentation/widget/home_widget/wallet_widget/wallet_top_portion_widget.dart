@@ -107,8 +107,7 @@ class _TopUpWidetInWalletState extends State<TopUpWidetInWallet>
                              crossAxisAlignment:  CrossAxisAlignment.start,
                               children: [
                               Icon(Icons.warning_amber_rounded, color: AppPalette.redClr,),
-                              Text("Wallet capacity of ₹30,000 has been reached. Top-up is currently disabled until the balance drops below the maximum limit."),
-                              Text("To maintain secure and compliant usage, top-ups are temporarily disabled until the wallet balance falls below the permitted threshold. This ensures adherence to regulatory standards and protects against misuse.",style: TextStyle(color: AppPalette.redClr),),
+                              Text("Wallet capacity of ₹30,000 has been reached. Top-up is currently disabled until the balance drops below the maximum limit. To maintain secure and compliant usage, top-ups are temporarily disabled until the wallet balance falls below the permitted threshold. This ensures adherence to regulatory standards and protects against misuse."),
                               ]  );
                             }else {  
                            return  Column(
@@ -170,7 +169,7 @@ class _TopUpWidetInWalletState extends State<TopUpWidetInWallet>
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                              Icon(Icons.error),
-                             Text('sOops! Something went wrong. Please try again in a moment. We couldn’t complete your request.')
+                             Text('Oops! Something went wrong. Please try again in a moment. We couldn’t complete your request.')
                             ],
                           );
                         }

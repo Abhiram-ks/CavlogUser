@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +20,6 @@ class FetchSlotsSpecificdateBloc extends Bloc<FetchSlotsSpecificdateEvent, Fetch
     Emitter<FetchSlotsSpecificDateState> emit,
   ) async {
     emit(FetchSlotsSpecificDateLoading());
-    log('Fetching date in specific day : ${event.selectedDate}');
     try {
 
       await emit.forEach<List<SlotModel>>(

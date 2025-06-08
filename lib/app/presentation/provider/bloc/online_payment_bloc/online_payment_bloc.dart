@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:user_panel/app/data/datasources/booking_remote_datasources.dart';
@@ -80,7 +80,6 @@ class OnlinePaymentBloc extends Bloc<OnlinePaymentEvent, OnlinePaymentState> {
         selectedSlots: event.selectedSlots,
       );
        
-      log('slot values updation working well done : $slotBooked');
       if (!slotBooked) {
         emit(OnlinePaymentFailure('Slot booking failed. Amount will be refunded in 1–3 business days.'));
         return;

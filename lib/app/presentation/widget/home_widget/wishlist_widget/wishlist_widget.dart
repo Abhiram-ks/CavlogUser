@@ -1,12 +1,8 @@
 
-
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/common/custom_loadingscreen_widget.dart';
-import '../../../../../core/common/custom_lottie_widget.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constant/constant.dart';
 import '../../../../../core/utils/image/app_images.dart';
@@ -47,18 +43,18 @@ class _WishlistScreenWidgetState extends State<WishlistScreenWidget> {
             ),
           );
         } else if (state is FetchWishlistsEmpty) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Center(
-                  child: LottieFilesCommon.load(
-                      assetPath: LottieImages.emptyData,
-                      width: widget.screenWidth * .5,
-                      height: widget.screenWidth * .5)),
-              Text("Something’s missing… maybe your favorites?")
-            ],
-          );
+           return Center(
+             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ConstantWidgets.hight50(context),
+                Icon(Icons.heart_broken,color: AppPalette.redClr,size: 50,),
+                Text("Something’s missing… maybe your favorites?"),
+                Text('It’s time to turn intent into impact.')
+              ],
+                       ),
+           );
         } 
          else if (state is FetchWishlistsLoaded) {
           final List<BarberModel> barbers = state.barbers;
@@ -97,9 +93,12 @@ class _WishlistScreenWidgetState extends State<WishlistScreenWidget> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               ConstantWidgets.hight50(context),
-              Center( child:Icon(Icons.heart_broken,color: AppPalette.redClr,)),
+              Center( child:Icon(Icons.heart_broken,color: AppPalette.redClr,size: 50,)),
               Text("Looks like there was an issue."),
              Text("No results matched your request. Please try again."),
+             IconButton(onPressed: (){
+               context.read<FetchWishlistsBloc>().add(FetchWishlistsRequst());
+             }, icon: Icon(Icons.refresh_rounded))
             ],
           );
       },

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:user_panel/app/data/models/barber_model.dart';
@@ -124,7 +123,6 @@ class FetchAllbarberBloc
             filteredList.add(barber);
           }
         } catch (e) {
-          log('Error fetching services for barber ${barber.uid}: $e');
           continue;
         }
       } else {

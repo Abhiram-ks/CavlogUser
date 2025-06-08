@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:user_panel/app/data/datasources/barber_wallet_remote_datasources.dart';
@@ -80,7 +80,6 @@ class PaymentScreen extends StatelessWidget {
               }
               return BlocListener<OnlinePaymentBloc, OnlinePaymentState>(
                 listener: (context, state) {
-                  log('now working state for online payment is : $state');
                   handleOnlinePaymentStates(context: context, state: state, totalAmount: totalInINR.toStringAsFixed(2), barberUid: barberUid, selectedServices: selectedServices,convertionState: convertionState,labelText: labelText,platformFee: platformFee,screenHeight: screenHeight,screenWidth: screenWidth,selectedSlots: selectedSlots, slotSelectionCubit:slotSelectionCubit, totalInINR: totalInINR);
                 },
                 child: SizedBox(

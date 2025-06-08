@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:user_panel/auth/presentation/provider/bloc/register_bloc/register_bloc.dart';
@@ -83,7 +83,7 @@ class _RegisterCredentialformWidgetState
                     final isChecked = context.read<CheckboxCubit>().state is CheckboxChecked;
                     final navigator = Navigator.of(context);
                     String? error = await ValidatorHelper.validateEmailWithFirebase(emailController.text);
-                    log('Error due to email valid : ${error.toString()}');
+                   
                     
                     if (!mounted) return;
                     if (widget.formKey.currentState!.validate()) {
@@ -95,10 +95,8 @@ class _RegisterCredentialformWidgetState
                            return;
                         }
                          buttonCubit.startLoading();
-                         log('message: user enter email: ${emailController.text.trim()} and password: ${passwordController.text.trim()}');
                          registerBloc.add(RegisterCredentialsData(email: emailController.text.trim(), password: passwordController.text.trim()));
                          registerBloc.add(GenerateOTPEvent());
-                         await Future.delayed(const Duration(seconds: 2));
                          timerCubit.startTimer();
                          buttonCubit.stopLoading();
                         if (mounted) {

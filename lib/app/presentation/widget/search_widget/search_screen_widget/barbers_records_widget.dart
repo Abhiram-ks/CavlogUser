@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:user_panel/app/presentation/screens/pages/search/detail_screen/detail_screen.dart';
 import 'package:user_panel/app/presentation/widget/search_widget/search_screen_widget/custom_cards_barberlist.dart';
+import 'package:user_panel/core/themes/colors.dart';
 import '../../../../../core/common/custom_loadingscreen_widget.dart';
-import '../../../../../core/common/custom_lottie_widget.dart';
 import '../../../../../core/utils/constant/constant.dart';
 import '../../../../../core/utils/image/app_images.dart';
 import '../../../../data/models/barber_model.dart';
@@ -23,32 +23,23 @@ class BarberListBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<FetchAllbarberBloc, FetchAllbarberState>(
       builder: (context, state) {
-        if (state is FetchAllbarberLoading || state is FetchAllbarberFailure) {
+         if (state is FetchAllbarberEmpty) {
           return SliverToBoxAdapter(
-            child: SizedBox(
-              height: screenHeight * .7,
-              child: LoadingScreen(
-                screenHeight: screenHeight,
-                screenWidth: screenWidth,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                    ConstantWidgets.hight50(context),
+                    Icon(Icons.cloud_off,color: AppPalette.blackClr,size: 50,),
+                    Text('No matching shops found.'),
+                    Text('Try adjusting your search or filters.'),
+                ],
               ),
             ),
           );
-        } else if (state is FetchAllbarberEmpty) {
-          return SliverToBoxAdapter(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Center(
-                    child: LottieFilesCommon.load(
-                        assetPath: LottieImages.emptyData,
-                        width: screenWidth * .5,
-                        height: screenWidth * .5)),
-                  Text('No matching shops found.')
-              ],
-            ),
-          );
-        } else if (state is FetchAllbarberSuccess) {
+        }
+         else if (state is FetchAllbarberSuccess) {
           final List<BarberModel> barbers = state.barbers;
     
           return SliverList(
@@ -78,16 +69,35 @@ class BarberListBuilder extends StatelessWidget {
               childCount: barbers.length,
             ),
           );
-        }
-        return SliverToBoxAdapter(
-          child: SizedBox(
-            height: screenHeight * 0.7,
-            child: LoadingScreen(
-              screenHeight: screenHeight,
-              screenWidth: screenWidth,
-            ),
+        }else if (state is FetchAllbarberFailure){
+               return SliverToBoxAdapter(
+           child:  Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ConstantWidgets.hight50(context),
+              Icon(Icons.cloud_off_outlined,color: AppPalette.blackClr,size:  50,),
+              Text("Oop's Unable to complete the request."),
+              Text('Please try again later.'),
+              IconButton(onPressed: (){
+                context.read<FetchAllbarberBloc>().add(FetchAllBarbersRequested());
+              }, 
+              icon: Icon(Icons.refresh_rounded))
+            ],
           ),
+        )
         );
+        }
+      return SliverToBoxAdapter(
+            child: SizedBox(
+              height: screenHeight * .7,
+              child: LoadingScreen(
+                screenHeight: screenHeight,
+                screenWidth: screenWidth,
+              ),
+            ),
+          );
       },
     );
   }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:user_panel/app/presentation/provider/bloc/nearby_barbers_bloc/nearby_barbers_bloc.dart';
 
 import '../../../../../auth/presentation/provider/bloc/location_bloc/location_bloc.dart';
 import '../../../../../core/themes/colors.dart';

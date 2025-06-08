@@ -35,20 +35,20 @@ void showReviewDetisSheet(BuildContext context, double screenHeight,
                   horizontal: screenWidth * .05, vertical: screenHeight * 0.08),
               child: BlocBuilder<FetchReviewsBloc, FetchReviewsState>(
                 builder: (context, state) {
-                  if (state is FetchReviewsLoadingState ||
-                      state is FetchReviewFailureState) {
+                  if (state is FetchReviewsLoadingState) {
                     return reviewsShimerBuilder();
-                  } else if (state is FetchReviewsEmptyState) {
-                    return Center(
+                  } 
+                  else if (state is FetchReviewsEmptyState) {
+                     return Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [ 
-                          Icon(Icons.rate_review_outlined,size: 60, color: AppPalette.buttonClr),
+                          Icon(Icons.rate_review_outlined,size: 60, color: AppPalette.blackClr),
                           ConstantWidgets.hight20(context),
                           Text( 'No reviews yet', style: TextStyle( fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           ConstantWidgets.hight10(context),
-                          Text('Make an impact – leave the first impression',style: TextStyle(color: AppPalette.greyClr)),ConstantWidgets.hight20(context),
+                          Text('Make an impact – leave the first impression',),ConstantWidgets.hight20(context),
                           const SpinKitThreeBounce(color: AppPalette.buttonClr,size: 30.0),
                         ],
                       ),
@@ -97,7 +97,22 @@ void showReviewDetisSheet(BuildContext context, double screenHeight,
                       ],
                     );
                   }
-                  return reviewsShimerBuilder();
+                              return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(Icons.cloud_off_outlined,color: AppPalette.blackClr,size:  50,),
+              Text("Oop's Unable to complete the request."),
+              Text('Please try again later.'),
+              IconButton(onPressed: (){
+                context.read<FetchReviewsBloc>().add(FetchReviewRequest(shopId: shopId));
+              }, 
+              icon: Icon(Icons.refresh_rounded))
+            ],
+          ),
+        );
+              
                 },
               ),
             ),

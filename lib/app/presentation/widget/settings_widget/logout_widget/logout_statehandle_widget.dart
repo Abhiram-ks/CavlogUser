@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../auth/presentation/provider/cubit/button_progress_cubit/button_progress_cubit.dart';
 import '../../../../../core/common/custom_bottomsheet_widget.dart';
-import '../../../../../core/common/custom_snackbar_widget.dart';
 import '../../../../../core/routes/routes.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../provider/bloc/logout_bloc/logout_bloc.dart';
@@ -40,11 +39,28 @@ void handleLogOutState(BuildContext context, LogoutState state) {
     );
   } else if (state is LogoutErrorState) {
      buttonCubit.bottomSheetStop();
-     CustomeSnackBar.show(
-      context: context,
-      title: 'Logout Request Failed',
-      description: 'Oops! Your logout request failed. ${state.errorMessage}',
-      titleClr: AppPalette.buttonClr,
-    );
+       showCupertinoDialog(
+    context: context,
+    builder: (_) => CupertinoAlertDialog(
+      title: Text('Log out Failed'),
+      content: Text('Something went wrong. Please try again.'),
+      actions: [
+        CupertinoDialogAction(
+          child: Text('Retry',style: TextStyle(color: AppPalette.redClr)),
+          onPressed: () {
+            Navigator.of(context).pop();
+            context.read<LogoutBloc>().add(LogoutRequestEvent());
+          },
+        ),
+        CupertinoDialogAction(
+          isDestructiveAction: true,
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text('Cancel',style: TextStyle(color: AppPalette.whiteClr),),
+        ),
+      ],
+    ),
+  );
   }
 }

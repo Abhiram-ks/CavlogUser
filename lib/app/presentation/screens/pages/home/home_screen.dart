@@ -4,6 +4,7 @@ import 'package:user_panel/app/data/datasources/firebase_review_datasource.dart'
 import 'package:user_panel/app/data/repositories/barbershop_repo.dart';
 import 'package:user_panel/app/data/repositories/fetch_banner_repo.dart';
 import 'package:user_panel/app/presentation/provider/bloc/take_review_bloc/take_review_bloc.dart';
+import 'package:user_panel/app/presentation/provider/bloc/nearby_barbers_bloc/nearby_barbers_bloc.dart';
 import '../../../../../auth/domain/usecases/get_location_usecase.dart';
 import '../../../../../auth/presentation/provider/bloc/location_bloc/location_bloc.dart';
 import '../../../../../core/themes/colors.dart';
@@ -12,7 +13,6 @@ import '../../../../data/repositories/fetch_booking_with_barber_model.dart';
 import '../../../../domain/repositories/barbershop_services_repo.dart';
 import '../../../provider/bloc/fetching_bloc/fetch_banners_bloc/fetch_banners_bloc.dart';
 import '../../../provider/bloc/fetching_bloc/fetch_booking_with_barber_bloc/fetch_booking_with_barber_bloc.dart';
-import '../../../provider/bloc/nearby_barbers_bloc/nearby_barbers_bloc.dart';
 import '../../../widget/home_widget/home_screen_widget/home_screen_customscrollview_widget.dart';
 
 class HomeScreen extends StatelessWidget {
