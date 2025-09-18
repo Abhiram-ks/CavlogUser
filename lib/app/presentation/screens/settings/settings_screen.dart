@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:user_panel/app/presentation/provider/bloc/logout_bloc/logout_bloc.dart';
 import 'package:user_panel/app/presentation/screens/settings/settings_subscreens/help_screen.dart';
+import 'package:user_panel/app/presentation/widget/settings_widget/delete_account/delete_account_screen.dart';
 import 'package:user_panel/app/presentation/widget/settings_widget/logout_widget/logout_statehandle_widget.dart';
 import 'package:user_panel/core/routes/routes.dart';
 import '../../../../core/themes/colors.dart';
@@ -168,6 +169,44 @@ class SettingsScreen extends StatelessWidget {
                   style: TextStyle(color: AppPalette.logoutClr, fontSize: 17),
                 ),
               ),
+            ),
+              ConstantWidgets.hight10(context),
+            InkWell(
+              onTap: () {
+                showCupertinoDialog(
+                  context: context,
+                  builder: (_) => CupertinoAlertDialog(
+                    title: Text('Delete Account?'),
+                    content: Text(
+                      'Are you sure you want to delete your account? This action is permanent and requires verification before proceeding to the next step.',
+                    ),
+                    actions: [
+                      CupertinoDialogAction(
+                        child: Text('Proceed ',
+                            style: TextStyle(color: AppPalette.redClr)),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => DeleteAccountScreen(),));
+                        },
+                      ),
+                      CupertinoDialogAction(
+                        isDestructiveAction: true,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(color: AppPalette.blackClr),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              child: Text("Delete Account?",
+                  style: TextStyle(
+                    color: AppPalette.redClr,
+                  )),
             ),
             ConstantWidgets.hight50(context)
           ],

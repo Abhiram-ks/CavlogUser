@@ -154,7 +154,7 @@ class _PaymentBottomSectionWidgetState
                 prefixText: 'Platform fee(1%)',
                 prefixTextStyle: GoogleFonts.plusJakartaSans(
                     fontWeight: FontWeight.w500, color: AppPalette.blackClr),
-                suffixText: '₹ $platformFee',
+                suffixText: '₹ ${platformFee.toStringAsFixed(2)}',
                 suffixTextStyle: GoogleFonts.plusJakartaSans(
                     fontWeight: FontWeight.w500, color: AppPalette.blueClr),
               ),

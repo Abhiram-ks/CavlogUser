@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:user_panel/auth/presentation/widget/otp_widget/otp_widget.dart';
 import 'package:user_panel/core/common/custom_appbar_widget.dart';
 
 import '../../../../core/themes/colors.dart';
@@ -38,7 +37,7 @@ class OtpScreen extends StatelessWidget {
                 Text("OTP will expire in 2 minutes.", style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w100, color: AppPalette.greyClr),
                 ),
                 ConstantWidgets.hight20(context),
-                OtpWidget(screenHight: screenHeight, screenWidth: screenWidth)
+              //  OtpWidget(screenHight: screenHeight, screenWidth: screenWidth)
               ],
             ),
           ),

@@ -6,6 +6,8 @@ import 'package:user_panel/app/data/datasources/booking_remote_datasources.dart'
 import 'package:user_panel/app/data/repositories/slot_cheking_repo.dart';
 import 'package:user_panel/app/presentation/provider/bloc/online_payment_bloc/online_payment_bloc.dart';
 import 'package:user_panel/app/presentation/widget/search_widget/payment_screen_widgets/handle_online_payment_state.dart';
+import 'package:user_panel/core/common/custom_appbar_widget.dart';
+import 'package:user_panel/core/utils/constant/constant.dart';
 import '../../../../../../core/common/custom_actionbutton_widget.dart';
 import '../../../../../../core/themes/colors.dart';
 import '../../../../../data/models/slot_model.dart' show SlotModel;
@@ -46,6 +48,7 @@ class PaymentScreen extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: AppPalette.whiteClr,
+          appBar: CustomAppBar(backgroundColor: AppPalette.orengeClr,),
           body: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: ColoredBox(
@@ -53,11 +56,12 @@ class PaymentScreen extends StatelessWidget {
               child: SafeArea(
                 child: Column(
                   children: [
+                    ConstantWidgets.hight10(context),
                     PaymentTopPortion(
                       screenHeight: screenHeight,
                       screenWidth: screenWidth,
                       barberUId: barberUid,
-                    ),
+                    ), ConstantWidgets.hight30(context),
                     PaymentBottomSectionWidget(
                       screenHeight: screenHeight,
                       screenWidth: screenWidth,

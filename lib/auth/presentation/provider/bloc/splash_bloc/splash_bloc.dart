@@ -1,6 +1,6 @@
 import 'dart:isolate';
 import 'package:bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:user_panel/auth/data/datasources/auth_local_datasource.dart';
 part 'splash_event.dart';
 part 'splash_state.dart';
 
@@ -16,9 +16,10 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
        await for(final double progress in receivePort) {
         if (progress >= 1.0) {
           receivePort.close();
-          var curretuser = FirebaseAuth.instance.currentUser;
+         final credentials = await SecureStorageService.getUserCredentials();
+         final isUserLogged = credentials['isUserLogged'] == 'true';
 
-          if(curretuser != null){
+          if(isUserLogged){
             emit(GoToHomePage());
           }
           else{

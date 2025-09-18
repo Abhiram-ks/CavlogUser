@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:user_panel/app/presentation/provider/bloc/fetch_chat_barberlebel_bloc/fetch_chat_barberlebel_bloc.dart';
-import 'package:user_panel/app/presentation/screens/pages/chat/individual_chat_screen.dart';
+import 'package:user_panel/app/presentation/screens/pages/chat/chat_window_screen.dart';
 import 'package:user_panel/app/presentation/widget/chat_widget/chat_tile_widget/chat_tile_custom_card_widget.dart';
-import 'package:user_panel/auth/data/datasources/auth_local_datasource.dart';
 import 'package:user_panel/core/common/custom_lottie_widget.dart';
 import 'package:user_panel/core/utils/constant/constant.dart';
 
@@ -39,6 +38,8 @@ BlocBuilder<FetchChatBarberlebelBloc, FetchChatBarberlebelState>
                 assetPath: LottieImages.emptyData,
                 width: screenWidth * 0.3,
                 height: screenHeight * 0.3),
+           Text("Oops! There's nothing here yet."),
+            Text('No conversation added yet — time to take action!'),
           ],
         );
       }
@@ -61,19 +62,13 @@ BlocBuilder<FetchChatBarberlebelBloc, FetchChatBarberlebelState>
               final barber = chatList[index];
               return InkWell(
                 onTap: () async {
-                  final credentials =   await SecureStorageService.getUserCredentials();
-                  final String? userId = credentials['userId'];
-                  if (userId == null) return;
-
-                  if (!context.mounted) return;
 
                   Navigator.push(
-                    // ignore: use_build_context_synchronously
                     context,
                     MaterialPageRoute(
                       builder: (context) => IndividualChatScreen(
                         barberId: barber.uid,
-                        userId: userId,
+                        userId: state.userId,
                       ),
                     ),
                   );

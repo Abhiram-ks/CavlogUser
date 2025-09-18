@@ -65,7 +65,11 @@ app.*.map.json
 
 # Environment and Secrets
 # Secrets and environment files
+# Ignore environment files
 .env
 *.env
 *.key
 *.pem
+
+# Ignore keystore with API keys
+lib/core/keystore/keystore.dart

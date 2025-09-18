@@ -10,7 +10,8 @@ class WalletTransactionWidget extends StatelessWidget {
   final double screenWidth;
   final double screenHeight;
 
-  const WalletTransactionWidget({
+  const 
+  WalletTransactionWidget({
     super.key,
     required this.screenWidth,
     required this.screenHeight,
@@ -42,7 +43,7 @@ class WalletTransactionWidget extends StatelessWidget {
                   label: 'Debited',
                   colors: AppPalette.redClr,
                   icon: Icons.arrow_downward_rounded,
-                  onTap: () => context.read<FetchBookingBloc>().add(FetchBookingDatasFilteringTransaction(fillterText: 'Debited'))
+                  onTap: () => context.read<FetchBookingBloc>().add(FetchBookingDatasFilteringTransaction(fillterText: 'debited'))
                 ),
               ],
             ),

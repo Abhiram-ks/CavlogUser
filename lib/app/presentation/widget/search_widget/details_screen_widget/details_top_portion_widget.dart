@@ -14,7 +14,7 @@ import '../../../../domain/usecases/direction_navigation.dart';
 import '../../../../domain/usecases/geo_coding_helper_usecase.dart';
 import '../../../provider/cubit/fetch_wishlist_singlebarber_cubit/fetch_wishlist_singlebarber_cubit.dart';
 import '../../../provider/cubit/wishlist_function_cubit/wishlist_function_cubit.dart';
-import '../../../screens/pages/chat/individual_chat_screen.dart';
+import '../../../screens/pages/chat/chat_window_screen.dart';
 import '../../profile_widget/profile_scrollable_section.dart';
 
 class DetailTopPortionWidget extends StatelessWidget {
@@ -159,8 +159,7 @@ class DetailTopPortionWidget extends StatelessWidget {
                       }
                     },
                     text: 'Direction'),
-                BlocBuilder<FetchWishlistSinglebarberCubit,
-                    FetchWishlistSinglebarberState>(
+                BlocBuilder<FetchWishlistSinglebarberCubit, FetchWishlistSinglebarberState>(
                   builder: (context, state) {
                     bool isLiked = false;
                     if (state is FetchWishlistSinglebarberLoaded) {

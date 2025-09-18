@@ -1,9 +1,7 @@
 
-
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constant/constant.dart';
@@ -17,11 +15,22 @@ class DetilServiceWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<FetchBarberDetailsBloc, FetchBarberDetailsState>
     (builder: (context, state) {
-      if (state is FetchBarberServicesLoading || state is FetchBarberServicesFailure) {
-        Center(
-          child: CupertinoActivityIndicator( radius: 16.0, animating: true),
-        );
-      } else if (state is FetchBarberServiceSuccess) {
+      if (state is FetchBarberServicesLoading) {
+        return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      ConstantWidgets.hight30(context),
+                      SpinKitCircle(color: AppPalette.orengeClr),
+                      ConstantWidgets.hight10(context),
+                      Text('Just a moment...'),
+                      Text('Please wait while we process your request'),
+                    ],
+                  ),
+                );
+       } 
+      else if (state is FetchBarberServiceSuccess) {
        final services = state.barberServices;
 
        return SingleChildScrollView(
@@ -49,12 +58,16 @@ class DetilServiceWidget extends StatelessWidget {
                   );
                 }, 
                 separatorBuilder: (context, index) => ConstantWidgets.hight10(context), 
-                )
+                ),
+                ConstantWidgets.hight50(context),
+                ConstantWidgets.hight50(context),
             ],
+            
           ),
           ),
        );
-      }else if (state is FetchBarberServicesEmpty) {
+      }
+      else if (state is FetchBarberServicesEmpty) {
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -67,9 +80,22 @@ class DetilServiceWidget extends StatelessWidget {
           ),
         );
       }
-       return   Center(
-         child: CupertinoActivityIndicator( radius: 16.0, animating: true ),
-       );
+                   return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ConstantWidgets.hight30(context),
+                    Icon(
+                      Icons.cloud_off_outlined,
+                      color: AppPalette.blackClr,
+                      size: 50,
+                    ),
+                    Text("Oop's Unable to complete the request."),
+                    Text('Please try again later.'),
+                  ],
+                ),
+              );
     },);
   }
 }

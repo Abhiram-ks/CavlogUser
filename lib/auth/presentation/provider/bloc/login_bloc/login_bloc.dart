@@ -9,27 +9,34 @@ part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
+  final String password = '';
+  final String email = '';
   final AuthRepositoryLogin _authRepository;
   LoginBloc(this._authRepository) : super(LoginInitial()) {
-    on<LoginActionEvent>((event, emit)async {
-     emit(LoginLoading());
-     try {
-      await for (final user in _authRepository.login(event.email, event.password)){
-        if(user != null){
-          bool response = await  RefreshHelper().refreshUser(event.context, user);
-          if(response){
-            emit(LoginSuccess());
-          }else {
-            emit(LoginFiled(error: 'Authentication Failed'));
+    on<LoginActionEvent>((event, emit) async {
+      emit(LoginLoading());
+      try {
+        await for (final user in _authRepository.login(event.email, event.password)) {
+          if (user != null) {
+            bool response =
+                await RefreshHelper().refreshUser(event.context, user);
+            if (response) {
+              emit(LoginSuccess());
+            } else {
+              emit(LoginFiled(error: 'Authentication Failed'));
+            }
           }
         }
-      }
-     }  on FirebaseAuthException catch (e) {
-        List<String> errorMessage =FirebaseErrorHandler.handleFirebaseAuthError(e);
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'email-not-verified') {
+          emit(EmailNotvarify(email: email, password: password));
+          return;
+        }
+        List<String> errorMessage = FirebaseErrorHandler.handleFirebaseAuthError(e);
         emit(LoginFiled(error: errorMessage.join(', ')));
-     } catch (e){
-      emit(LoginFiled(error: 'An Error occured: ${e.toString()}'));
-     }
+      } catch (e) {
+        emit(LoginFiled(error: 'An Error occured: ${e.toString()}'));
+      }
     });
   }
 }

@@ -118,7 +118,7 @@ class BookingCancelBloc extends Bloc<BookingCancelEvent, BookingCancelState> {
               refund: 0.00,
               docId: booking.bookingId ?? '',
               serviceStatus: 'Pending',
-              transactionStatus: 'Debited');
+              transactionStatus: 'debited');
             transactionRemoteDataSource.barberWalletUpdate( barberId: booking.barberId, amount: refundAmount);
             refundRepo.getUserWallet( userId: booking.userId, amount: refundAmount);
             emit(
@@ -130,7 +130,7 @@ class BookingCancelBloc extends Bloc<BookingCancelEvent, BookingCancelState> {
               refund: 0.00,
               docId: booking.bookingId ?? '',
               serviceStatus: 'Pending',
-              transactionStatus: 'Debited');
+              transactionStatus: 'debited');
           transactionRemoteDataSource.barberWalletUpdate(  barberId: booking.barberId, amount: refundAmount);
           refundRepo.getUserWallet( userId: booking.userId, amount: refundAmount);
           emit(BookingCancelFailure('Booking cancel failure dut to db issue'));

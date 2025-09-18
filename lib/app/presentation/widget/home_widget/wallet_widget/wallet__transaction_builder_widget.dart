@@ -56,16 +56,17 @@ RefreshIndicator walletTransactionWidgetBuilder(
                     ),
                   );
                 } else if (state is FetchBookingEmpty) {
-                  return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.account_balance_wallet_rounded),
-                        Text(
-                            "Currently, there are no transaction history available."),
-                        Text("No transactions yet!",
-                            style: TextStyle(color: AppPalette.orengeClr))
-                      ]);
+                  return Center(
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ConstantWidgets.hight50(context),
+                          Icon(Icons.cloud_off_outlined,size: 50,color: AppPalette.blackClr,),
+                          Text("No transactions yet!",style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text("Currently, there are no transaction history available."),
+                        ]),
+                  );
                 }
                 else if (state is FetchBookingSuccess) {
                   return ListView.separated(

@@ -16,7 +16,7 @@ class AutoComplitedBookingCubit extends Cubit<AutoComplitedBookingState> {
       refund: 0.0,
       docId: docId,
       serviceStatus: 'Completed',
-      transactionStatus: 'Debited',
+      transactionStatus: 'debited',
     );
 
     if (success) {

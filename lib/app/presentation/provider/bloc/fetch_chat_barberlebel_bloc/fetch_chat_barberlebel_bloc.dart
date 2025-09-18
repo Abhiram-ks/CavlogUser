@@ -36,7 +36,7 @@ class FetchChatBarberlebelBloc extends Bloc<FetchChatBarberlebelEvent, FetchChat
           if (chat.isEmpty) {
             return FetchChatBarberlebelEmpty();
           } else {
-            return FetchChatBarberlebelSuccess(chat);
+            return FetchChatBarberlebelSuccess(chat,userId);
           }
         },
            onError: (error, stackTrace) {
@@ -68,7 +68,7 @@ class FetchChatBarberlebelBloc extends Bloc<FetchChatBarberlebelEvent, FetchChat
         if (filteredBarbers.isEmpty) {
            return FetchChatBarberlebelEmpty();
         }else {
-           return FetchChatBarberlebelSuccess(filteredBarbers);
+           return FetchChatBarberlebelSuccess(filteredBarbers,userId);
         }
       },
        onError: (error, stackTrace) {

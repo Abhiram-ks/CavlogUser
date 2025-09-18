@@ -5,7 +5,7 @@ import 'package:user_panel/app/domain/usecases/data_listing_usecase.dart';
 import 'package:user_panel/app/presentation/provider/bloc/fetching_bloc/fetch_post_with_barber_bloc/fetch_post_with_barber_bloc.dart';
 import 'package:user_panel/app/presentation/provider/cubit/post_like_cubit/post_like_cubit.dart';
 import 'package:user_panel/app/presentation/provider/cubit/share_post_cubit/share_post_cubit.dart';
-import 'package:user_panel/app/presentation/screens/pages/chat/individual_chat_screen.dart';
+import 'package:user_panel/app/presentation/screens/pages/chat/chat_window_screen.dart';
 import 'package:user_panel/app/presentation/screens/pages/search/detail_screen/detail_screen.dart';
 import 'package:user_panel/app/presentation/widget/post_widget/post_card_widget.dart';
 import 'package:user_panel/app/presentation/widget/post_widget/post_comment_bottomsheet.dart';

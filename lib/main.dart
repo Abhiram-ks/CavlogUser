@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:user_panel/app/data/datasources/send_comment_remote_datasource.dart';
 import 'package:user_panel/app/data/repositories/fetch_barber_repo.dart';
@@ -49,7 +48,6 @@ import 'auth/presentation/provider/bloc/reset_password/reset_password_bloc.dart'
 
 
 void main() async {
-  await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
   await requestNotificationPermission();
   await LocalNotificationServices.init();
@@ -69,7 +67,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        //Auth Bloc
         BlocProvider(create: (context) => SplashBloc()..add(StartSplashEvent())),
         BlocProvider(create: (context) => LocationBloc(GetLocationUseCase())),
         BlocProvider(create: (context) => SerchlocatonBloc()),

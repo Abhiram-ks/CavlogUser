@@ -15,11 +15,4 @@ final class RegisterCredentialsData extends RegisterEvent {
 
   RegisterCredentialsData({required this.email, required this.password});
 }
-
-final class GenerateOTPEvent extends RegisterEvent{}
-final class VerifyOTPEvent   extends RegisterEvent{
-  final String inputOtp;
-  VerifyOTPEvent({required this.inputOtp});
-}
-
 class RegisterSubmit extends RegisterEvent {}

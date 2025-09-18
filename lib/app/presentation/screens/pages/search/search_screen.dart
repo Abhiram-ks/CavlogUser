@@ -42,8 +42,7 @@ class _SearchScreenState extends State<SearchScreen>
   void initState() {
     super.initState();
     _voiceSearchUseCase = VoiceSearchUseCase(stt.SpeechToText());
-    GlobalSearchController.searchController
-        .addListener(_handleControllerChange);
+    GlobalSearchController.searchController.addListener(_handleControllerChange);
   }
 
   @override

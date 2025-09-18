@@ -67,12 +67,12 @@ class WalletHistoryWidget extends StatelessWidget {
                         color: AppPalette.blackClr,
                         size: 50,
                       ),
-                      Text("Currently, there are no top-ups in your history. "),
-                      Text("Top-up transactions will appear once completed."),
                       Text(
                         "No transactions yet!",
-                        style: TextStyle(color: AppPalette.buttonClr),
-                      )
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text("Currently, there are no top-ups in your history. "),
+                      Text("Top-up transactions will appear once completed."),
                     ]),
               );
             } else if (state is FetchWalletLoaded) {

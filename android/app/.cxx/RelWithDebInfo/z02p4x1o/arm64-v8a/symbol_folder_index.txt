@@ -1,0 +1,1 @@
+C:\project\CAVLOG\user_panel\build\app\intermediates\cxx\RelWithDebInfo\z02p4x1o\obj\arm64-v8a

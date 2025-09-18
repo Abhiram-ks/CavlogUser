@@ -33,27 +33,35 @@ class DetailPostWidget extends StatelessWidget {
           ));
         } 
         else if (state is FetchPostSuccessState) {
-          return GridView.builder(
-            shrinkWrap: true,
-            physics: const BouncingScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 2,
-              mainAxisSpacing: 2,
-              childAspectRatio: 1,
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 2,
+                    mainAxisSpacing: 2,
+                    childAspectRatio: 1,
+                  ),
+                  itemCount: state.posts.length,
+                  itemBuilder: (context, index) {
+                    final post = state.posts[index];
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: PinchToZoomScrollableWidget(
+                        child: imageshow(
+                          imageUrl: post.imageUrl, 
+                          imageAsset: AppImages.barberEmpty),
+                      )
+                    );
+                  },
+                ),
+                ConstantWidgets.hight50(context),
+                ConstantWidgets.hight50(context),
+              ],
             ),
-            itemCount: state.posts.length,
-            itemBuilder: (context, index) {
-              final post = state.posts[index];
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: PinchToZoomScrollableWidget(
-                  child: imageshow(
-                    imageUrl: post.imageUrl, 
-                    imageAsset: AppImages.barberEmpty),
-                )
-              );
-            },
           );
         } 
         else {

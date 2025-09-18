@@ -1,6 +1,5 @@
 import 'dart:developer';
-
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:user_panel/core/keystore/keystore.dart';
 
 class CloudinaryConfig {
   static late String cloudName;
@@ -8,9 +7,9 @@ class CloudinaryConfig {
   static late String apiSecret;
 
   static void initialize() {
-   cloudName = dotenv.env['CLOUDINARY_CLOUD_NAME'] ?? '';
-   apiKey = dotenv.env['CLOUDINARY_API_KEY'] ?? '';
-   apiSecret = dotenv.env['CLOUDINARY_API_SECRET'] ?? '';
+   cloudName = EnvConstants.cloudinaryCloudName;
+   apiKey = EnvConstants.cloudinaryApiKey;
+   apiSecret = EnvConstants.cloudinaryApiSecret;
 
    if (cloudName.isEmpty || apiKey.isEmpty || apiSecret.isEmpty) {
       log("Cloudinary cloud name is not set in the .env file");

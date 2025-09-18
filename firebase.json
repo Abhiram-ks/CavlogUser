@@ -1,1 +1,29 @@
-{"firestore":{"rules":"firestore.rules","indexes":"firestore.indexes.json"},"flutter":{"platforms":{"android":{"default":{"projectId":"cav-log","appId":"1:76576135686:android:cd7e647bad2f8c15b10187","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"cav-log","configurations":{"android":"1:76576135686:android:cd7e647bad2f8c15b10187","ios":"1:76576135686:ios:34937302287b6843b10187","macos":"1:76576135686:ios:34937302287b6843b10187","web":"1:76576135686:web:2b501083bbb141adb10187","windows":"1:76576135686:web:2b501083bbb141adb10187"}}}}}}
+{
+    "firestore": {
+        "rules": "firestore.rules",
+        "indexes": "firestore.indexes.json"
+    },
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "cavlog-officail",
+                    "appId": "1:368277681170:android:522fb5b19dbff8b87454cb",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "cavlog-officail",
+                    "configurations": {
+                        "android": "1:368277681170:android:522fb5b19dbff8b87454cb",
+                        "ios": "1:368277681170:ios:de22e8461869c9107454cb",
+                        "macos": "1:368277681170:ios:de22e8461869c9107454cb",
+                        "web": "1:368277681170:web:8f559c3954a888c97454cb",
+                        "windows": "1:368277681170:web:0891e489cf914a277454cb"
+                    }
+                }
+            }
+        }
+    }
+}

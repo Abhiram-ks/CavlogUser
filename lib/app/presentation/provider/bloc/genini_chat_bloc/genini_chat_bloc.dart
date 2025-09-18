@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 
@@ -17,12 +19,14 @@ class GeminiChatBloc extends Bloc<GeminiChatEvent, GeminiChatState> {
       emit(GeminiChatLoading(messages: List.from(_chatHistory)));
 
       try {
+        log('Genimin request started');
         StringBuffer buffer = StringBuffer();
 
         await for (final content
             // ignore: deprecated_member_use
             in gemini.streamGenerateContent(event.prompt)) {
           if (content.output != null) {
+            log('The content is due to: ${content.output}');
             buffer.write(content.output);
             emit(GeminiChatStreaming(
               partial: buffer.toString(),
@@ -30,11 +34,12 @@ class GeminiChatBloc extends Bloc<GeminiChatEvent, GeminiChatState> {
             ));
           }
         }
-
+       
         _chatHistory.add(ChatMessage(text: buffer.toString(), isUser: false));
         emit(GeminiChatSuccess(
             response: buffer.toString(), messages: List.from(_chatHistory)));
       } catch (e) {
+        log('due to error : $e');
         emit(GeminiChatError(
             message: e.toString(), messages: List.from(_chatHistory)));
       }

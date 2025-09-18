@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -26,9 +26,9 @@ class AuthRemoteDataSource {
         .get();
 
       if(emailQuery.docs.isNotEmpty){
-        log('Email alredy exists');
         return false;
       }
+      
       String hashPassword = Hashfunction.generateHash(password);
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(email: email, password: hashPassword);
       String uid = userCredential.user!.uid; 
@@ -92,7 +92,6 @@ class AuthRemoteDataSource {
          }
        }
     } catch (e) {  
-       log('Google sign-in Eroor: $e');
       return null;
     }
     return null;

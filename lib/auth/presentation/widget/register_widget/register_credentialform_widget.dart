@@ -2,13 +2,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:user_panel/auth/presentation/provider/bloc/register_bloc/register_bloc.dart';
-import 'package:user_panel/auth/presentation/provider/cubit/button_progress_cubit/button_progress_cubit.dart';
 import 'package:user_panel/auth/presentation/provider/cubit/checkbox_cubit/checkbox_cubit.dart';
-import 'package:user_panel/auth/presentation/provider/cubit/timer_cubit/timer_cubit.dart';
-import 'package:user_panel/auth/presentation/widget/otp_widget/otp_handlestates_widget.dart';
+import 'package:user_panel/auth/presentation/widget/register_widget/register_handle_state.dart';
 import 'package:user_panel/auth/presentation/widget/register_widget/terms_conditions_widget.dart';
 import 'package:user_panel/core/common/custom_formfield_widget.dart';
-import 'package:user_panel/core/routes/routes.dart';
 import 'package:user_panel/core/utils/constant/constant.dart';
 import 'package:user_panel/core/validation/input_validation.dart';
 import '../../../../core/common/custom_actionbutton_widget.dart';
@@ -69,39 +66,27 @@ class _RegisterCredentialformWidgetState
             ConstantWidgets.hight30(context),
             BlocListener<RegisterBloc, RegisterState>(
               listener: (context, state) {
-                 handleOtpState(context, state, true);
+                 handleRegisterState(context, state, true);
               },
               child: ButtonComponents.actionButton(
                   screenHeight: widget.screenHeight,
                   screenWidth: widget.screenWidth,
-                  label: 'Send code',
+                  label: 'Verify',
                   onTap: () async{
-                    if (!mounted) return;
-                    final timerCubit = context.read<TimerCubit>();
                     final registerBloc = context.read<RegisterBloc>();
-                    final buttonCubit = context.read<ButtonProgressCubit>();
                     final isChecked = context.read<CheckboxCubit>().state is CheckboxChecked;
-                    final navigator = Navigator.of(context);
                     String? error = await ValidatorHelper.validateEmailWithFirebase(emailController.text);
                    
                     
-                    if (!mounted) return;
                     if (widget.formKey.currentState!.validate()) {
                       if (isChecked) {
                         if (error != null && error.isNotEmpty) {
                           if (!context.mounted) return;
                          CustomeSnackBar.show(context: context,title: "Oops, Error Occured",
-                                description: '$error. Occured. Please try again!.', titleClr: AppPalette.redClr,);
+                          description: '$error. Occured. Please try again!.', titleClr: AppPalette.redClr,);
                            return;
                         }
-                         buttonCubit.startLoading();
                          registerBloc.add(RegisterCredentialsData(email: emailController.text.trim(), password: passwordController.text.trim()));
-                         registerBloc.add(GenerateOTPEvent());
-                         timerCubit.startTimer();
-                         buttonCubit.stopLoading();
-                        if (mounted) {
-                           navigator.pushNamed(AppRoutes.otp);
-                        }
                       }else{
                         if(!context.mounted) return;
                          CustomeSnackBar.show(
